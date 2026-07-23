@@ -1,0 +1,278 @@
+
+##### ajax-cookie (53) #####
+
+go({},this.converter,e),this.attributes)}},{attributes:{value:Object.freeze(t)},converter:{value:Object.freeze(e)}})}var U=vo(_o,{path:`/`}),yo=new class{async getSession(){let e=H().ajaxUrl,t=U.get(`ajax-cookie`);return t?V.post(`${e}users/auth/session`,null,{params:{token:t},withCredentials:!1}):null}},bo=(0,w.createContext)({});function xo(e){let t=(0,w.useRef)(null);return t.current===null&&(t.current=e()),t.current}var So=typeof window<`u`?w.useLayoutEffect:w.useEffect,Co=(0,w.createContext)(null);function wo(e,t){e.indexOf(t)===-1&&e.push(t)}function To(e,t){let n=e.indexOf(t);n>-1&&e.sp
+
+----
+
+0,I.jsx)(`div`,{className:__.titleText,children:t})]}),(0,I.jsx)(`div`,{className:`${__.popupContent} ${n}`,children:a})]})})})},y_=new class{async getPaymentMethods(){let e=H().ajaxUrl;return U.get(`ajax-cookie`)?V.get(`${e}payments/getMethods`,{withCredentials:!1}):null}async getAllPayments(){let e=H().ajaxUrl;return V.get(`${e}payments/getAll`,{withCredentials:!1})}async getAllAdditionProducts(){let e=H().ajaxUrl;return V.get(`${e}payments/additional/getAll`,{withCredentials:!1})}async applyPaymentPromocode(e){let t=H().ajaxUrl,n=U.get(`ajax-cookie`);return n?V.post(`${t}payments/promocodes
+
+----
+
+l`,{withCredentials:!1})}async getAllAdditionProducts(){let e=H().ajaxUrl;return V.get(`${e}payments/additional/getAll`,{withCredentials:!1})}async applyPaymentPromocode(e){let t=H().ajaxUrl,n=U.get(`ajax-cookie`);return n?V.post(`${t}payments/promocodes/apply`,null,{params:{token:n,code:e},withCredentials:!1}):null}async createPayment(e){let t=H().ajaxUrl;return U.get(`ajax-cookie`)?V.post(`${t}payments/frontend/create`,null,{params:e,withCredentials:!1}):null}},b_={comboBoxWrapper:`_comboBoxWrapper_1xm1f_1`,comboBoxLabel:`_comboBoxLabel_1xm1f_8`,labelIcon:`_labelIcon_1xm1f_13`,labelText:`_la
+
+----
+
+let t=H().ajaxUrl,n=U.get(`ajax-cookie`);return n?V.post(`${t}payments/promocodes/apply`,null,{params:{token:n,code:e},withCredentials:!1}):null}async createPayment(e){let t=H().ajaxUrl;return U.get(`ajax-cookie`)?V.post(`${t}payments/frontend/create`,null,{params:e,withCredentials:!1}):null}},b_={comboBoxWrapper:`_comboBoxWrapper_1xm1f_1`,comboBoxLabel:`_comboBoxLabel_1xm1f_8`,labelIcon:`_labelIcon_1xm1f_13`,labelText:`_labelText_1xm1f_14`,comboBox:`_comboBox_1xm1f_1`,open:`_open_1xm1f_42`,boxChevron:`_boxChevron_1xm1f_45`,boxHeader:`_boxHeader_1xm1f_48`,boxList:`_boxList_1xm1f_60`,boxOption:
+
+----
+
+t})=>{let[n,r]=(0,w.useState)(``),[i,a]=(0,w.useState)(``),[o,s]=(0,w.useState)(``),[c,l]=(0,w.useState)(!1),{addNotification:u}=p_(),{funpayLink:d,resellerLink:f}=H(),p=async(e,t,n,r)=>{let i=U.get(`ajax-cookie`);if(i){let a={token:i,id:e,paymentType:t};if(n&&(a.promoCode=n),r)if(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(r))a.inputBoxEmail=r;else return u(`error`,`Create payment failed [email]`,`Please enter a valid email address.`);try{let e=await y_.createPayment(a);u(`success`,`Create payment successed`,`Redirect to the payment page...`);let t=setTimeout(()=>er(e?.data,`_self`),1500);return()=>cle
+
+----
+
+
+##### handleAuthorize (2) #####
+
+separatorText_7h1zp_127`,formCaptcha:`_formCaptcha_7h1zp_135`,formButtons:`_formButtons_7h1zp_139`,signIn:`_signIn_7h1zp_158`,signUp:`_signUp_7h1zp_158`,filled:`_filled_7h1zp_161`},_v=new class{async handleAuthorize(e,t,n){let r=H().ajaxUrl;return V.post(`${r}users/auth/default`,null,{params:{hCaptcha:e,username:t,password:n},withCredentials:!1})}},vv=(0,w.forwardRef)(({as:e=`div`,...t},n)=>(0,I.jsx)(e,{...t,ref:n})),yv=`https://challenges.cloudflare.com/turnstile/v0/api.js`,bv=`cf-turnstile-script`,xv=`onloadTurnstileCallback`,Sv=e=>!!document.getElementById(e),Cv=({render:e=`explicit`,onLoad
+
+----
+
+as ${i}`}`,type:`filled`,className:`${K.signIn} ${c&&K.filled}`,onClick:async()=>{if(!l)return r(`error`,`Checking for a bot...`,`To log in, go through a bot check!`);p(!0);try{let t=ir(o),n=await _v.handleAuthorize(l,i,t),a=n.data.authStatus,s=n.data.authMessage;if(a){let{token:t}=n.data;return U.set(`ajax-cookie`,t),r(`success`,`Authorization successed`,s),window.dispatchEvent(new Event(`authChange`)),p(!1),e(`/cabinet`)}else return p(!1),window.dispatchEvent(new Event(`authChange`)),m()}catch(e){return p(!1),V.isAxiosError(e)&&e.response?.data?(r(`error`,`Authorization failed`,`${e.response
+
+----
+
+
+##### handleRegistrate (2) #####
+
+rror?e.message:String(e)),m())}},disabled:!c,isLoading:{loading:f,color:`light`}}),(0,I.jsx)(R,{text:`No account? Sign up.`,type:`filled`,onClick:()=>e(`/sign-up`)})]})]})]})]})})},Nv=new class{async handleRegistrate(e,t,n,r){let i=H().ajaxUrl;return V.post(`${i}users/auth/register`,null,{params:{hCaptcha:e,username:t,password:n,email:r},withCredentials:!1})}},Pv=()=>{let e=F(),{addNotification:t}=p_(),{shortClientName:n,turnStileSiteKey:r}=H(),[i,a]=(0,w.useState)(``),o=(0,w.useRef)(null),[s,c]=(0,w.useState)(``),[l,u]=(0,w.useState)(``),[d,f]=(0,w.useState)(``),[p,m]=(0,w.useState)(``),h=s&&
+
+----
+
+urn t(`error`,`Password confirmation`,`The password you repeated doesn't match!`);if(!i)return t(`error`,`Checking for a bot...`,`To log in, go through a bot check!`);_(!0);try{let n=ir(d),r=await Nv.handleRegistrate(i,s,n,l),a=r.data.authStatus,o=r.data.authMessage;if(a){let{token:n}=r.data;return U.set(`ajax-cookie`,n),t(`success`,`Registration successed`,o),e(`/sign-in`),_(!1),window.dispatchEvent(new Event(`authChange`))}else return _(!1),v(),t(`error`,`Registration failed`,o)}catch(e){return _(!1),V.isAxiosError(e)&&e.response?.data?(t(`error`,`Registration failed`,e.response.data),v()):(
+
+----
+
+
+##### users/auth (7) #####
+
+utes)}},{attributes:{value:Object.freeze(t)},converter:{value:Object.freeze(e)}})}var U=vo(_o,{path:`/`}),yo=new class{async getSession(){let e=H().ajaxUrl,t=U.get(`ajax-cookie`);return t?V.post(`${e}users/auth/session`,null,{params:{token:t},withCredentials:!1}):null}},bo=(0,w.createContext)({});function xo(e){let t=(0,w.useRef)(null);return t.current===null&&(t.current=e()),t.current}var So=typeof window<`u`?w.useLayoutEffect:w.useEffect,Co=(0,w.createContext)(null);function wo(e,t){e.indexOf(t)===-1&&e.push(t)}function To(e,t){let n=e.indexOf(t);n>-1&&e.splice(n,1)}var Eo=(e,t,n)=>n>t?t:n<e
+
+----
+
+`,formButtons:`_formButtons_7h1zp_139`,signIn:`_signIn_7h1zp_158`,signUp:`_signUp_7h1zp_158`,filled:`_filled_7h1zp_161`},_v=new class{async handleAuthorize(e,t,n){let r=H().ajaxUrl;return V.post(`${r}users/auth/default`,null,{params:{hCaptcha:e,username:t,password:n},withCredentials:!1})}},vv=(0,w.forwardRef)(({as:e=`div`,...t},n)=>(0,I.jsx)(e,{...t,ref:n})),yv=`https://challenges.cloudflare.com/turnstile/v0/api.js`,bv=`cf-turnstile-script`,xv=`onloadTurnstileCallback`,Sv=e=>!!document.getElementById(e),Cv=({render:e=`explicit`,onLoadCallbackName:t=xv,scriptOptions:{nonce:n=``,defer:r=!0,async
+
+----
+
+:f,color:`light`}}),(0,I.jsx)(R,{text:`No account? Sign up.`,type:`filled`,onClick:()=>e(`/sign-up`)})]})]})]})]})})},Nv=new class{async handleRegistrate(e,t,n,r){let i=H().ajaxUrl;return V.post(`${i}users/auth/register`,null,{params:{hCaptcha:e,username:t,password:n,email:r},withCredentials:!1})}},Pv=()=>{let e=F(),{addNotification:t}=p_(),{shortClientName:n,turnStileSiteKey:r}=H(),[i,a]=(0,w.useState)(``),o=(0,w.useRef)(null),[s,c]=(0,w.useState)(``),[l,u]=(0,w.useState)(``),[d,f]=(0,w.useState)(``),[p,m]=(0,w.useState)(``),h=s&&d,[g,_]=(0,w.useState)(!1),v=()=>{o.current&&(o.current?.reset(
+
+----
+
+or:`light`}}),(0,I.jsx)(R,{text:`Already have an account? Sign in.`,type:`filled`,onClick:()=>e(`/sign-in`)})]})]})]})]})})},Fv=new class{async resetPassword(e,t){let n=H().ajaxUrl;return V.post(`${n}users/auth/resetPassword`,null,{params:{email:e,newPassword:t},withCredentials:!1})}},Iv=()=>{let{shortClientName:e}=H(),[t,n]=(0,w.useState)(``),[r,i]=(0,w.useState)(``),{addNotification:a}=p_(),[o,s]=(0,w.useState)(!1);return(0,I.jsx)(I.Fragment,{children:(0,I.jsxs)(`div`,{className:`${K.authentification} ${K.forgotPassword}`,children:[(0,I.jsx)(`div`,{className:K.authentificationBackground}),(0
+
+----
+
+orQRCode:`_authentificatorQRCode_823vs_561`,authentificatorLinkButton:`_authentificatorLinkButton_823vs_589`},Lv=new class{async logout(){let e=H().ajaxUrl,t=U.get(`ajax-cookie`);return t?V.post(`${e}users/auth/logout`,null,{params:{token:t},withCredentials:!1}):null}async getFriends(){let e=H().ajaxUrl,t=U.get(`ajax-cookie`);return t?V.post(`${e}friends/getAll`,null,{params:{token:t},withCredentials:!1}):null}async sendFriendRequest(e){let t=H().ajaxUrl,n=U.get(`ajax-cookie`);return n?V.post(`${t}friends/request`,null,{params:{token:n,friendUserName:e},withCredentials:!1}):null}async removeFr
+
+----
+
+
+##### Checking for a bot (2) #####
+
+hed})]}),(0,I.jsxs)(`div`,{className:K.formButtons,children:[(0,I.jsx)(R,{text:`Sign in ${i&&`as ${i}`}`,type:`filled`,className:`${K.signIn} ${c&&K.filled}`,onClick:async()=>{if(!l)return r(`error`,`Checking for a bot...`,`To log in, go through a bot check!`);p(!0);try{let t=ir(o),n=await _v.handleAuthorize(l,i,t),a=n.data.authStatus,s=n.data.authMessage;if(a){let{token:t}=n.data;return U.set(`ajax-cookie`,t),r(`success`,`Authorization successed`,s),window.dispatchEvent(new Event(`authChange`)),p(!1),e(`/cabinet`)}else return p(!1),window.dispatchEvent(new Event(`authChange`)),m()}catch(e){re
+
+----
+
+${s}`}`,type:`filled`,className:`${K.signUp} ${h&&i&&K.filled}`,onClick:async()=>{if(p!==d)return t(`error`,`Password confirmation`,`The password you repeated doesn't match!`);if(!i)return t(`error`,`Checking for a bot...`,`To log in, go through a bot check!`);_(!0);try{let n=ir(d),r=await Nv.handleRegistrate(i,s,n,l),a=r.data.authStatus,o=r.data.authMessage;if(a){let{token:n}=r.data;return U.set(`ajax-cookie`,n),t(`success`,`Registration successed`,o),e(`/sign-in`),_(!1),window.dispatchEvent(new Event(`authChange`))}else return _(!1),v(),t(`error`,`Registration failed`,o)}catch(e){return _(!1
+
+----
+
+
+##### group (16) #####
+
+istener(),this.session&&this.session.end()}},Hg=!1,Ug=class extends w.Component{componentDidMount(){let{visualElement:e,layoutGroup:t,switchLayoutGroup:n,layoutId:r}=this.props,{projection:i}=e;i&&(t.group&&t.group.add(i),n&&n.register&&r&&n.register(i),Hg&&i.root.didUpdate(),i.addEventListener(`animationComplete`,()=>{this.safeToRemove()}),i.setOptions({...i.options,layoutDependency:this.props.layoutDependency,onExitComplete:()=>this.safeToRemove()})),vm.hasEverUpdated=!0}getSnapshotBeforeUpdate(e){let{layoutDependency:t,visualElement:n,drag:r,isPresent:i}=this.props,{projection:a}=n;return a
+
+----
+
+,this.session&&this.session.end()}},Hg=!1,Ug=class extends w.Component{componentDidMount(){let{visualElement:e,layoutGroup:t,switchLayoutGroup:n,layoutId:r}=this.props,{projection:i}=e;i&&(t.group&&t.group.add(i),n&&n.register&&r&&n.register(i),Hg&&i.root.didUpdate(),i.addEventListener(`animationComplete`,()=>{this.safeToRemove()}),i.setOptions({...i.options,layoutDependency:this.props.layoutDependency,onExitComplete:()=>this.safeToRemove()})),vm.hasEverUpdated=!0}getSnapshotBeforeUpdate(e){let{layoutDependency:t,visualElement:n,drag:r,isPresent:i}=this.props,{projection:a}=n;return a?(a.isPre
+
+----
+
+entAnimation&&n.isLead()&&this.safeToRemove()}))}componentWillUnmount(){let{visualElement:e,layoutGroup:t,switchLayoutGroup:n}=this.props,{projection:r}=e;Hg=!0,r&&(r.scheduleCheckAfterUnmount(),t&&t.group&&t.group.remove(r),n&&n.deregister&&n.deregister(r))}safeToRemove(){let{safeToRemove:e}=this.props;e&&e()}render(){return null}};function Wg(e){let[t,n]=lh(),r=(0,w.useContext)(bo);return(0,I.jsx)(Ug,{...e,layoutGroup:r,switchLayoutGroup:(0,w.useContext)(Jh),isPresent:t,safeToRemove:n})}var Gg={pan:{Feature:Vg},drag:{Feature:zg,ProjectionNode:eh,MeasureLayout:Wg}};function Kg(e,t,n){let{prop
+
+----
+
+ion&&n.isLead()&&this.safeToRemove()}))}componentWillUnmount(){let{visualElement:e,layoutGroup:t,switchLayoutGroup:n}=this.props,{projection:r}=e;Hg=!0,r&&(r.scheduleCheckAfterUnmount(),t&&t.group&&t.group.remove(r),n&&n.deregister&&n.deregister(r))}safeToRemove(){let{safeToRemove:e}=this.props;e&&e()}render(){return null}};function Wg(e){let[t,n]=lh(),r=(0,w.useContext)(bo);return(0,I.jsx)(Ug,{...e,layoutGroup:r,switchLayoutGroup:(0,w.useContext)(Jh),isPresent:t,safeToRemove:n})}var Gg={pan:{Feature:Vg},drag:{Feature:zg,ProjectionNode:eh,MeasureLayout:Wg}};function Kg(e,t,n){let{props:r}=e;e.
+
+----
+
+tFamily:`Icons`},children:`(`}),(0,I.jsx)(`div`,{className:J.columnText,children:`Role`})]}),(0,I.jsx)(`div`,{className:J.columnData,children:h.map((e,t)=>(0,I.jsx)(`div`,{className:J.data,children:e.group.charAt(0).toUpperCase()+e.group.slice(1).toLowerCase()},t))})]}),(0,I.jsxs)(`div`,{className:J.tableColumn,children:[(0,I.jsxs)(`div`,{className:`${J.columnHeader} ${J.headerUsers}`,children:[(0,I.jsx)(`div`,{className:J.columnIcon,style:{fontFamily:`Icons`},children:`1`}),(0,I.jsx)(`div`,{className:`${J.columnText}`,children:`Actions`})]}),(0,I.jsx)(`div`,{className:`${J.columnData} ${J.dat
+
+----
+
+
+##### ADMIN (6) #####
+
+e=>{n(`error`,`Copied failed`,e)}),ir=e=>{let t=new TextEncoder().encode(e),n=``;for(let e=0;e<t.length;++e)n+=String.fromCharCode(t[e]);return btoa(n)},ar={USER:`USER`,BETA:`BETA`,YOUTUBER:`YOUTUBE`,ADMIN:`ADMIN`},or={buttonIcon:`_buttonIcon_163v0_16`,loader:`_loader_163v0_19`,rotation:`_rotation_163v0_1`,loading:`_loading_163v0_38`,outline:`_outline_163v0_44`,filled:`_filled_163v0_51`},R=({icon:e,text:t=`[Text]`,type:n,style:r,onClick:i,className:a,to:o,disabled:s,isLoading:c})=>{let l=F();switch(n){case`outline`:return(0,I.jsx)(`button`,{className:`${or[n]} ${c?.loading&&or.loading} ${a}`,s
+
+----
+
+error`,`Copied failed`,e)}),ir=e=>{let t=new TextEncoder().encode(e),n=``;for(let e=0;e<t.length;++e)n+=String.fromCharCode(t[e]);return btoa(n)},ar={USER:`USER`,BETA:`BETA`,YOUTUBER:`YOUTUBE`,ADMIN:`ADMIN`},or={buttonIcon:`_buttonIcon_163v0_16`,loader:`_loader_163v0_19`,rotation:`_rotation_163v0_1`,loading:`_loading_163v0_38`,outline:`_outline_163v0_44`,filled:`_filled_163v0_51`},R=({icon:e,text:t=`[Text]`,type:n,style:r,onClick:i,className:a,to:o,disabled:s,isLoading:c})=>{let l=F();switch(n){case`outline`:return(0,I.jsx)(`button`,{className:`${or[n]} ${c?.loading&&or.loading} ${a}`,style:r,
+
+----
+
+.userButton,style:{fontFamily:`Icons`},onClick:u,children:`7`})]}),(0,I.jsx)(`div`,{className:q.userHr}),(0,I.jsx)(`div`,{className:q.userTabs,children:b.filter(e=>e.name===`Media Panel`?c?.role===ar.ADMIN||c?.role===ar.YOUTUBER:e.name!==`Dashboard`||c?.role===ar.ADMIN).map((n,r)=>(0,I.jsxs)(`div`,{className:q.tab,onClick:()=>{if(n.name===`Dashboard`){P();return}if(n.name===`Roulette`){t(`warning`,`Roulette`,`Roulette is temporarily disabled!`);return}e(n.path)},children:[(0,I.jsx)(`div`,{className:q.tabIcon,style:{fontFamily:`Icons`},children:n.icon}),(0,I.jsx)(`div`,{className:q.tabText,chil
+
+----
+
+}),(0,I.jsx)(`div`,{className:q.userHr}),(0,I.jsx)(`div`,{className:q.userTabs,children:b.filter(e=>e.name===`Media Panel`?c?.role===ar.ADMIN||c?.role===ar.YOUTUBER:e.name!==`Dashboard`||c?.role===ar.ADMIN).map((n,r)=>(0,I.jsxs)(`div`,{className:q.tab,onClick:()=>{if(n.name===`Dashboard`){P();return}if(n.name===`Roulette`){t(`warning`,`Roulette`,`Roulette is temporarily disabled!`);return}e(n.path)},children:[(0,I.jsx)(`div`,{className:q.tabIcon,style:{fontFamily:`Icons`},children:n.icon}),(0,I.jsx)(`div`,{className:q.tabText,children:n.name})]},r))})]}),(0,I.jsxs)(`div`,{className:`${q.column
+
+----
+
+,n.response.data?.message):t(`error`,`Redact failed`,n instanceof Error?n.message:String(n))}},c=[{value:`DEFAULT`,label:`User`},{value:`BETA`,label:`Beta`},{value:`YOUTUBE`,label:`Youtuber`},{value:`ADMIN`,label:`Admin`}];return(0,I.jsx)(I.Fragment,{children:(0,I.jsx)(`div`,{className:`${J.dashboard} ${J.dashboardUsers}`,children:(0,I.jsxs)(`div`,{className:`${J.dashboardContent} ${J.usersContent}`,children:[(0,I.jsxs)(`div`,{className:J.contentHeader,children:[(0,I.jsx)(`div`,{className:J.contentBackButton,children:(0,I.jsx)(R,{text:`Go back to main Settings`,type:`filled`,icon:{orientation:
+
+----
+
+
+##### subtill (13) #####
+
+elegram:s}=i,[c,l]=(0,w.useState)();(0,w.useEffect)(()=>{(async()=>{try{let t=await yo.getSession();if(t?.data.authStatus){let{id:e,username:n,email:r,isEmailVerified:i,role:a,banned:o,token:s,hwid:c,subtill:u,regdate:d}=t.data;l({id:e,username:n,email:r,isEmailVerified:i,role:a,banned:o,token:s,hwid:c,subtill:u,regdate:d})}else window.dispatchEvent(new Event(`authChange`)),e(`/sign-in`)}catch{window.dispatchEvent(new Event(`authChange`)),e(`/sign-in`)}})()},[]);let u=async()=>{try{let n=await Lv.logout();return U.remove(`ajax-cookie`),e(`/sign-in`),t(`success`,`Logout successed`,n?.data),wind
+
+----
+
+?.data.authStatus){let{id:e,username:n,email:r,isEmailVerified:i,role:a,banned:o,token:s,hwid:c,subtill:u,regdate:d}=t.data;l({id:e,username:n,email:r,isEmailVerified:i,role:a,banned:o,token:s,hwid:c,subtill:u,regdate:d})}else window.dispatchEvent(new Event(`authChange`)),e(`/sign-in`)}catch{window.dispatchEvent(new Event(`authChange`)),e(`/sign-in`)}})()},[]);let u=async()=>{try{let n=await Lv.logout();return U.remove(`ajax-cookie`),e(`/sign-in`),t(`success`,`Logout successed`,n?.data),window.dispatchEvent(new Event(`authChange`))}catch(e){return V.isAxiosError(e)&&e.response?.data?t(`error`,
+
+----
+
+.includes(`The entered`))return v(``),t(`error`,`Activate key failed`,e?.data);t(`success`,`Activate key successed`,e?.data);try{let e=await yo.getSession();if(e?.data.authStatus)return l(t=>t&&{...t,subtill:e?.data.subtill}),v(``)}catch(e){return V.isAxiosError(e)&&e.response?.data?(v(``),t(`error`,`Activate key failed`,e.response.data)):(v(``),t(`error`,`Activate key failed`,e instanceof Error?e.message:String(e)))}}catch(e){return V.isAxiosError(e)&&e.response?.data?t(`error`,`Activate key failed`,e.response.data):t(`error`,`Activate key failed`,e instanceof Error?e.message:String(e))}},b=[
+
+----
+
+ntered`))return v(``),t(`error`,`Activate key failed`,e?.data);t(`success`,`Activate key successed`,e?.data);try{let e=await yo.getSession();if(e?.data.authStatus)return l(t=>t&&{...t,subtill:e?.data.subtill}),v(``)}catch(e){return V.isAxiosError(e)&&e.response?.data?(v(``),t(`error`,`Activate key failed`,e.response.data)):(v(``),t(`error`,`Activate key failed`,e instanceof Error?e.message:String(e)))}}catch(e){return V.isAxiosError(e)&&e.response?.data?t(`error`,`Activate key failed`,e.response.data):t(`error`,`Activate key failed`,e instanceof Error?e.message:String(e))}},b=[{icon:`&`,name:`
+
+----
+
+assName:q.avatarOnline})]}),(0,I.jsxs)(`div`,{className:q.profileInformation,children:[(0,I.jsxs)(`div`,{className:q.informationSubscribe,children:[`Subscription Till: `,(0,I.jsx)(`span`,{children:c?.subtill??`[User SubTill]`})]}),(0,I.jsxs)(`div`,{className:q.informationUsername,children:[c?.username??`[User Username]`,` `,(0,I.jsxs)(`span`,{children:[`[`,c?.id,`]`]})]})]})]}),(0,I.jsx)(`div`,{className:q.userButton,style:{fontFamily:`Icons`},onClick:u,children:`7`})]}),(0,I.jsx)(`div`,{className:q.userHr}),(0,I.jsx)(`div`,{className:q.userTabs,children:b.filter(e=>e.name===`Media Panel`?c?.r
+
+----
+
+
+##### dashboard (79) #####
+
+error`,`Activate key failed`,e.response.data):t(`error`,`Activate key failed`,e instanceof Error?e.message:String(e))}},b=[{icon:`&`,name:`Settings`,path:`/cabinet`},{icon:`*`,name:`Dashboard`,path:`/dashboard/users/panel`},{icon:`z`,name:`Media Panel`,path:`/mediapanel`},{icon:`)`,name:`Roulette`,path:`/roulette`}],x=[{icon:`8`,name:`Email`,data:c?.email?(()=>{let[e,t]=c.email.split(`@`);return e.length>10?`${e.slice(0,10)}...@${t}`:c.email})():c?.email??`[User Email]`},{icon:`4`,name:`Registration Date`,data:c?.regdate??`[User RegDate]`},{icon:`r`,name:`Hwid`,data:c?.hwid??`[User HWID]`}],S=
+
+----
+
+rent?.map(e=>e?.value??``).join(``)??``)}e.key===`Enter`&&ie()},[A,j]=(0,w.useState)(``),[M,te]=(0,w.useState)(``),[ne,N]=(0,w.useState)(``),P=async()=>{try{return await Rv.isSessionInitialized(),e(`/dashboard/users/panel`)}catch(e){let t=String(e?.response?.data).trim();return t===`2FA_LINK_REQUIRED`?(re(),N(C),n(C)):t===`2FA_VERIFY_REQUIRED`?(N(T),n(T)):void 0}},re=async()=>{try{j((await Lv.generateQRCode())?.data)}catch(e){return V.isAxiosError(e)&&e.response?.data?t(`error`,`Authentificator failed`,e.response.data):t(`error`,`Authentificator failed`,e instanceof Error?e.message:String(e))}
+
+----
+
+abet is not allowed in the code!`);if(!M)return t(`error`,`Authentificator failed`,`Please, fill this field!`);if(n)try{let t=await Rv.initializeSession(M);return r(ne),ne!==T&&j(String(t?.data)),e(`/dashboard/users/panel`)}catch(e){return V.isAxiosError(e)&&e.response?.data?t(`error`,`Authentificator failed`,e.response.data):t(`error`,`Authentificator failed`,e instanceof Error?e.message:String(e))}};return(0,I.jsxs)(I.Fragment,{children:[(0,I.jsxs)(v_,{canClose:!0,width:275,label:`Authentificator QR-Code:`,id:C,className:`${q.cabinetPopup} ${q.popupGenerateAuthentificatorQR}`,children:[(0,I.
+
+----
+
+t`,icon:`3`},onClick:()=>(h(!0),g()),isLoading:{loading:m,color:`light`}}),(0,I.jsx)(R,{text:`Can’t download? Contact support.`,type:`filled`,onClick:()=>er(o,`_blank`)})]})]})})]})]})]})]})})]})},J={dashboard:`_dashboard_6ycf9_1`,dashboardContent:`_dashboardContent_6ycf9_7`,contentHeader:`_contentHeader_6ycf9_17`,contentBackButton:`_contentBackButton_6ycf9_22`,contentTitle:`_contentTitle_6ycf9_34`,titleSignature:`_titleSignature_6ycf9_39`,signatureIcon:`_signatureIcon_6ycf9_44`,signatureText:`_signatureText_6ycf9_45`,titleText:`_titleText_6ycf9_56`,contentBody:`_contentBody_6ycf9_64`,contentN
+
+----
+
+,onClick:()=>(h(!0),g()),isLoading:{loading:m,color:`light`}}),(0,I.jsx)(R,{text:`Can’t download? Contact support.`,type:`filled`,onClick:()=>er(o,`_blank`)})]})]})})]})]})]})]})})]})},J={dashboard:`_dashboard_6ycf9_1`,dashboardContent:`_dashboardContent_6ycf9_7`,contentHeader:`_contentHeader_6ycf9_17`,contentBackButton:`_contentBackButton_6ycf9_22`,contentTitle:`_contentTitle_6ycf9_34`,titleSignature:`_titleSignature_6ycf9_39`,signatureIcon:`_signatureIcon_6ycf9_44`,signatureText:`_signatureText_6ycf9_45`,titleText:`_titleText_6ycf9_56`,contentBody:`_contentBody_6ycf9_64`,contentNavigation:`_
+
+----
+
+
+##### setCookie (0) #####
+
+
+##### Cookies (0) #####
+
+
+##### U.get (50) #####
+
+urn vo(go({},this.converter,e),this.attributes)}},{attributes:{value:Object.freeze(t)},converter:{value:Object.freeze(e)}})}var U=vo(_o,{path:`/`}),yo=new class{async getSession(){let e=H().ajaxUrl,t=U.get(`ajax-cookie`);return t?V.post(`${e}users/auth/session`,null,{params:{token:t},withCredentials:!1}):null}},bo=(0,w.createContext)({});function xo(e){let t=(0,w.useRef)(null);return t.current===null&&(t.current=e()),t.current}var So=typeof window<`u`?w.useLayoutEffect:w.useEffect,Co=(0,w.createContext)(null);function wo(e,t){e.indexOf(t)===-1&&e.push(t)}function To(e,t){let n=e.indexOf(t);n>-
+
+----
+
+`l`}),(0,I.jsx)(`div`,{className:__.titleText,children:t})]}),(0,I.jsx)(`div`,{className:`${__.popupContent} ${n}`,children:a})]})})})},y_=new class{async getPaymentMethods(){let e=H().ajaxUrl;return U.get(`ajax-cookie`)?V.get(`${e}payments/getMethods`,{withCredentials:!1}):null}async getAllPayments(){let e=H().ajaxUrl;return V.get(`${e}payments/getAll`,{withCredentials:!1})}async getAllAdditionProducts(){let e=H().ajaxUrl;return V.get(`${e}payments/additional/getAll`,{withCredentials:!1})}async applyPaymentPromocode(e){let t=H().ajaxUrl,n=U.get(`ajax-cookie`);return n?V.post(`${t}payments/pro
+
+----
+
+s/getAll`,{withCredentials:!1})}async getAllAdditionProducts(){let e=H().ajaxUrl;return V.get(`${e}payments/additional/getAll`,{withCredentials:!1})}async applyPaymentPromocode(e){let t=H().ajaxUrl,n=U.get(`ajax-cookie`);return n?V.post(`${t}payments/promocodes/apply`,null,{params:{token:n,code:e},withCredentials:!1}):null}async createPayment(e){let t=H().ajaxUrl;return U.get(`ajax-cookie`)?V.post(`${t}payments/frontend/create`,null,{params:e,withCredentials:!1}):null}},b_={comboBoxWrapper:`_comboBoxWrapper_1xm1f_1`,comboBoxLabel:`_comboBoxLabel_1xm1f_8`,labelIcon:`_labelIcon_1xm1f_13`,labelTe
+
+----
+
+ode(e){let t=H().ajaxUrl,n=U.get(`ajax-cookie`);return n?V.post(`${t}payments/promocodes/apply`,null,{params:{token:n,code:e},withCredentials:!1}):null}async createPayment(e){let t=H().ajaxUrl;return U.get(`ajax-cookie`)?V.post(`${t}payments/frontend/create`,null,{params:e,withCredentials:!1}):null}},b_={comboBoxWrapper:`_comboBoxWrapper_1xm1f_1`,comboBoxLabel:`_comboBoxLabel_1xm1f_8`,labelIcon:`_labelIcon_1xm1f_13`,labelText:`_labelText_1xm1f_14`,comboBox:`_comboBox_1xm1f_1`,open:`_open_1xm1f_42`,boxChevron:`_boxChevron_1xm1f_45`,boxHeader:`_boxHeader_1xm1f_48`,boxList:`_boxList_1xm1f_60`,box
+
+----
+
+ethods:t})=>{let[n,r]=(0,w.useState)(``),[i,a]=(0,w.useState)(``),[o,s]=(0,w.useState)(``),[c,l]=(0,w.useState)(!1),{addNotification:u}=p_(),{funpayLink:d,resellerLink:f}=H(),p=async(e,t,n,r)=>{let i=U.get(`ajax-cookie`);if(i){let a={token:i,id:e,paymentType:t};if(n&&(a.promoCode=n),r)if(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(r))a.inputBoxEmail=r;else return u(`error`,`Create payment failed [email]`,`Please enter a valid email address.`);try{let e=await y_.createPayment(a);u(`success`,`Create payment successed`,`Redirect to the payment page...`);let t=setTimeout(()=>er(e?.data,`_self`),1500);return
+
+----
+
+
+##### U.set (2) #####
+
+`error`,`Checking for a bot...`,`To log in, go through a bot check!`);p(!0);try{let t=ir(o),n=await _v.handleAuthorize(l,i,t),a=n.data.authStatus,s=n.data.authMessage;if(a){let{token:t}=n.data;return U.set(`ajax-cookie`,t),r(`success`,`Authorization successed`,s),window.dispatchEvent(new Event(`authChange`)),p(!1),e(`/cabinet`)}else return p(!1),window.dispatchEvent(new Event(`authChange`)),m()}catch(e){return p(!1),V.isAxiosError(e)&&e.response?.data?(r(`error`,`Authorization failed`,`${e.response.data}`),m()):(r(`error`,`Authorization failed`,e instanceof Error?e.message:String(e)),m())}},di
+
+----
+
+ror`,`Checking for a bot...`,`To log in, go through a bot check!`);_(!0);try{let n=ir(d),r=await Nv.handleRegistrate(i,s,n,l),a=r.data.authStatus,o=r.data.authMessage;if(a){let{token:n}=r.data;return U.set(`ajax-cookie`,n),t(`success`,`Registration successed`,o),e(`/sign-in`),_(!1),window.dispatchEvent(new Event(`authChange`))}else return _(!1),v(),t(`error`,`Registration failed`,o)}catch(e){return _(!1),V.isAxiosError(e)&&e.response?.data?(t(`error`,`Registration failed`,e.response.data),v()):(t(`error`,`Registration failed`,e instanceof Error?e.message:String(e)),v())}},disabled:!h,isLoading
+
+----
+
+
+##### ir( (2) #####
+
+t:`Sign in ${i&&`as ${i}`}`,type:`filled`,className:`${K.signIn} ${c&&K.filled}`,onClick:async()=>{if(!l)return r(`error`,`Checking for a bot...`,`To log in, go through a bot check!`);p(!0);try{let t=ir(o),n=await _v.handleAuthorize(l,i,t),a=n.data.authStatus,s=n.data.authMessage;if(a){let{token:t}=n.data;return U.set(`ajax-cookie`,t),r(`success`,`Authorization successed`,s),window.dispatchEvent(new Event(`authChange`)),p(!1),e(`/cabinet`)}else return p(!1),window.dispatchEvent(new Event(`authChange`)),m()}catch(e){return p(!1),V.isAxiosError(e)&&e.response?.data?(r(`error`,`Authorization fail
+
+----
+
+()=>{if(p!==d)return t(`error`,`Password confirmation`,`The password you repeated doesn't match!`);if(!i)return t(`error`,`Checking for a bot...`,`To log in, go through a bot check!`);_(!0);try{let n=ir(d),r=await Nv.handleRegistrate(i,s,n,l),a=r.data.authStatus,o=r.data.authMessage;if(a){let{token:n}=r.data;return U.set(`ajax-cookie`,n),t(`success`,`Registration successed`,o),e(`/sign-in`),_(!1),window.dispatchEvent(new Event(`authChange`))}else return _(!1),v(),t(`error`,`Registration failed`,o)}catch(e){return _(!1),V.isAxiosError(e)&&e.response?.data?(t(`error`,`Registration failed`,e.resp
+
+----
+
+
+##### turnStileSiteKey (2) #####
+
+execution,b,ne]),(0,w.useEffect)(()=>{!M||typeof p!=`function`||p()},[M]),(0,I.jsx)(vv,{ref:T,as:g,id:ee,style:{...S,...h},...y})});jv.displayName=`Turnstile`;var Mv=()=>{let e=F(),{shortClientName:t,turnStileSiteKey:n}=H(),{addNotification:r}=p_(),[i,a]=(0,w.useState)(``),[o,s]=(0,w.useState)(``),c=i&&o,[l,u]=(0,w.useState)(``),d=(0,w.useRef)(null),[f,p]=(0,w.useState)(!1),m=()=>{d.current&&(d.current?.reset(),u(``))};return(0,w.useEffect)(()=>{(async()=>{try{if((await yo.getSession())?.data.authStatus)return e(`/cabinet`)}catch(e){V.isAxiosError(e)&&e.response?.data?r(`error`,`Session verifi
+
+----
+
+{let i=H().ajaxUrl;return V.post(`${i}users/auth/register`,null,{params:{hCaptcha:e,username:t,password:n,email:r},withCredentials:!1})}},Pv=()=>{let e=F(),{addNotification:t}=p_(),{shortClientName:n,turnStileSiteKey:r}=H(),[i,a]=(0,w.useState)(``),o=(0,w.useRef)(null),[s,c]=(0,w.useState)(``),[l,u]=(0,w.useState)(``),[d,f]=(0,w.useState)(``),[p,m]=(0,w.useState)(``),h=s&&d,[g,_]=(0,w.useState)(!1),v=()=>{o.current&&(o.current?.reset(),a(``))};return(0,w.useEffect)(()=>{(async()=>{try{if((await yo.getSession())?.data.authStatus)return e(`/cabinet`)}catch(e){V.isAxiosError(e)&&e.response?.data?
+
+----
+
+
+##### banned (15) #####
+
+uteFilter:[`class`]}),()=>{window.removeEventListener(`scroll`,t),n.disconnect()}},[e.pathname]),(0,w.useEffect)(()=>{let e=async()=>{try{let e=await yo.getSession();return e?.data.authStatus?e?.data.banned?o(!1):o(!0):o(!1)}catch{return o(!1)}};return e(),window.addEventListener(`authChange`,e),()=>window.removeEventListener(`authChange`,e)},[]);let[u,d]=(0,w.useState)(`light`);(0,w.useEffect)(()=>{let e=localStorage.getItem(`theme`)||`light`;d(e),document.documentElement.classList.toggle(`dark`,e===`dark`)},[]);let f=e=>{document.body.classList.add(`theme-transition`),d(e),localStorage.setIt
+
+----
+
+xUrl:a}=H(),{discord:o,telegram:s}=i,[c,l]=(0,w.useState)();(0,w.useEffect)(()=>{(async()=>{try{let t=await yo.getSession();if(t?.data.authStatus){let{id:e,username:n,email:r,isEmailVerified:i,role:a,banned:o,token:s,hwid:c,subtill:u,regdate:d}=t.data;l({id:e,username:n,email:r,isEmailVerified:i,role:a,banned:o,token:s,hwid:c,subtill:u,regdate:d})}else window.dispatchEvent(new Event(`authChange`)),e(`/sign-in`)}catch{window.dispatchEvent(new Event(`authChange`)),e(`/sign-in`)}})()},[]);let u=async()=>{try{let n=await Lv.logout();return U.remove(`ajax-cookie`),e(`/sign-in`),t(`success`,`Logout 
+
+----
+
+ait yo.getSession();if(t?.data.authStatus){let{id:e,username:n,email:r,isEmailVerified:i,role:a,banned:o,token:s,hwid:c,subtill:u,regdate:d}=t.data;l({id:e,username:n,email:r,isEmailVerified:i,role:a,banned:o,token:s,hwid:c,subtill:u,regdate:d})}else window.dispatchEvent(new Event(`authChange`)),e(`/sign-in`)}catch{window.dispatchEvent(new Event(`authChange`)),e(`/sign-in`)}})()},[]);let u=async()=>{try{let n=await Lv.logout();return U.remove(`ajax-cookie`),e(`/sign-in`),t(`success`,`Logout successed`,n?.data),window.dispatchEvent(new Event(`authChange`))}catch(e){return V.isAxiosError(e)&&e.r
+
+----
+
+f9_432`,tableRedactUser:`_tableRedactUser_6ycf9_437`,tableRedactInformation:`_tableRedactInformation_6ycf9_443`,informationRow:`_informationRow_6ycf9_449`,blackListButton:`_blackListButton_6ycf9_473`,banned:`_banned_6ycf9_473`,tableCreateKey:`_tableCreateKey_6ycf9_477`,tableChooseKey:`_tableChooseKey_6ycf9_482`,tableChooseWithdraw:`_tableChooseWithdraw_6ycf9_483`,activeBackground:`_activeBackground_6ycf9_498`,keyType:`_keyType_6ycf9_510`,tableWithdrawInputs:`_tableWithdrawInputs_6ycf9_544`,inputsMainData:`_inputsMainData_6ycf9_549`,inputWithdrawalButton:`_inputWithdrawalButton_6ycf9_559`,table
+
+----
+
+ableRedactUser:`_tableRedactUser_6ycf9_437`,tableRedactInformation:`_tableRedactInformation_6ycf9_443`,informationRow:`_informationRow_6ycf9_449`,blackListButton:`_blackListButton_6ycf9_473`,banned:`_banned_6ycf9_473`,tableCreateKey:`_tableCreateKey_6ycf9_477`,tableChooseKey:`_tableChooseKey_6ycf9_482`,tableChooseWithdraw:`_tableChooseWithdraw_6ycf9_483`,activeBackground:`_activeBackground_6ycf9_498`,keyType:`_keyType_6ycf9_510`,tableWithdrawInputs:`_tableWithdrawInputs_6ycf9_544`,inputsMainData:`_inputsMainData_6ycf9_549`,inputWithdrawalButton:`_inputWithdrawalButton_6ycf9_559`,tableKeyInputs
+
+----
+
+
+##### hwid (6) #####
+
+ord:o,telegram:s}=i,[c,l]=(0,w.useState)();(0,w.useEffect)(()=>{(async()=>{try{let t=await yo.getSession();if(t?.data.authStatus){let{id:e,username:n,email:r,isEmailVerified:i,role:a,banned:o,token:s,hwid:c,subtill:u,regdate:d}=t.data;l({id:e,username:n,email:r,isEmailVerified:i,role:a,banned:o,token:s,hwid:c,subtill:u,regdate:d})}else window.dispatchEvent(new Event(`authChange`)),e(`/sign-in`)}catch{window.dispatchEvent(new Event(`authChange`)),e(`/sign-in`)}})()},[]);let u=async()=>{try{let n=await Lv.logout();return U.remove(`ajax-cookie`),e(`/sign-in`),t(`success`,`Logout successed`,n?.dat
+
+----
+
+();if(t?.data.authStatus){let{id:e,username:n,email:r,isEmailVerified:i,role:a,banned:o,token:s,hwid:c,subtill:u,regdate:d}=t.data;l({id:e,username:n,email:r,isEmailVerified:i,role:a,banned:o,token:s,hwid:c,subtill:u,regdate:d})}else window.dispatchEvent(new Event(`authChange`)),e(`/sign-in`)}catch{window.dispatchEvent(new Event(`authChange`)),e(`/sign-in`)}})()},[]);let u=async()=>{try{let n=await Lv.logout();return U.remove(`ajax-cookie`),e(`/sign-in`),t(`success`,`Logout successed`,n?.data),window.dispatchEvent(new Event(`authChange`))}catch(e){return V.isAxiosError(e)&&e.response?.data?t(`
+
+----
+
+mail.split(`@`);return e.length>10?`${e.slice(0,10)}...@${t}`:c.email})():c?.email??`[User Email]`},{icon:`4`,name:`Registration Date`,data:c?.regdate??`[User RegDate]`},{icon:`r`,name:`Hwid`,data:c?.hwid??`[User HWID]`}],S=[{icon:`5`,url:o},{icon:`h`,url:s}],C=`authentificatorQR`,T=`authentificatorCode`,E=(0,w.useRef)([]),D=(0,w.useRef)([]),O=(e,t,n)=>{let r=e.target.value.replace(/\D/g,``).slice(-1);e.target.value=r,te(n.current?.map(e=>e?.value??``).join(``)??``),r&&t<5&&n.current?.[t+1]?.focus()},k=(e,t)=>{e.preventDefault();let n=e.clipboardData.getData(`text`).replace(/\D/g,``).slice(0,6
+
+----
+
+lue.length;o.current.setSelectionRange(e,e)}},0)},placeholder:`dd.MM.yyyy`,maxLength:10})]})},$y=()=>{let e=F(),{addNotification:t}=p_(),{uid:n}=dt(),[r,i]=(0,w.useState)({banned:!1,email:``,group:``,hwid:``,subtill:``,user:``});(0,w.useEffect)(()=>{n||e(`/dashboard/users/panel`)},[n,e]),(0,w.useEffect)(()=>{n&&(async()=>{try{let e=await Rv.getEditUserInfo(Number(n));e?.data&&i({banned:e.data.banned??!1,email:e.data.email??``,group:e.data.group??``,hwid:e.data.hwid??``,subtill:e.data.subtill??``,user:e.data.user??``})}catch{}})()},[n]);let a=async()=>{try{return t(`success`,`Redact successed`,
+
+----
+
+e(`/dashboard/users/panel`)},[n,e]),(0,w.useEffect)(()=>{n&&(async()=>{try{let e=await Rv.getEditUserInfo(Number(n));e?.data&&i({banned:e.data.banned??!1,email:e.data.email??``,group:e.data.group??``,hwid:e.data.hwid??``,subtill:e.data.subtill??``,user:e.data.user??``})}catch{}})()},[n]);let a=async()=>{try{return t(`success`,`Redact successed`,(await Rv.patchUser(r.user,r.group,r.banned,r.subtill,r.email))?.data)}catch(e){return V.isAxiosError(e)&&e.response?.data?t(`error`,`Redact failed`,e.response.data):t(`error`,`Redact failed`,e instanceof Error?e.message:String(e))}},o=async()=>{try{let
+
+----

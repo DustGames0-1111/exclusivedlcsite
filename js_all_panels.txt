@@ -1,0 +1,347 @@
+ROUTES:
+`/dashboard/autoupload/panel`
+`/dashboard/keys/create`
+`/dashboard/keys/panel`
+`/dashboard/logs/panel`
+`/dashboard/promocodes/create`
+`/dashboard/promocodes/panel`
+`/dashboard/promocodes/redact/${encodeURIComponent(t.name)}`
+`/dashboard/promocodes/redact/:name`
+`/dashboard/users/panel`
+`/dashboard/users/redact/${t.uid}`
+`/dashboard/users/redact/:uid`
+`/dashboard/withdraw/panel`
+
+
+===== Rv class start =====
+
+Rv=new class{async initializeSession(e){let t=H().ajaxUrl,n=U.get(`ajax-cookie`);return n?V.post(`${t}users/auth/2fa/initializePanelSession`,null,{params:{token:n,code:e},withCredentials:!1}):null}async isSessionInitialized(){let e=H().ajaxUrl,t=U.get(`ajax-cookie`);return t?V.post(`${e}admin/states/isSessionInitialized`,null,{params:{token:t},withCredentials:!1}):null}async getAll(e=0){let t=H().ajaxUrl,n=U.get(`ajax-cookie`);if(!n)throw Error(`Unauthorized`);return V.post(`${t}admin/users/getAll`,null,{params:{token:n,page:e}})}async userSearch(e,t=0){let n=H().ajaxUrl,r=U.get(`ajax-cookie`);if(!r)throw Error(`Unauthorized`);return V.post(`${n}admin/users/search`,null,{params:{token:r,query:e,page:t}})}async getEditUserInfo(e){let t=H().ajaxUrl,n=U.get(`ajax-cookie`);return n?V.post(`${t}admin/users/getByIdentifier`,null,{params:{token:n,id:e},withCredentials:!1}):null}async patchUser(e,t,n,r,i){let a=H().ajaxUrl,o=U.get(`ajax-cookie`);return o?V.patch(`${a}admin/users/patch`,{username:e,role:t,isBanned:n,subTill:r,email:i},{params:{token:o,user:e},withCredentials:!1}):null}async resetUserHWID(e){let t=H().ajaxUrl,n=U.get(`ajax-cookie`);return n?V.post(`${t}admin/users/resetHardwareId`,null,{params:{token:n,user:e},withCredentials:!1}):null}async getBalance(){let e=H().ajaxUrl,t=U.get(`ajax-cookie`);return t?V.post(`${e}admin/finances/getBalance`,null,{params:{token:t}}):null}async getBanks(){let e=H().ajaxUrl;return U.get(`ajax-cookie`)?V.post(`${e}admin/finances/getBanks`,null):null}async createInference(e){let t=H().ajaxUrl;return U.get(`ajax-cookie`)?V.post(`${t}admin/finances/createInference`,null,{params:e}):null}async getAllPromocodes(){let e=H().ajaxUrl,t=U.get(`ajax-cookie`);return t?V.post(`${e}admin/promocodes/getAll`,null,{params:{token:t},withCredentials:!1}):null}async getAllPromocodesStatistics(e){let t=H().ajaxUrl,n=U.get(`ajax-cookie`);return n?V.post(`${t}admin/promocodes/statistic/get`,null,{params:{token:n,promocode:e},withCredentials:!1}):null}async deletePromocode(e){let t=H().ajaxUrl,n=U.get(`ajax-cookie`);return n?V.postForm(`${t}admin/promocodes/delete`,{token:n,promocode:e}):null}async patchPromocode(e,t,n){let r=H().ajaxUrl,i=U.get(`ajax-cookie`);return i?V.postForm(r+`admin/promocodes/patch`,{token:i,promocode:e,bet:t,maxUsages:n}):null}async resetUsages(e){let t=H().ajaxUrl,n=U.get(`ajax-cookie`);return n?V.postForm(`${t}admin/promocodes/resetUsages`,{token:n,promocode:e}):null}async resetStatistics(e){let t=H().ajaxUrl,n=U.get(`ajax-cookie`);return n?V.postForm(`${t}admin/promocodes/statistic/clearPayments`,{token:n,promocode:e}):null}async getEditPromocodeInfo(e){let t=H().ajaxUrl,n=U.get(`ajax-cookie`);return n?V.post(`${t}admin/promocodes/get`,null,{params:{token:n,promocode:e},withCredentials:!1}):null}async createPromocode(e,t,n){let r=H().ajaxUrl,i=U.get(`ajax-cookie`);return i?V.postForm(`${r}admin/promocodes/create`,{token:i,promocode:e,bet:t,maxUsages:n}):null}async removeLog(e){let t=H().ajaxUrl,n=U.get(`ajax-cookie`);return n?V.postForm(`${t}admin/logs/remove`,{token:n,timeStamp:e}):null}async getAllByCategory(e){let t=H().ajaxUrl,n=U.get(`ajax-cookie`);return n?V.postForm(`${t}admin/logs/getAllByCategory`,{token:n,category:e}):null}async handleCreateKey(e,t){let n=H().ajaxUrl;return U.get(`ajax-cookie`)?V.post(n+e,null,{params:t,withCredentials:!1}):null}async getAdditionalProducts(){let e=H().ajaxUrl,t=U.get(`ajax-cookie`);return t?V.get(`${e}admin/multiactions/keys/getAdditionalProducts`,{params:{token:t},withCredentials:!1}):null}async getAllKeys(){let e=H().ajaxUrl,t=U.get(`ajax-cookie`);return t?V.post(`${e}admin/multiactions/keys/action/getAll`,null,{params:{token:t},withCredentials:!1}):null}async removeKey(e){let t=H().ajaxUrl,n=U.get(`ajax-cookie`);return n?V.post(`${t}admin/multiactions/keys/action/remove`,null,{params:{token:n,key:e},withCredentials:!1}):null}async uploadVersion(e){let t=H().ajaxUrl;return U.get(`ajax-cookie`)?V.post(`${t}admin/autoload/uploadVersion`,e,{headers:{"Content-Type":`multipart/form-data`},withCredentials:!1,timeout:3e5}):null}async getVersions(){let e=H().ajaxUrl,t=U.get(`ajax-cookie`);return t?V.post(`${e}admin/autoload/getVersions`,null,{params:{token:t},withCredentials:!1}):null}async getWithdraws(){let e=H().ajaxUrl,t=U.get(`ajax-cookie`);return t?V.post(`${e}admin/finances/getWithdraws`,null,{params:{token:t},withCredentials:!1}):null}async updateInferenceStatus(e){let t=H().ajaxUrl,n=U.get(`ajax-cookie`);return n?V.post(`${t}adm
+
+
+===== PANEL keys/panel =====
+
+`},Bv=[{icon:`k`,name:`Users`,path:`/dashboard/users/panel`},{icon:`e`,name:`Keys`,path:`/dashboard/keys/panel`},{icon:`d`,name:`Promocodes`,path:`/dashboard/promocodes/panel`},{icon:`w`,name:`Logs`,path:`/dashboard/logs/panel`},{icon:`%`,name:`Auto Upload`,path:`/dashboard/autoupload/panel`},{icon:
+
+--
+
+{fontFamily:`Icons`},children:`2`}),(0,I.jsx)(`div`,{className:J.backText,onClick:()=>e(`/dashboard/keys/panel`),children:`Back to all keys`})]}),(0,I.jsxs)(`div`,{className:J.tableChooseKey,children:[(0,I.jsx)(`div`,{className:J.activeBackground,style:x}),b.map((e,t)=>(0,I.jsx)(`div`,{ref:e=>{_.cur
+
+--
+
+{fontFamily:`Icons`},children:`2`}),(0,I.jsx)(`div`,{className:J.backText,onClick:()=>e(`/dashboard/keys/panel`),children:`Back to all keys`})]}),(0,I.jsxs)(`div`,{className:J.tableChooseKey,children:[(0,I.jsx)(`div`,{className:J.activeBackground,style:k}),o.map((e,t)=>(0,I.jsx)(`div`,{ref:e=>{r.cur
+
+--
+
+{fontFamily:`Icons`},children:`2`}),(0,I.jsx)(`div`,{className:J.backText,onClick:()=>e(`/dashboard/keys/panel`),children:`Back to all keys`})]}),(0,I.jsxs)(`div`,{className:J.tableBalance,children:[(0,I.jsx)(`div`,{className:J.balanceIcon,style:{fontFamily:`Icons`},children:`s`}),(0,I.jsxs)(`div`,{
+
+--
+
+(0,I.jsx)(D0,{children:(0,I.jsx)(eb,{children:(0,I.jsx)($y,{})})})}),(0,I.jsx)(It,{path:`/dashboard/keys/panel`,element:(0,I.jsx)(D0,{children:(0,I.jsx)(eb,{children:(0,I.jsx)(cb,{})})})}),(0,I.jsx)(It,{path:`/dashboard/keys/create`,element:(0,I.jsx)(D0,{children:(0,I.jsx)(eb,{children:(0,I.jsx)(sb,
+
+--
+
+s Panel » ${e}`},{path:`/dashboard/users/redact/:uid`,title:`User Redact » ${e}`},{path:`/dashboard/keys/panel`,title:`Keys Panel » ${e}`},{path:`/dashboard/keys/create`,title:`Keys Create » ${e}`},{path:`/dashboard/promocodes/panel`,title:`Promocodes Panel » ${e}`},{path:`/dashboard/promocodes/reda
+
+--
+
+
+
+===== PANEL promocodes/panel =====
+
+`},{icon:`e`,name:`Keys`,path:`/dashboard/keys/panel`},{icon:`d`,name:`Promocodes`,path:`/dashboard/promocodes/panel`},{icon:`w`,name:`Logs`,path:`/dashboard/logs/panel`},{icon:`%`,name:`Auto Upload`,path:`/dashboard/autoupload/panel`},{icon:`s`,name:`Withdraw`,path:`/dashboard/withdraw/panel`}],Vv=
+
+--
+
+{fontFamily:`Icons`},children:`2`}),(0,I.jsx)(`div`,{className:J.backText,onClick:()=>e(`/dashboard/promocodes/panel`),children:`Back to all promocodes`})]}),(0,I.jsxs)(`div`,{className:J.promocodeInputs,children:[(0,I.jsx)(`div`,{className:J.promocodeInput,children:(0,I.jsx)(C_,{icon:`!`,label:`Nam
+
+--
+
+{fontFamily:`Icons`},children:`2`}),(0,I.jsx)(`div`,{className:J.backText,onClick:()=>e(`/dashboard/promocodes/panel`),children:`Back to all promocodes`})]}),(0,I.jsxs)(`div`,{className:J.promocodeInputs,children:[(0,I.jsx)(`div`,{className:J.promocodeInput,children:(0,I.jsx)(C_,{icon:`!`,label:`Nam
+
+--
+
+(0,I.jsx)(D0,{children:(0,I.jsx)(eb,{children:(0,I.jsx)(sb,{})})})}),(0,I.jsx)(It,{path:`/dashboard/promocodes/panel`,element:(0,I.jsx)(D0,{children:(0,I.jsx)(eb,{children:(0,I.jsx)(lb,{})})})}),(0,I.jsx)(It,{path:`/dashboard/promocodes/create`,element:(0,I.jsx)(D0,{children:(0,I.jsx)(eb,{children:(
+
+--
+
+e:`Keys Panel » ${e}`},{path:`/dashboard/keys/create`,title:`Keys Create » ${e}`},{path:`/dashboard/promocodes/panel`,title:`Promocodes Panel » ${e}`},{path:`/dashboard/promocodes/redact/:name`,title:`Promocodes Redact » ${e}`},{path:`/dashboard/promocodes/create`,title:`Promocodes Create » ${e}`},{
+
+--
+
+
+
+===== PANEL logs/panel =====
+
+on:`d`,name:`Promocodes`,path:`/dashboard/promocodes/panel`},{icon:`w`,name:`Logs`,path:`/dashboard/logs/panel`},{icon:`%`,name:`Auto Upload`,path:`/dashboard/autoupload/panel`},{icon:`s`,name:`Withdraw`,path:`/dashboard/withdraw/panel`}],Vv=()=>{let e=F(),t=st().pathname.split(`/`)[2];return(0,I.js
+
+--
+
+(0,I.jsx)(D0,{children:(0,I.jsx)(eb,{children:(0,I.jsx)(h0,{})})})}),(0,I.jsx)(It,{path:`/dashboard/logs/panel`,element:(0,I.jsx)(D0,{children:(0,I.jsx)(eb,{children:(0,I.jsx)(v0,{})})})}),(0,I.jsx)(It,{path:`/dashboard/autoupload/panel`,element:(0,I.jsx)(D0,{children:(0,I.jsx)(eb,{children:(0,I.jsx
+
+--
+
+t » ${e}`},{path:`/dashboard/promocodes/create`,title:`Promocodes Create » ${e}`},{path:`/dashboard/logs/panel`,title:`Logs » ${e}`},{path:`/dashboard/autoupload/panel`,title:`Auto Upload » ${e}`},{path:`/dashboard/withdraw/panel`,title:`Withdraw » ${e}`},{path:`/privacypolicy`,title:`Privacy Policy
+
+--
+
+
+
+===== PANEL autoupload/panel =====
+
+},{icon:`w`,name:`Logs`,path:`/dashboard/logs/panel`},{icon:`%`,name:`Auto Upload`,path:`/dashboard/autoupload/panel`},{icon:`s`,name:`Withdraw`,path:`/dashboard/withdraw/panel`}],Vv=()=>{let e=F(),t=st().pathname.split(`/`)[2];return(0,I.jsx)(`div`,{className:J.navigationTabs,children:Bv.map((n,r)=
+
+--
+
+(0,I.jsx)(D0,{children:(0,I.jsx)(eb,{children:(0,I.jsx)(v0,{})})})}),(0,I.jsx)(It,{path:`/dashboard/autoupload/panel`,element:(0,I.jsx)(D0,{children:(0,I.jsx)(eb,{children:(0,I.jsx)(g0,{})})})}),(0,I.jsx)(It,{path:`/dashboard/withdraw/panel`,element:(0,I.jsx)(D0,{children:(0,I.jsx)(eb,{children:(0,I
+
+--
+
+le:`Promocodes Create » ${e}`},{path:`/dashboard/logs/panel`,title:`Logs » ${e}`},{path:`/dashboard/autoupload/panel`,title:`Auto Upload » ${e}`},{path:`/dashboard/withdraw/panel`,title:`Withdraw » ${e}`},{path:`/privacypolicy`,title:`Privacy Policy » ${e}`}]},j0=e=>k0.find(t=>{if(t.path.includes(`:
+
+--
+
+
+
+===== PANEL withdraw/panel =====
+
+`,name:`Auto Upload`,path:`/dashboard/autoupload/panel`},{icon:`s`,name:`Withdraw`,path:`/dashboard/withdraw/panel`}],Vv=()=>{let e=F(),t=st().pathname.split(`/`)[2];return(0,I.jsx)(`div`,{className:J.navigationTabs,children:Bv.map((n,r)=>{let i=n.path.split(`/`)[2];return(0,I.jsxs)(`div`,{className
+
+--
+
+(0,I.jsx)(D0,{children:(0,I.jsx)(eb,{children:(0,I.jsx)(g0,{})})})}),(0,I.jsx)(It,{path:`/dashboard/withdraw/panel`,element:(0,I.jsx)(D0,{children:(0,I.jsx)(eb,{children:(0,I.jsx)(_0,{})})})}),(0,I.jsx)(It,{path:`*`,element:(0,I.jsx)(Ft,{to:`/`,replace:!0})})]},e.pathname)}),t&&(0,I.jsx)(ev,{})]})},
+
+--
+
+le:`Logs » ${e}`},{path:`/dashboard/autoupload/panel`,title:`Auto Upload » ${e}`},{path:`/dashboard/withdraw/panel`,title:`Withdraw » ${e}`},{path:`/privacypolicy`,title:`Privacy Policy » ${e}`}]},j0=e=>k0.find(t=>{if(t.path.includes(`:`)){let n=`^`+t.path.replace(/:[^/]+/g,`[^/]+`)+`$`;return new R
+
+--
+
+
+
+===== PANEL users/panel =====
+
+ing(e))}},b=[{icon:`&`,name:`Settings`,path:`/cabinet`},{icon:`*`,name:`Dashboard`,path:`/dashboard/users/panel`},{icon:`z`,name:`Media Panel`,path:`/mediapanel`},{icon:`)`,name:`Roulette`,path:`/roulette`}],x=[{icon:`8`,name:`Email`,data:c?.email?(()=>{let[e,t]=c.email.split(`@`);return e.length>10
+
+--
+
+(``),[ne,N]=(0,w.useState)(``),P=async()=>{try{return await Rv.isSessionInitialized(),e(`/dashboard/users/panel`)}catch(e){let t=String(e?.response?.data).trim();return t===`2FA_LINK_REQUIRED`?(re(),N(C),n(C)):t===`2FA_VERIFY_REQUIRED`?(N(T),n(T)):void 0}},re=async()=>{try{j((await Lv.generateQRCode
+
+--
+
+;if(n)try{let t=await Rv.initializeSession(M);return r(ne),ne!==T&&j(String(t?.data)),e(`/dashboard/users/panel`)}catch(e){return V.isAxiosError(e)&&e.response?.data?t(`error`,`Authentificator failed`,e.response.data):t(`error`,`Authentificator failed`,e instanceof Error?e.message:String(e))}};retur
+
+--
+
+tisticsResetButton:`_statisticsResetButton_6ycf9_1464`},Bv=[{icon:`k`,name:`Users`,path:`/dashboard/users/panel`},{icon:`e`,name:`Keys`,path:`/dashboard/keys/panel`},{icon:`d`,name:`Promocodes`,path:`/dashboard/promocodes/panel`},{icon:`w`,name:`Logs`,path:`/dashboard/logs/panel`},{icon:`%`,name:`Au
+
+--
+
+te)({banned:!1,email:``,group:``,hwid:``,subtill:``,user:``});(0,w.useEffect)(()=>{n||e(`/dashboard/users/panel`)},[n,e]),(0,w.useEffect)(()=>{n&&(async()=>{try{let e=await Rv.getEditUserInfo(Number(n));e?.data&&i({banned:e.data.banned??!1,email:e.data.email??``,group:e.data.group??``,hwid:e.data.hw
+
+--
+
+{fontFamily:`Icons`},children:`2`}),(0,I.jsx)(`div`,{className:J.backText,onClick:()=>e(`/dashboard/users/panel`),children:`Back to all users`})]}),(0,I.jsxs)(`div`,{className:J.tableRedactInformation,children:[(0,I.jsxs)(`div`,{className:J.informationRow,children:[(0,I.jsx)(C_,{icon:`k`,label:`User
+
+--
+
+th:`/mediapanel`,element:(0,I.jsx)(D0,{children:(0,I.jsx)(E0,{})})}),(0,I.jsx)(It,{path:`/dashboard/users/panel`,element:(0,I.jsx)(D0,{children:(0,I.jsx)(eb,{children:(0,I.jsx)(Hv,{})})})}),(0,I.jsx)(It,{path:`/dashboard/users/redact/:uid`,element:(0,I.jsx)(D0,{children:(0,I.jsx)(eb,{children:(0,I.j
+
+--
+
+/cabinet`,title:`Cabinet » ${e}`},{path:`/mediapanel`,title:`Media Panel » ${e}`},{path:`/dashboard/users/panel`,title:`Users Panel » ${e}`},{path:`/dashboard/users/redact/:uid`,title:`User Redact » ${e}`},{path:`/dashboard/keys/panel`,title:`Keys Panel » ${e}`},{path:`/dashboard/keys/create`,title:
+
+--
+
+
+
+===== PANEL users/redact =====
+
+J.data} ${J.dataEdit}`,style:{fontFamily:`Icons`,color:`var(--text-800)`},onClick:()=>e(`/dashboard/users/redact/${t.uid}`),children:`a`},n))})]})]}),(0,I.jsxs)(`div`,{className:J.tablePagination,children:[(0,I.jsxs)(`div`,{className:J.paginationRenderingData,children:[`Rendering 9 out of `,h.length
+
+--
+
+(0,I.jsx)(D0,{children:(0,I.jsx)(eb,{children:(0,I.jsx)(Hv,{})})})}),(0,I.jsx)(It,{path:`/dashboard/users/redact/:uid`,element:(0,I.jsx)(D0,{children:(0,I.jsx)(eb,{children:(0,I.jsx)($y,{})})})}),(0,I.jsx)(It,{path:`/dashboard/keys/panel`,element:(0,I.jsx)(D0,{children:(0,I.jsx)(eb,{children:(0,I.js
+
+--
+
+:`Media Panel » ${e}`},{path:`/dashboard/users/panel`,title:`Users Panel » ${e}`},{path:`/dashboard/users/redact/:uid`,title:`User Redact » ${e}`},{path:`/dashboard/keys/panel`,title:`Keys Panel » ${e}`},{path:`/dashboard/keys/create`,title:`Keys Create » ${e}`},{path:`/dashboard/promocodes/panel`,t
+
+--
+
+
+
+===== DESTRUCTURE PATTERNS =====
+
+
+Rv methods: createInference, createPromocode, deletePromocode, getAdditionalProducts, getAll, getAllByCategory, getAllKeys, getAllPromocodes, getAllPromocodesStatistics, getBalance, getBanks, getEditPromocodeInfo, getEditUserInfo, getVersions, getWithdraws, handleCreateKey, initializeSession, isSessionInitialized, patchPromocode, patchUser, removeKey, removeLog, resetStatistics, resetUsages, resetUserHWID, returnCancelledInference, updateInferenceStatus, uploadVersion, userSearch
+
+
+##### keys/get (1) #####
+
+et(`ajax-cookie`)?V.post(n+e,null,{params:t,withCredentials:!1}):null}async getAdditionalProducts(){let e=H().ajaxUrl,t=U.get(`ajax-cookie`);return t?V.get(`${e}admin/multiactions/keys/getAdditionalProducts`,{params:{token:t},withCredentials:!1}):null}async getAllKeys(){let e=H().ajaxUrl,t=U.get(`ajax-cookie`);return t?V.post(`${e}admin/multiactions/keys/action/getAll`,null,{params:{token:t},withCredentials:!1}):null}async removeKey(e){let t=H().ajaxUrl,n=U.get(`ajax-cookie`);return n?V.post(`${t}admin/multiactions/keys/acti
+
+----
+
+
+
+##### multiactions (4) #####
+
+rl;return U.get(`ajax-cookie`)?V.post(n+e,null,{params:t,withCredentials:!1}):null}async getAdditionalProducts(){let e=H().ajaxUrl,t=U.get(`ajax-cookie`);return t?V.get(`${e}admin/multiactions/keys/getAdditionalProducts`,{params:{token:t},withCredentials:!1}):null}async getAllKeys(){let e=H().ajaxUrl,t=U.get(`ajax-cookie`);return t?V.post(`${e}admin/multiactions/keys/action/getAll`,null,{params:{token:t},withCredentials:!1}):null}async removeKey(e){let t=H().ajaxUrl,n=U.get(`ajax-cookie`);return n?V.post(`${t}admin/multiacti
+
+----
+
+e}admin/multiactions/keys/getAdditionalProducts`,{params:{token:t},withCredentials:!1}):null}async getAllKeys(){let e=H().ajaxUrl,t=U.get(`ajax-cookie`);return t?V.post(`${e}admin/multiactions/keys/action/getAll`,null,{params:{token:t},withCredentials:!1}):null}async removeKey(e){let t=H().ajaxUrl,n=U.get(`ajax-cookie`);return n?V.post(`${t}admin/multiactions/keys/action/remove`,null,{params:{token:n,key:e},withCredentials:!1}):null}async uploadVersion(e){let t=H().ajaxUrl;return U.get(`ajax-cookie`)?V.post(`${t}admin/autolo
+
+----
+
+`${e}admin/multiactions/keys/action/getAll`,null,{params:{token:t},withCredentials:!1}):null}async removeKey(e){let t=H().ajaxUrl,n=U.get(`ajax-cookie`);return n?V.post(`${t}admin/multiactions/keys/action/remove`,null,{params:{token:n,key:e},withCredentials:!1}):null}async uploadVersion(e){let t=H().ajaxUrl;return U.get(`ajax-cookie`)?V.post(`${t}admin/autoload/uploadVersion`,e,{headers:{"Content-Type":`multipart/form-data`},withCredentials:!1,timeout:3e5}):null}async getVersions(){let e=H().ajaxUrl,t=U.get(`ajax-cookie`);re
+
+----
+
+t)(()=>{(async()=>{try{m((await Rv.getAdditionalProducts())?.data)}catch{}})()},[]);let y=async()=>{if(parseInt(i)===0||u===`custom`&&(parseInt(o)===0||o===``))return;let e=`admin/multiactions/keys`;u===`custom`&&(e+=`/subscription`),u===`hardwareReset`&&(e+=`/hardwareReset`),u===`beta`&&(e+=`/beta`),u===`product`&&(e+=`/additionalProduct`);let n=U.get(`ajax-cookie`);if(n)try{let r={token:n,count:i,...u===`product`&&{productId:h}};u===`custom`&&(r.days=o);let a=await Rv.handleCreateKey(e,r),s=document.createElement(`a`),c=ne
+
+----
+
+
+
+##### getAllKeys (2) #####
+
+tAdditionalProducts(){let e=H().ajaxUrl,t=U.get(`ajax-cookie`);return t?V.get(`${e}admin/multiactions/keys/getAdditionalProducts`,{params:{token:t},withCredentials:!1}):null}async getAllKeys(){let e=H().ajaxUrl,t=U.get(`ajax-cookie`);return t?V.post(`${e}admin/multiactions/keys/action/getAll`,null,{params:{token:t},withCredentials:!1}):null}async removeKey(e){let t=H().ajaxUrl,n=U.get(`ajax-cookie`);return n?V.post(`${t}admin/multiactions/keys/action/remove`,null,{params:{token:n,key:e},withCredentials:!1}):null}async upload
+
+----
+
+4,d-m+1)},(e,t)=>m+t),_=()=>{let e=Math.max(1,c-1);l(e),e<m&&h(Math.max(1,m-4+1))},v=()=>{let e=Math.min(d,c+1);l(e),e>m+4-1&&h(e)};(0,w.useEffect)(()=>{(async()=>{try{r((await Rv.getAllKeys())?.data)}catch{}})()},[]);let y=async e=>{try{let n=await Rv.removeKey(e);r(t=>t.filter(t=>t.key!==e)),t(`success`,`Keys success deleted!`,n?.data)}catch(e){t(`error`,`Keys failed deleted...`,e instanceof Error?e.message:String(e))}};return(0,I.jsx)(I.Fragment,{children:(0,I.jsx)(`div`,{className:J.dashboard,children:(0,I.jsxs)(`div`,{c
+
+----
+
+
+
+##### getVersions (3) #####
+
+t t=H().ajaxUrl;return U.get(`ajax-cookie`)?V.post(`${t}admin/autoload/uploadVersion`,e,{headers:{"Content-Type":`multipart/form-data`},withCredentials:!1,timeout:3e5}):null}async getVersions(){let e=H().ajaxUrl,t=U.get(`ajax-cookie`);return t?V.post(`${e}admin/autoload/getVersions`,null,{params:{token:t},withCredentials:!1}):null}async getWithdraws(){let e=H().ajaxUrl,t=U.get(`ajax-cookie`);return t?V.post(`${e}admin/finances/getWithdraws`,null,{params:{token:t},withCredentials:!1}):null}async updateInferenceStatus(e){let t
+
+----
+
+aders:{"Content-Type":`multipart/form-data`},withCredentials:!1,timeout:3e5}):null}async getVersions(){let e=H().ajaxUrl,t=U.get(`ajax-cookie`);return t?V.post(`${e}admin/autoload/getVersions`,null,{params:{token:t},withCredentials:!1}):null}async getWithdraws(){let e=H().ajaxUrl,t=U.get(`ajax-cookie`);return t?V.post(`${e}admin/finances/getWithdraws`,null,{params:{token:t},withCredentials:!1}):null}async updateInferenceStatus(e){let t=H().ajaxUrl,n=U.get(`ajax-cookie`);return n?V.post(`${t}admin/finances/updateInferenceStat
+
+----
+
+rror`,`Upload failed`,e instanceof Error?e.message:String(e))}finally{clearInterval(s),f(100),setTimeout(()=>{m(!1),f(0)},5e3)}};(0,w.useEffect)(()=>{(async()=>{try{let e=await Rv.getVersions();if(!e){s([]);return}let t=e.data,n=[];t&&typeof t==`object`&&(n=Object.values(t).filter(e=>!!e&&typeof e==`object`&&`display`in e&&`identify`in e).map((e,t)=>({...e,id:t}))),s(n),n.length>0&&(l(n[0].id),u(n[0].identify))}catch{s([])}})()},[n,t]);let O=o.findIndex(e=>e.id===c),[k,ee]=(0,w.useState)({width:0,transform:`translateX(0px)`}
+
+----
+
+
+
+##### getWithdraws (5) #####
+
+out:3e5}):null}async getVersions(){let e=H().ajaxUrl,t=U.get(`ajax-cookie`);return t?V.post(`${e}admin/autoload/getVersions`,null,{params:{token:t},withCredentials:!1}):null}async getWithdraws(){let e=H().ajaxUrl,t=U.get(`ajax-cookie`);return t?V.post(`${e}admin/finances/getWithdraws`,null,{params:{token:t},withCredentials:!1}):null}async updateInferenceStatus(e){let t=H().ajaxUrl,n=U.get(`ajax-cookie`);return n?V.post(`${t}admin/finances/updateInferenceStatus`,null,{params:{token:n,orderId:e},withCredentials:!1}):null}async
+
+----
+
+`${e}admin/autoload/getVersions`,null,{params:{token:t},withCredentials:!1}):null}async getWithdraws(){let e=H().ajaxUrl,t=U.get(`ajax-cookie`);return t?V.post(`${e}admin/finances/getWithdraws`,null,{params:{token:t},withCredentials:!1}):null}async updateInferenceStatus(e){let t=H().ajaxUrl,n=U.get(`ajax-cookie`);return n?V.post(`${t}admin/finances/updateInferenceStatus`,null,{params:{token:n,orderId:e},withCredentials:!1}):null}async returnCancelledInference(e){let t=H().ajaxUrl,n=U.get(`ajax-cookie`);return n?V.post(`${t}a
+
+----
+
+e:`SBP`},{id:1,title:`Карты (Visa/Mastercard/MIR)`,value:`RU_CARD`},{id:2,title:`FKWallet`,value:`FK_WALLET`}],[C,T]=(0,w.useState)([]);(0,w.useEffect)(()=>{(async()=>{T((await Rv.getWithdraws())?.data)})()},[]);let E=async e=>{try{let n=await Rv.updateInferenceStatus(e);T((await Rv.getWithdraws())?.data),t(`success`,`Inference status successed`,n?.data)}catch(e){t(`error`,`Inference status failed`,e instanceof Error?e.message:String(e))}},D=async e=>{try{let n=await Rv.returnCancelledInference(e);T((await Rv.getWithdraws())
+
+----
+
+LET`}],[C,T]=(0,w.useState)([]);(0,w.useEffect)(()=>{(async()=>{T((await Rv.getWithdraws())?.data)})()},[]);let E=async e=>{try{let n=await Rv.updateInferenceStatus(e);T((await Rv.getWithdraws())?.data),t(`success`,`Inference status successed`,n?.data)}catch(e){t(`error`,`Inference status failed`,e instanceof Error?e.message:String(e))}},D=async e=>{try{let n=await Rv.returnCancelledInference(e);T((await Rv.getWithdraws())?.data),t(`success`,`Inference cancelled successed`,n?.data)}catch(e){t(`error`,`Inference cancelled fai
+
+----
+
+s successed`,n?.data)}catch(e){t(`error`,`Inference status failed`,e instanceof Error?e.message:String(e))}},D=async e=>{try{let n=await Rv.returnCancelledInference(e);T((await Rv.getWithdraws())?.data),t(`success`,`Inference cancelled successed`,n?.data)}catch(e){t(`error`,`Inference cancelled failed`,e instanceof Error?e.message:String(e))}},[O,k]=(0,w.useState)(``),[ee,A]=(0,w.useState)(``),[j,M]=(0,w.useState)(1),te=C.filter(e=>`${e.orderId} ${e.orderId} ${e.orderId} ${e.orderId}`.toLowerCase().includes(O.toLowerCase()))
+
+----
+
+
+
+##### getAllPromocodes (5) #####
+
+}admin/finances/getBanks`,null):null}async createInference(e){let t=H().ajaxUrl;return U.get(`ajax-cookie`)?V.post(`${t}admin/finances/createInference`,null,{params:e}):null}async getAllPromocodes(){let e=H().ajaxUrl,t=U.get(`ajax-cookie`);return t?V.post(`${e}admin/promocodes/getAll`,null,{params:{token:t},withCredentials:!1}):null}async getAllPromocodesStatistics(e){let t=H().ajaxUrl,n=U.get(`ajax-cookie`);return n?V.post(`${t}admin/promocodes/statistic/get`,null,{params:{token:n,promocode:e},withCredentials:!1}):null}asyn
+
+----
+
+ams:e}):null}async getAllPromocodes(){let e=H().ajaxUrl,t=U.get(`ajax-cookie`);return t?V.post(`${e}admin/promocodes/getAll`,null,{params:{token:t},withCredentials:!1}):null}async getAllPromocodesStatistics(e){let t=H().ajaxUrl,n=U.get(`ajax-cookie`);return n?V.post(`${t}admin/promocodes/statistic/get`,null,{params:{token:n,promocode:e},withCredentials:!1}):null}async deletePromocode(e){let t=H().ajaxUrl,n=U.get(`ajax-cookie`);return n?V.postForm(`${t}admin/promocodes/delete`,{token:n,promocode:e}):null}async patchPromocode(
+
+----
+
+(4,d-m+1)},(e,t)=>m+t),_=()=>{let e=Math.max(1,c-1);l(e),e<m&&h(Math.max(1,m-4+1))},v=()=>{let e=Math.min(d,c+1);l(e),e>m+4-1&&h(e)};(0,w.useEffect)(()=>{(async()=>{let e=await Rv.getAllPromocodes();r(Object.entries(e?.data).map(([e,t])=>t))})()},[]);let y=async e=>{try{let n=await Rv.deletePromocode(e);r(t=>t.filter(t=>t.name!==e)),String(n?.data).startsWith(`This promo code was`)?t(`error`,`Promocode`,n?.data):t(`success`,`Promocode`,n?.data)}catch(e){t(`error`,`Promocode`,e instanceof Error?e.message:String(e))}};return(0
+
+----
+
+ight:`700`},children:new Date(t[0].payload.time).toLocaleString()})]})]}):null,m0=({promocode:e})=>{let[t,n]=(0,w.useState)(null);return(0,w.useEffect)(()=>{(async()=>{n((await Rv.getAllPromocodesStatistics(e))?.data)})()},[e]),(0,I.jsx)(RO,{width:`100%`,height:400,children:(0,I.jsxs)(l0,{data:(t?.payments??[]).slice(-12).map(e=>({name:e.title,amount:e.amount,time:e.buyTime})),onContextMenu:(e,t)=>t.preventDefault(),children:[(0,I.jsx)(uZ,{strokeDasharray:`3 3`}),(0,I.jsx)(k$,{dataKey:`name`,angle:0,height:180}),(0,I.jsx)(RG
+
+----
+
+atch(e){t(`error`,``,e instanceof Error?e.message:String(e))}})()},[n]);let[d,f]=(0,w.useState)(0),[p,m]=(0,w.useState)(0);return(0,w.useEffect)(()=>{(async()=>{try{let e=await Rv.getAllPromocodesStatistics(String(n));m(e?.data?.payments?.length??0),f(e?.data?.totalAmount??0)}catch(e){t(`error`,``,e instanceof Error?e.message:String(e))}})()},[]),(0,I.jsx)(I.Fragment,{children:(0,I.jsxs)(`div`,{className:`${J.dashboard} ${J.dashboardPromocodeStatistics}`,children:[(0,I.jsxs)(`div`,{className:`${J.dashboardContent} ${J.usersC
+
+----
+
+
+
+##### autoload (2) #####
+
+dmin/multiactions/keys/action/remove`,null,{params:{token:n,key:e},withCredentials:!1}):null}async uploadVersion(e){let t=H().ajaxUrl;return U.get(`ajax-cookie`)?V.post(`${t}admin/autoload/uploadVersion`,e,{headers:{"Content-Type":`multipart/form-data`},withCredentials:!1,timeout:3e5}):null}async getVersions(){let e=H().ajaxUrl,t=U.get(`ajax-cookie`);return t?V.post(`${e}admin/autoload/getVersions`,null,{params:{token:t},withCredentials:!1}):null}async getWithdraws(){let e=H().ajaxUrl,t=U.get(`ajax-cookie`);return t?V.post(`
+
+----
+
+on`,e,{headers:{"Content-Type":`multipart/form-data`},withCredentials:!1,timeout:3e5}):null}async getVersions(){let e=H().ajaxUrl,t=U.get(`ajax-cookie`);return t?V.post(`${e}admin/autoload/getVersions`,null,{params:{token:t},withCredentials:!1}):null}async getWithdraws(){let e=H().ajaxUrl,t=U.get(`ajax-cookie`);return t?V.post(`${e}admin/finances/getWithdraws`,null,{params:{token:t},withCredentials:!1}):null}async updateInferenceStatus(e){let t=H().ajaxUrl,n=U.get(`ajax-cookie`);return n?V.post(`${t}admin/finances/updateInfe
+
+----
+
+
+
+##### content: (12) #####
+
+.to;else{let n=Promise.resolve().then(()=>window.__reactRouterDataRouter.navigate(i.to,{replace:e.replace}));throw vt.set(t,n),n}return w.createElement(`meta`,{httpEquiv:`refresh`,content:`0;url=${i.absoluteURL||i.to}`})}}return e}function bt({routeContext:e,match:t,children:n}){let r=w.useContext(Ue);return r&&r.static&&r.staticContext&&(t.route.errorElement||t.route.ErrorBoundary)&&(r.staticContext._deepestRenderedBoundaryId=t.route.id),w.createElement(Qe.Provider,{value:e},n)}function xt(e,t=[],n){let r=n?.state;if(e==nul
+
+----
+
+g;time=0;userData={};lastVelocity=0;velocity=0;direction=0;options;targetScroll;animatedScroll;animate=new sv;emitter=new uv;dimensions;virtualScroll;constructor({wrapper:e=window,content:t=document.documentElement,eventsTarget:n=e,smoothWheel:r=!0,syncTouch:i=!1,syncTouchLerp:a=.075,touchInertiaExponent:o=1.7,duration:s,easing:c,lerp:l=.1,infinite:u=!1,orientation:d=`vertical`,gestureOrientation:f=d===`horizontal`?`both`:`vertical`,touchMultiplier:p=1,wheelMultiplier:m=1,autoResize:h=!0,prevent:g,virtualScroll:_,overscroll:
+
+----
+
+enis.touch=!0),(!e||e===document.documentElement)&&(e=window),typeof s==`number`&&typeof c!=`function`?c=hv:typeof c==`function`&&typeof s!=`number`&&(s=1),this.options={wrapper:e,content:t,eventsTarget:n,smoothWheel:r,syncTouch:i,syncTouchLerp:a,touchInertiaExponent:o,duration:s,easing:c,lerp:l,infinite:u,gestureOrientation:f,orientation:d,touchMultiplier:p,wheelMultiplier:m,autoResize:h,prevent:g,virtualScroll:_,overscroll:v,autoRaf:y,anchors:b,autoToggle:x,allowNestedScroll:S,naiveDimensions:w,stopInertiaOnNavigate:T},thi
+
+----
+
+0,w.useState)(``),[p,m]=(0,w.useState)(1),h=i,[g,_]=(0,w.useState)(1),v=Array.from({length:Math.min(4,p-g+1)},(e,t)=>g+t);return(0,w.useEffect)(()=>{(async()=>{try{let e=c.trim(),{content:t,total:i}=(e?await Rv.userSearch(e,r-1):await Rv.getAll(r-1)).data;if(r>i&&i>0){n({page:String(i)}),_(Math.max(1,i-4+1));return}a(t),m(Math.max(1,i))}catch{a([]),m(1)}})()},[r,c,n]),(0,I.jsx)(I.Fragment,{children:(0,I.jsx)(`div`,{className:`${J.dashboard} ${J.dashboardUsers}`,children:(0,I.jsxs)(`div`,{className:`${J.dashboardContent} ${J.
+
+----
+
+n:{x:!1,y:!1},separator:` : `,trigger:`hover`,useTranslate3d:!1,wrapperStyle:{}};function RG(e){var t=QS(e,LG),{active:n,allowEscapeViewBox:r,animationDuration:i,animationEasing:a,content:o,filterNull:s,isAnimationActive:c,offset:l,payloadUniqBy:u,position:d,reverseDirection:f,useTranslate3d:p,wrapperStyle:m,cursor:h,shared:g,trigger:_,defaultIndex:v,portal:y,axisId:b}=t,x=zC(),S=typeof v==`number`?String(v):v;(0,w.useEffect)(()=>{x(NH({shared:g,trigger:_,axisId:b,active:n,defaultIndex:S}))},[x,g,_,b,n,S]);var C=BO(),T=GA(),
+
+----
+
+t,cy:n,outerRadius:r}=e,i=r*2;return{x:t-r,y:n-r,width:i,upperWidth:i,lowerWidth:i,height:i}}function gq(e){var t=QS(e,mq),{viewBox:n,parentViewBox:r,position:i,value:a,children:o,content:s,className:c=``,textBreakAll:l,labelRef:u}=t,d=sq(),f=aq(),p=n==null?i===`center`?f:d??f:pq(n)?n:zO(n),m,h,g=hq(p);if(!p||wS(a)&&wS(o)&&!(0,w.isValidElement)(s)&&typeof s!=`function`)return null;var _=QK(QK({},t),{},{viewBox:p});if((0,w.isValidElement)(s)){var{labelRef:v}=_;return(0,w.cloneElement)(s,YK(_,qK))}if(typeof s==`function`){var{
+
+----
+
+
+
+##### .data; (8) #####
+
+ey)||t.ctrlKey&&t.altKey){if(t.char&&1<t.char.length)return t.char;if(t.which)return String.fromCharCode(t.which)}return null;case`compositionend`:return Qn&&t.locale!==`ko`?null:t.data;default:return null}}var ir={color:!0,date:!0,datetime:!0,"datetime-local":!0,email:!0,month:!0,number:!0,password:!0,range:!0,search:!0,tel:!0,text:!0,time:!0,url:!0,week:!0};function ar(e){var t=e&&e.nodeName&&e.nodeName.toLowerCase();return t===`input`?!!ir[e.type]:t===`textarea`}function or(e,t,n,r){on?sn?sn.push(r):sn=[r]:on=r,t=Nd(t,`on
+
+----
+
+==`$?`||t===`$~`||t===`&`||t===`F!`||t===`F`)break;if(t===`/$`||t===`/&`)return null}}return e}var _f=null;function vf(e){e=e.nextSibling;for(var t=0;e;){if(e.nodeType===8){var n=e.data;if(n===`/$`||n===`/&`){if(t===0)return gf(e.nextSibling);t--}else n!==`$`&&n!==`$!`&&n!==`$?`&&n!==`$~`&&n!==`&`||t++}e=e.nextSibling}return null}function yf(e){e=e.previousSibling;for(var t=0;e;){if(e.nodeType===8){var n=e.data;if(n===`$`||n===`$!`||n===`$?`||n===`$~`||n===`&`){if(t===0)return e;t--}else n!==`/$`&&n!==`/&`||t++}e=e.previousS
+
+----
+
+.nextSibling);t--}else n!==`$`&&n!==`$!`&&n!==`$?`&&n!==`$~`&&n!==`&`||t++}e=e.nextSibling}return null}function yf(e){e=e.previousSibling;for(var t=0;e;){if(e.nodeType===8){var n=e.data;if(n===`$`||n===`$!`||n===`$?`||n===`$~`||n===`&`){if(t===0)return e;t--}else n!==`/$`&&n!==`/&`||t++}e=e.previousSibling}return null}function bf(e,t,n){switch(t=Jd(n),e){case`html`:if(e=t.documentElement,!e)throw Error(i(452));return e;case`head`:if(e=t.head,!e)throw Error(i(453));return e;case`body`:if(e=t.body,!e)throw Error(i(454));return
+
+----
+
+ */*`,"Content-Type":void 0}}};z.forEach([`delete`,`get`,`head`,`post`,`put`,`patch`,`query`],e=>{fa.headers[e]={}});function pa(e,t){let n=this||fa,r=t||n,i=Fi.from(r.headers),a=r.data;return z.forEach(e,function(e){a=e.call(n,a,i.normalize(),t?t.status:void 0)}),i.normalize(),a}function ma(e){return!!(e&&e.__CANCEL__)}var ha=class extends B{constructor(e,t,n){super(e??`canceled`,B.ERR_CANCELED,t,n),this.name=`CanceledError`,this.__CANCEL__=!0}};function ga(e,t,n){let r=n.config.validateStatus;!n.status||!r||r(n.status)?e(n
+
+----
+
+${K.signIn} ${c&&K.filled}`,onClick:async()=>{if(!l)l=`bypass`;p(!0);try{let t=ir(o),n=await _v.handleAuthorize(l,i,t),a=n.data.authStatus,s=n.data.authMessage;if(a){let{token:t}=n.data;return U.set(`ajax-cookie`,t),r(`success`,`Authorization successed`,s),window.dispatchEvent(new Event(`authChange`)),p(!1),e(`/cabinet`)}else return p(!1),window.dispatchEvent(new Event(`authChange`)),m()}catch(e){return p(!1),V.isAxiosError(e)&&e.response?.data?(r(`error`,`Authorization failed`,`${e.response.data}`),m()):(r(`error`,`Authoriz
+
+----
+
+The password you repeated doesn't match!`);if(!i)i=`bypass`;_(!0);try{let n=ir(d),r=await Nv.handleRegistrate(i,s,n,l),a=r.data.authStatus,o=r.data.authMessage;if(a){let{token:n}=r.data;return U.set(`ajax-cookie`,n),t(`success`,`Registration successed`,o),e(`/sign-in`),_(!1),window.dispatchEvent(new Event(`authChange`))}else return _(!1),v(),t(`error`,`Registration failed`,o)}catch(e){return _(!1),V.isAxiosError(e)&&e.response?.data?(t(`error`,`Registration failed`,e.response.data),v()):(t(`error`,`Registration failed`,e ins
+
+----

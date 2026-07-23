@@ -1,0 +1,20 @@
+{
+  "shortClientName": "None",
+  "clientName": "NONE",
+  "version": "1.16.5",
+  "supportEmail": "support@none.local",
+  "url": "localhost",
+  "ajaxUrl": "http://127.0.0.1:8080/ajax/",
+  "funpayLink": "#",
+  "clientColor": "#8be9fd",
+  "socials": {
+    "discord": "#",
+    "telegram": "#"
+  },
+  "media": {
+    "first": "https://www.youtube.com/embed/LsF6GYEHx1I?si=IFRCxX32_8xlJYTQ",
+    "two": "https://www.youtube.com/embed/8v8nFWp-CsU?si=GONHbzfjxmMvfpxQ",
+    "three": "https://www.youtube.com/embed/oWXd59Kutk8?si=MAP0AwdECXubqWPo"
+  },
+  "turnStileSiteKey": ""
+}

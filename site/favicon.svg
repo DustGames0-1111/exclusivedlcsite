@@ -1,0 +1,6 @@
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- stylized mark -->
+  <path d="M8 1.2c1.15 0 2.1.95 2.1 2.1v5.35c.85.45 1.4 1.35 1.4 2.35 0 1.45-1.2 2.65-2.65 2.65h-1.7C5.7 13.65 4.5 12.45 4.5 11c0-1 .55-1.9 1.4-2.35V3.3c0-1.15.95-2.1 2.1-2.1Z" fill="white"/>
+  <circle cx="6.55" cy="11.05" r="0.85" fill="#1a1a1a" opacity="0.35"/>
+  <circle cx="9.45" cy="11.05" r="0.85" fill="#1a1a1a" opacity="0.35"/>
+</svg>

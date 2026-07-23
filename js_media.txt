@@ -1,0 +1,128 @@
+
+===== mediapanel (11) =====
+
+ivate key failed`,e instanceof Error?e.message:String(e))}},b=[{icon:`&`,name:`Settings`,path:`/cabinet`},{icon:`*`,name:`Dashboard`,path:`/dashboard/users/panel`},{icon:`z`,name:`Media Panel`,path:`/mediapanel`},{icon:`)`,name:`Roulette`,path:`/roulette`}],x=[{icon:`8`,name:`Email`,data:c?.email?(()=>{let[e,t]=c.email.split(`@`);return e.length>10?`${e.slice(0,10)}...@${t}`:c.email})():c?.email??`[User Email]`},{icon:`4`,name:`Registration Date`,data:c?.regdate??`[User RegDate]`},{icon:`r`,name:`Hwid`,data:c?.hwid??`[User HWID]`}],S=[{icon:`5`,url:o},{icon:`h`,url:s}],C=`authentificatorQR`,T=`authentificatorCode`,E=(0,w.useRef)([]),D=(0,w.useRef)([]),O=(e,t,n)=>{let r=e.target.value.replace
+
+----
+
+ error in your order.`}),(0,I.jsx)(`div`,{children:`All purchases are final. Once a product or service has been purchased, it is not eligible for return, refund, or exchange.`})]})]})]})})]})})})},$={mediapanel:`_mediapanel_hruzy_1`,mediapanelContent:`_mediapanelContent_hruzy_10`,mediapanelASide:`_mediapanelASide_hruzy_11`,contentHeader:`_contentHeader_hruzy_24`,contentBackButton:`_contentBackButton_hruzy_29`,contentTitle:`_contentTitle_hruzy_41`,titleSignature:`_titleSignature_hruzy_46`,signatureIcon:`_signatureIcon_hruzy_51`,signatureText:`_signatureText_hruzy_52`,titleText:`_titleText_hruzy_63`,contentData:`_contentData_hruzy_71`,data:`_data_hruzy_77`,dataTitle:`_dataTitle_hruzy_88`,title
+
+----
+
+r order.`}),(0,I.jsx)(`div`,{children:`All purchases are final. Once a product or service has been purchased, it is not eligible for return, refund, or exchange.`})]})]})]})})]})})})},$={mediapanel:`_mediapanel_hruzy_1`,mediapanelContent:`_mediapanelContent_hruzy_10`,mediapanelASide:`_mediapanelASide_hruzy_11`,contentHeader:`_contentHeader_hruzy_24`,contentBackButton:`_contentBackButton_hruzy_29`,contentTitle:`_contentTitle_hruzy_41`,titleSignature:`_titleSignature_hruzy_46`,signatureIcon:`_signatureIcon_hruzy_51`,signatureText:`_signatureText_hruzy_52`,titleText:`_titleText_hruzy_63`,contentData:`_contentData_hruzy_71`,data:`_data_hruzy_77`,dataTitle:`_dataTitle_hruzy_88`,titleIcon:`_titleI
+
+----
+
+)(`div`,{children:`All purchases are final. Once a product or service has been purchased, it is not eligible for return, refund, or exchange.`})]})]})]})})]})})})},$={mediapanel:`_mediapanel_hruzy_1`,mediapanelContent:`_mediapanelContent_hruzy_10`,mediapanelASide:`_mediapanelASide_hruzy_11`,contentHeader:`_contentHeader_hruzy_24`,contentBackButton:`_contentBackButton_hruzy_29`,contentTitle:`_contentTitle_hruzy_41`,titleSignature:`_titleSignature_hruzy_46`,signatureIcon:`_signatureIcon_hruzy_51`,signatureText:`_signatureText_hruzy_52`,titleText:`_titleText_hruzy_63`,contentData:`_contentData_hruzy_71`,data:`_data_hruzy_77`,dataTitle:`_dataTitle_hruzy_88`,titleIcon:`_titleIcon_hruzy_93`,dataTe
+
+----
+
+ll purchases are final. Once a product or service has been purchased, it is not eligible for return, refund, or exchange.`})]})]})]})})]})})})},$={mediapanel:`_mediapanel_hruzy_1`,mediapanelContent:`_mediapanelContent_hruzy_10`,mediapanelASide:`_mediapanelASide_hruzy_11`,contentHeader:`_contentHeader_hruzy_24`,contentBackButton:`_contentBackButton_hruzy_29`,contentTitle:`_contentTitle_hruzy_41`,titleSignature:`_titleSignature_hruzy_46`,signatureIcon:`_signatureIcon_hruzy_51`,signatureText:`_signatureText_hruzy_52`,titleText:`_titleText_hruzy_63`,contentData:`_contentData_hruzy_71`,data:`_data_hruzy_77`,dataTitle:`_dataTitle_hruzy_88`,titleIcon:`_titleIcon_hruzy_93`,dataText:`_dataText_hruzy_
+
+----
+
+
+===== Media Panel (4) =====
+
+data):t(`error`,`Activate key failed`,e instanceof Error?e.message:String(e))}},b=[{icon:`&`,name:`Settings`,path:`/cabinet`},{icon:`*`,name:`Dashboard`,path:`/dashboard/users/panel`},{icon:`z`,name:`Media Panel`,path:`/mediapanel`},{icon:`)`,name:`Roulette`,path:`/roulette`}],x=[{icon:`8`,name:`Email`,data:c?.email?(()=>{let[e,t]=c.email.split(`@`);return e.length>10?`${e.slice(0,10)}...@${t}`:c.email})():c?.email??`[User Email]`},{icon:`4`,name:`Registration Date`,data:c?.regdate??`[User RegDate]`},{icon:`r`,name:`Hwid`,data:c?.hwid??`[User HWID]`}],S=[{icon:`5`,url:o},{icon:`h`,url:s}],C=`authentificatorQR`,T=`authentificatorCode`,E=(0,w.useRef)([]),D=(0,w.useRef)([]),O=(e,t,n)=>{let r=e.
+
+----
+
+,I.jsx)(`div`,{className:q.userButton,style:{fontFamily:`Icons`},onClick:u,children:`7`})]}),(0,I.jsx)(`div`,{className:q.userHr}),(0,I.jsx)(`div`,{className:q.userTabs,children:b.filter(e=>e.name===`Media Panel`?c?.role===ar.ADMIN||c?.role===ar.YOUTUBER:e.name!==`Dashboard`||c?.role===ar.ADMIN).map((n,r)=>(0,I.jsxs)(`div`,{className:q.tab,onClick:()=>{if(n.name===`Dashboard`){P();return}if(n.name===`Roulette`){t(`warning`,`Roulette`,`Roulette is temporarily disabled!`);return}e(n.path)},children:[(0,I.jsx)(`div`,{className:q.tabIcon,style:{fontFamily:`Icons`},children:n.icon}),(0,I.jsx)(`div`,{className:q.tabText,children:n.name})]},r))})]}),(0,I.jsxs)(`div`,{className:`${q.columnWrapper} $
+
+----
+
+ldren:[(0,I.jsxs)(`div`,{className:$.titleSignature,children:[(0,I.jsx)(`div`,{className:$.signatureIcon,style:{fontFamily:`Icons`},children:`z`}),(0,I.jsx)(`div`,{className:$.signatureText,children:`Media Panel`})]}),(0,I.jsx)(`div`,{className:$.titleText,children:`Control your statistics here.`})]})]}),(0,I.jsxs)(`div`,{className:$.contentData,children:[(0,I.jsxs)(`div`,{className:$.data,children:[(0,I.jsxs)(`div`,{className:$.dataTitle,children:[(0,I.jsx)(`div`,{className:$.titleIcon,style:{fontFamily:`Icons`},children:`)`}),(0,I.jsx)(`div`,{className:$.titleText,children:`Discount`})]}),(0,I.jsxs)(`div`,{className:$.dataText,children:[f.bet,`%`]})]}),(0,I.jsxs)(`div`,{className:$.data,ch
+
+----
+
+sign-in`,title:`Sign In » ${e}`},{path:`/sign-up`,title:`Sign Up » ${e}`},{path:`/forgot-password`,title:`Recovery Account » ${e}`},{path:`/cabinet`,title:`Cabinet » ${e}`},{path:`/mediapanel`,title:`Media Panel » ${e}`},{path:`/dashboard/users/panel`,title:`Users Panel » ${e}`},{path:`/dashboard/users/redact/:uid`,title:`User Redact » ${e}`},{path:`/dashboard/keys/panel`,title:`Keys Panel » ${e}`},{path:`/dashboard/keys/create`,title:`Keys Create » ${e}`},{path:`/dashboard/promocodes/panel`,title:`Promocodes Panel » ${e}`},{path:`/dashboard/promocodes/redact/:name`,title:`Promocodes Redact » ${e}`},{path:`/dashboard/promocodes/create`,title:`Promocodes Create » ${e}`},{path:`/dashboard/logs
+
+----
+
+
+===== /mediapanel (3) =====
+
+tivate key failed`,e instanceof Error?e.message:String(e))}},b=[{icon:`&`,name:`Settings`,path:`/cabinet`},{icon:`*`,name:`Dashboard`,path:`/dashboard/users/panel`},{icon:`z`,name:`Media Panel`,path:`/mediapanel`},{icon:`)`,name:`Roulette`,path:`/roulette`}],x=[{icon:`8`,name:`Email`,data:c?.email?(()=>{let[e,t]=c.email.split(`@`);return e.length>10?`${e.slice(0,10)}...@${t}`:c.email})():c?.email??`[User Email]`},{icon:`4`,name:`Registration Date`,data:c?.regdate??`[User RegDate]`},{icon:`r`,name:`Hwid`,data:c?.hwid??`[User HWID]`}],S=[{icon:`5`,url:o},{icon:`h`,url:s}],C=`authentificatorQR`,T=`authentificatorCode`,E=(0,w.useRef)([]),D=(0,w.useRef)([]),O=(e,t,n)=>{let r=e.target.value.replac
+
+----
+
+{})})}),(0,I.jsx)(It,{path:`/forgot-password`,element:(0,I.jsx)(D0,{children:(0,I.jsx)(Iv,{})})}),(0,I.jsx)(It,{path:`/cabinet`,element:(0,I.jsx)(D0,{children:(0,I.jsx)(zv,{})})}),(0,I.jsx)(It,{path:`/mediapanel`,element:(0,I.jsx)(D0,{children:(0,I.jsx)(E0,{})})}),(0,I.jsx)(It,{path:`/dashboard/users/panel`,element:(0,I.jsx)(D0,{children:(0,I.jsx)(eb,{children:(0,I.jsx)(Hv,{})})})}),(0,I.jsx)(It,{path:`/dashboard/users/redact/:uid`,element:(0,I.jsx)(D0,{children:(0,I.jsx)(eb,{children:(0,I.jsx)($y,{})})})}),(0,I.jsx)(It,{path:`/dashboard/keys/panel`,element:(0,I.jsx)(D0,{children:(0,I.jsx)(eb,{children:(0,I.jsx)(cb,{})})})}),(0,I.jsx)(It,{path:`/dashboard/keys/create`,element:(0,I.jsx)(D0,{c
+
+----
+
+me » ${e}`},{path:`/sign-in`,title:`Sign In » ${e}`},{path:`/sign-up`,title:`Sign Up » ${e}`},{path:`/forgot-password`,title:`Recovery Account » ${e}`},{path:`/cabinet`,title:`Cabinet » ${e}`},{path:`/mediapanel`,title:`Media Panel » ${e}`},{path:`/dashboard/users/panel`,title:`Users Panel » ${e}`},{path:`/dashboard/users/redact/:uid`,title:`User Redact » ${e}`},{path:`/dashboard/keys/panel`,title:`Keys Panel » ${e}`},{path:`/dashboard/keys/create`,title:`Keys Create » ${e}`},{path:`/dashboard/promocodes/panel`,title:`Promocodes Panel » ${e}`},{path:`/dashboard/promocodes/redact/:name`,title:`Promocodes Redact » ${e}`},{path:`/dashboard/promocodes/create`,title:`Promocodes Create » ${e}`},{p
+
+----
+
+
+===== mediaPanel (0) =====
+
+
+===== YOUTUBER (3) =====
+
+25)+`...`)}).catch(e=>{n(`error`,`Copied failed`,e)}),ir=e=>{let t=new TextEncoder().encode(e),n=``;for(let e=0;e<t.length;++e)n+=String.fromCharCode(t[e]);return btoa(n)},ar={USER:`USER`,BETA:`BETA`,YOUTUBER:`YOUTUBE`,ADMIN:`ADMIN`},or={buttonIcon:`_buttonIcon_163v0_16`,loader:`_loader_163v0_19`,rotation:`_rotation_163v0_1`,loading:`_loading_163v0_38`,outline:`_outline_163v0_44`,filled:`_filled_163v0_51`},R=({icon:e,text:t=`[Text]`,type:n,style:r,onClick:i,className:a,to:o,disabled:s,isLoading:c})=>{let l=F();switch(n){case`outline`:return(0,I.jsx)(`button`,{className:`${or[n]} ${c?.loading&&or.loading} ${a}`,style:r,onClick:e=>{c?.loading||(i?.(e),o&&l(o))},disabled:s,children:c?.loading?(
+
+----
+
+ontFamily:`Icons`},onClick:u,children:`7`})]}),(0,I.jsx)(`div`,{className:q.userHr}),(0,I.jsx)(`div`,{className:q.userTabs,children:b.filter(e=>e.name===`Media Panel`?c?.role===ar.ADMIN||c?.role===ar.YOUTUBER:e.name!==`Dashboard`||c?.role===ar.ADMIN).map((n,r)=>(0,I.jsxs)(`div`,{className:q.tab,onClick:()=>{if(n.name===`Dashboard`){P();return}if(n.name===`Roulette`){t(`warning`,`Roulette`,`Roulette is temporarily disabled!`);return}e(n.path)},children:[(0,I.jsx)(`div`,{className:q.tabIcon,style:{fontFamily:`Icons`},children:n.icon}),(0,I.jsx)(`div`,{className:q.tabText,children:n.name})]},r))})]}),(0,I.jsxs)(`div`,{className:`${q.columnWrapper} ${q.wrapperActivateKey} ${q.wrapperLabel}`,chil
+
+----
+
+(n(e),e){case 0:a(C0.slice(-8));break}};(0,w.useEffect)(()=>d(t),[]),(0,w.useEffect)(()=>{(async()=>{try{let t=await yo.getSession();(!t?.data.authStatus||!(t?.data.role===ar.ADMIN||t?.data.role===ar.YOUTUBER))&&(window.dispatchEvent(new Event(`authChange`)),e(`/sign-in`))}catch{window.dispatchEvent(new Event(`authChange`)),e(`/sign-in`)}})()},[]);let[f,p]=(0,w.useState)({bet:0,code:``,paymentBet:0,payments:[],totalAmount:0,usages:0});return(0,w.useEffect)(()=>{(async()=>{try{let t=await f0.getInformation();t?.data?.message?(e(`/cabinet`),r(`error`,`Get information failed...`,t?.data?.message)):p({bet:t?.data.bet??0,code:t?.data.code??``,paymentBet:t?.data.paymentBet??0,payments:t?.data.paym
+
+----
+
+
+===== YOUTUBE (5) =====
+
+25)+`...`)}).catch(e=>{n(`error`,`Copied failed`,e)}),ir=e=>{let t=new TextEncoder().encode(e),n=``;for(let e=0;e<t.length;++e)n+=String.fromCharCode(t[e]);return btoa(n)},ar={USER:`USER`,BETA:`BETA`,YOUTUBER:`YOUTUBE`,ADMIN:`ADMIN`},or={buttonIcon:`_buttonIcon_163v0_16`,loader:`_loader_163v0_19`,rotation:`_rotation_163v0_1`,loading:`_loading_163v0_38`,outline:`_outline_163v0_44`,filled:`_filled_163v0_51`},R=({icon:e,text:t=`[Text]`,type:n,style:r,onClick:i,className:a,to:o,disabled:s,isLoading:c})=>{let l=F();switch(n){case`outline`:return(0,I.jsx)(`button`,{className:`${or[n]} ${c?.loading&&or.loading} ${a}`,style:r,onClick:e=>{c?.loading||(i?.(e),o&&l(o))},disabled:s,children:c?.loading?(
+
+----
+
+}).catch(e=>{n(`error`,`Copied failed`,e)}),ir=e=>{let t=new TextEncoder().encode(e),n=``;for(let e=0;e<t.length;++e)n+=String.fromCharCode(t[e]);return btoa(n)},ar={USER:`USER`,BETA:`BETA`,YOUTUBER:`YOUTUBE`,ADMIN:`ADMIN`},or={buttonIcon:`_buttonIcon_163v0_16`,loader:`_loader_163v0_19`,rotation:`_rotation_163v0_1`,loading:`_loading_163v0_38`,outline:`_outline_163v0_44`,filled:`_filled_163v0_51`},R=({icon:e,text:t=`[Text]`,type:n,style:r,onClick:i,className:a,to:o,disabled:s,isLoading:c})=>{let l=F();switch(n){case`outline`:return(0,I.jsx)(`button`,{className:`${or[n]} ${c?.loading&&or.loading} ${a}`,style:r,onClick:e=>{c?.loading||(i?.(e),o&&l(o))},disabled:s,children:c?.loading?(0,I.jsx)(`
+
+----
+
+ontFamily:`Icons`},onClick:u,children:`7`})]}),(0,I.jsx)(`div`,{className:q.userHr}),(0,I.jsx)(`div`,{className:q.userTabs,children:b.filter(e=>e.name===`Media Panel`?c?.role===ar.ADMIN||c?.role===ar.YOUTUBER:e.name!==`Dashboard`||c?.role===ar.ADMIN).map((n,r)=>(0,I.jsxs)(`div`,{className:q.tab,onClick:()=>{if(n.name===`Dashboard`){P();return}if(n.name===`Roulette`){t(`warning`,`Roulette`,`Roulette is temporarily disabled!`);return}e(n.path)},children:[(0,I.jsx)(`div`,{className:q.tabIcon,style:{fontFamily:`Icons`},children:n.icon}),(0,I.jsx)(`div`,{className:q.tabText,children:n.name})]},r))})]}),(0,I.jsxs)(`div`,{className:`${q.columnWrapper} ${q.wrapperActivateKey} ${q.wrapperLabel}`,chil
+
+----
+
+nse?.data?t(`error`,`Redact failed`,n.response.data?.message):t(`error`,`Redact failed`,n instanceof Error?n.message:String(n))}},c=[{value:`DEFAULT`,label:`User`},{value:`BETA`,label:`Beta`},{value:`YOUTUBE`,label:`Youtuber`},{value:`ADMIN`,label:`Admin`}];return(0,I.jsx)(I.Fragment,{children:(0,I.jsx)(`div`,{className:`${J.dashboard} ${J.dashboardUsers}`,children:(0,I.jsxs)(`div`,{className:`${J.dashboardContent} ${J.usersContent}`,children:[(0,I.jsxs)(`div`,{className:J.contentHeader,children:[(0,I.jsx)(`div`,{className:J.contentBackButton,children:(0,I.jsx)(R,{text:`Go back to main Settings`,type:`filled`,icon:{orientation:`left`,icon:`&`},to:`/cabinet`})}),(0,I.jsxs)(`div`,{className:J.
+
+----
+
+(n(e),e){case 0:a(C0.slice(-8));break}};(0,w.useEffect)(()=>d(t),[]),(0,w.useEffect)(()=>{(async()=>{try{let t=await yo.getSession();(!t?.data.authStatus||!(t?.data.role===ar.ADMIN||t?.data.role===ar.YOUTUBER))&&(window.dispatchEvent(new Event(`authChange`)),e(`/sign-in`))}catch{window.dispatchEvent(new Event(`authChange`)),e(`/sign-in`)}})()},[]);let[f,p]=(0,w.useState)({bet:0,code:``,paymentBet:0,payments:[],totalAmount:0,usages:0});return(0,w.useEffect)(()=>{(async()=>{try{let t=await f0.getInformation();t?.data?.message?(e(`/cabinet`),r(`error`,`Get information failed...`,t?.data?.message)):p({bet:t?.data.bet??0,code:t?.data.code??``,paymentBet:t?.data.paymentBet??0,payments:t?.data.paym
+
+----
+
+
+===== ar.YOUTUBER (2) =====
+
+:{fontFamily:`Icons`},onClick:u,children:`7`})]}),(0,I.jsx)(`div`,{className:q.userHr}),(0,I.jsx)(`div`,{className:q.userTabs,children:b.filter(e=>e.name===`Media Panel`?c?.role===ar.ADMIN||c?.role===ar.YOUTUBER:e.name!==`Dashboard`||c?.role===ar.ADMIN).map((n,r)=>(0,I.jsxs)(`div`,{className:q.tab,onClick:()=>{if(n.name===`Dashboard`){P();return}if(n.name===`Roulette`){t(`warning`,`Roulette`,`Roulette is temporarily disabled!`);return}e(n.path)},children:[(0,I.jsx)(`div`,{className:q.tabIcon,style:{fontFamily:`Icons`},children:n.icon}),(0,I.jsx)(`div`,{className:q.tabText,children:n.name})]},r))})]}),(0,I.jsxs)(`div`,{className:`${q.columnWrapper} ${q.wrapperActivateKey} ${q.wrapperLabel}`,c
+
+----
+
+tch(n(e),e){case 0:a(C0.slice(-8));break}};(0,w.useEffect)(()=>d(t),[]),(0,w.useEffect)(()=>{(async()=>{try{let t=await yo.getSession();(!t?.data.authStatus||!(t?.data.role===ar.ADMIN||t?.data.role===ar.YOUTUBER))&&(window.dispatchEvent(new Event(`authChange`)),e(`/sign-in`))}catch{window.dispatchEvent(new Event(`authChange`)),e(`/sign-in`)}})()},[]);let[f,p]=(0,w.useState)({bet:0,code:``,paymentBet:0,payments:[],totalAmount:0,usages:0});return(0,w.useEffect)(()=>{(async()=>{try{let t=await f0.getInformation();t?.data?.message?(e(`/cabinet`),r(`error`,`Get information failed...`,t?.data?.message)):p({bet:t?.data.bet??0,code:t?.data.code??``,paymentBet:t?.data.paymentBet??0,payments:t?.data.p
+
+----
+
+
+===== ar.ADMIN (3) =====
+
+e:q.userButton,style:{fontFamily:`Icons`},onClick:u,children:`7`})]}),(0,I.jsx)(`div`,{className:q.userHr}),(0,I.jsx)(`div`,{className:q.userTabs,children:b.filter(e=>e.name===`Media Panel`?c?.role===ar.ADMIN||c?.role===ar.YOUTUBER:e.name!==`Dashboard`||c?.role===ar.ADMIN).map((n,r)=>(0,I.jsxs)(`div`,{className:q.tab,onClick:()=>{if(n.name===`Dashboard`){P();return}if(n.name===`Roulette`){t(`warning`,`Roulette`,`Roulette is temporarily disabled!`);return}e(n.path)},children:[(0,I.jsx)(`div`,{className:q.tabIcon,style:{fontFamily:`Icons`},children:n.icon}),(0,I.jsx)(`div`,{className:q.tabText,children:n.name})]},r))})]}),(0,I.jsxs)(`div`,{className:`${q.columnWrapper} ${q.wrapperActivateKey} 
+
+----
+
+})]}),(0,I.jsx)(`div`,{className:q.userHr}),(0,I.jsx)(`div`,{className:q.userTabs,children:b.filter(e=>e.name===`Media Panel`?c?.role===ar.ADMIN||c?.role===ar.YOUTUBER:e.name!==`Dashboard`||c?.role===ar.ADMIN).map((n,r)=>(0,I.jsxs)(`div`,{className:q.tab,onClick:()=>{if(n.name===`Dashboard`){P();return}if(n.name===`Roulette`){t(`warning`,`Roulette`,`Roulette is temporarily disabled!`);return}e(n.path)},children:[(0,I.jsx)(`div`,{className:q.tabIcon,style:{fontFamily:`Icons`},children:n.icon}),(0,I.jsx)(`div`,{className:q.tabText,children:n.name})]},r))})]}),(0,I.jsxs)(`div`,{className:`${q.columnWrapper} ${q.wrapperActivateKey} ${q.wrapperLabel}`,children:[(0,I.jsx)(`div`,{className:q.keyInp
+
+----
+
+x)`})},[t]);let d=e=>{switch(n(e),e){case 0:a(C0.slice(-8));break}};(0,w.useEffect)(()=>d(t),[]),(0,w.useEffect)(()=>{(async()=>{try{let t=await yo.getSession();(!t?.data.authStatus||!(t?.data.role===ar.ADMIN||t?.data.role===ar.YOUTUBER))&&(window.dispatchEvent(new Event(`authChange`)),e(`/sign-in`))}catch{window.dispatchEvent(new Event(`authChange`)),e(`/sign-in`)}})()},[]);let[f,p]=(0,w.useState)({bet:0,code:``,paymentBet:0,payments:[],totalAmount:0,usages:0});return(0,w.useEffect)(()=>{(async()=>{try{let t=await f0.getInformation();t?.data?.message?(e(`/cabinet`),r(`error`,`Get information failed...`,t?.data?.message)):p({bet:t?.data.bet??0,code:t?.data.code??``,paymentBet:t?.data.payment
+
+----
+
+
+ROUTE @ 508199
+
+:`/cabinet`},{icon:`*`,name:`Dashboard`,path:`/dashboard/users/panel`},{icon:`z`,name:`Media Panel`,path:`/mediapanel`},{icon:`)`,name:`Roulette`,path:`/roulette`}],x=[{icon:`8`,name:`Email`,data:c?.email?(()=>{let[e,t]=c.email.split(`@`);return e.length>10?`${e.slice(0,10)}...@${t}`:c.email})():c?.

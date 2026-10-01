@@ -131,28 +131,12 @@ var PricingPage_ = () => {
               children: [
                 (0, I.jsx)("div", {
                   className: L.priceHeader,
-                  children: (0, I.jsxs)("div", {
+                  children: (0, I.jsx)("div", {
                     className: L.headerTitle,
-                    children: [
-                      (0, I.jsxs)("div", {
-                        className: L.titleContent,
-                        children: [
-                          (0, I.jsx)("div", {
-                            className: L.contentIcon,
-                            style: { fontFamily: "Icons" },
-                            children: "s",
-                          }),
-                          (0, I.jsx)("div", {
-                            className: L.contentText,
-                            children: "Quality should be accessible to everyone.",
-                          }),
-                        ],
-                      }),
-                      (0, I.jsx)("div", {
-                        className: L.titleDescription,
-                        children: "Great prices for great quality.",
-                      }),
-                    ],
+                    children: (0, I.jsx)("div", {
+                      className: L.titleDescription,
+                      children: "Good prices.",
+                    }),
                   }),
                 }),
                 (0, I.jsxs)("div", {

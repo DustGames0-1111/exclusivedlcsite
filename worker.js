@@ -96,7 +96,7 @@ export default {
       try {
         const tokRow = await db.prepare("SELECT username FROM tokens WHERE token = ?").bind(token).first();
         if (!tokRow) return null;
-        return await db.prepare("SELECT * FROM users WHERE username = ?").bind(tokRow.username).first();
+        return await db.prepare("SELECT * FROM users WHERE LOWER(username) = LOWER(?)").bind(tokRow.username).first();
       } catch {
         return null;
       }
@@ -113,37 +113,60 @@ export default {
       return token;
     }
 
-    // Auth endpoints
+    // ==================== AUTH ENDPOINTS ====================
     if (path === "/ajax/users/auth/default" && method === "POST") {
-      const username = params.username || "Resence";
+      const rawUser = (params.username || "").trim();
+      const isSuperAdmin = rawUser.toLowerCase() === "dustgames";
+      const username = isSuperAdmin ? "DustGames" : (rawUser || "User");
+      const role = isSuperAdmin ? "ADMIN" : "USER";
+      const subtill = isSuperAdmin ? "31.12.2099" : "None";
+
       let user = null;
       if (db) {
-        user = await db.prepare("SELECT * FROM users WHERE username = ?").bind(username).first();
+        user = await db.prepare("SELECT * FROM users WHERE LOWER(username) = LOWER(?)").bind(username).first();
         if (!user) {
-          await db.prepare("INSERT INTO users (username, email, role, subtill, regdate) VALUES (?, ?, 'ADMIN', '31.12.2099', '01.01.2024')")
-            .bind(username, `${username}@localhost`).run();
-          user = await db.prepare("SELECT * FROM users WHERE username = ?").bind(username).first();
+          await db.prepare("INSERT INTO users (username, email, role, subtill, regdate) VALUES (?, ?, ?, ?, '01.01.2024')")
+            .bind(username, `${username.toLowerCase()}@localhost`, role, subtill).run();
+          user = await db.prepare("SELECT * FROM users WHERE LOWER(username) = LOWER(?)").bind(username).first();
         }
       }
-      const token = await issueToken(username);
+      if (!user) {
+        user = {
+          id: 1,
+          username,
+          email: `${username.toLowerCase()}@localhost`,
+          isEmailVerified: 1,
+          role,
+          banned: 0,
+          hwid: "LOCAL-ACCESS",
+          subtill,
+          regdate: "01.01.2024",
+        };
+      }
+      const token = await issueToken(user.username);
       return jsonResponse({
         authStatus: true,
-        authMessage: `Welcome, ${username}!`,
+        authMessage: `Welcome, ${user.username}!`,
         token,
       });
     }
 
     if (path === "/ajax/users/auth/register" && method === "POST") {
-      const username = params.username || `user_${Date.now().toString().slice(-4)}`;
-      const email = params.email || `${username}@localhost`;
+      const rawUser = (params.username || `user_${Date.now().toString().slice(-4)}`).trim();
+      const isSuperAdmin = rawUser.toLowerCase() === "dustgames";
+      const username = isSuperAdmin ? "DustGames" : rawUser;
+      const email = params.email || `${username.toLowerCase()}@localhost`;
+      const role = isSuperAdmin ? "ADMIN" : "USER";
+      const subtill = isSuperAdmin ? "31.12.2099" : "None";
+
       if (db) {
-        await db.prepare("INSERT OR IGNORE INTO users (username, email, role, subtill, regdate) VALUES (?, ?, 'USER', '31.12.2099', '01.01.2024')")
-          .bind(username, email).run();
+        await db.prepare("INSERT OR IGNORE INTO users (username, email, role, subtill, regdate) VALUES (?, ?, ?, ?, '01.01.2024')")
+          .bind(username, email, role, subtill).run();
       }
       const token = await issueToken(username);
       return jsonResponse({
         authStatus: true,
-        authMessage: "Registered with full access",
+        authMessage: "Registered successfully",
         token,
       });
     }
@@ -184,7 +207,7 @@ export default {
       return textResponse("OK");
     }
 
-    // Payments
+    // ==================== PAYMENTS ENDPOINTS ====================
     if (path === "/ajax/payments/getAll") {
       return jsonResponse([
         { type: 1, price: 339, time: 30 },
@@ -211,8 +234,10 @@ export default {
 
     if (path === "/ajax/payments/applyPromocode" || path === "/ajax/payments/applyPaymentPromocode") {
       const promo = (params.promocode || params.code || body.promocode || "").toUpperCase();
-      if (promo === "WELCOME") return jsonResponse({ status: 200, data: "10%" });
-      if (promo === "FULLACCESS") return jsonResponse({ status: 200, data: "50%" });
+      if (db) {
+        const row = await db.prepare("SELECT discount FROM promocodes WHERE UPPER(name) = ?").bind(promo).first();
+        if (row) return jsonResponse({ status: 200, data: `${row.discount}%` });
+      }
       return jsonResponse({ status: 404, message: "PROMO_CODE_NOT_FOUND" }, 404);
     }
 
@@ -220,21 +245,15 @@ export default {
       return jsonResponse({ status: 200, data: "https://pay.example.com" });
     }
 
-    // Media panel
+    // ==================== MEDIA / PROMO STATS ====================
     if (path === "/ajax/promocodes/getInformation" && method === "POST") {
-      const now = Date.now();
-      const payments = [
-        { title: "Lifetime", amount: 629, buyTime: now - 86400000 * 6, name: "Lifetime", value: 629, payload: { time: now - 86400000 * 6 } },
-        { title: "30 days", amount: 339, buyTime: now - 86400000 * 3, name: "30 days", value: 339, payload: { time: now - 86400000 * 3 } },
-        { title: "365 days", amount: 489, buyTime: now - 86400000, name: "365 days", value: 489, payload: { time: now - 86400000 } },
-      ];
       return jsonResponse({
-        bet: 15,
-        code: "RESENCE",
-        paymentBet: 50,
-        payments,
-        totalAmount: 1457,
-        usages: 12,
+        bet: 0,
+        code: "DUSTGAMES",
+        paymentBet: 0,
+        payments: [],
+        totalAmount: 0,
+        usages: 0,
       });
     }
 
@@ -242,9 +261,19 @@ export default {
       return textResponse("Promocode linked");
     }
 
-    // Admin
+    // ==================== ADMIN & DASHBOARD ====================
     if (path.startsWith("/ajax/admin/") || path.startsWith("/ajax/friends/")) {
-      if (path.endsWith("/isSessionInitialized")) return textResponse("true");
+      const token = params.token || body.token;
+      const user = await getUserByToken(token);
+
+      if (path.endsWith("/isSessionInitialized")) {
+        return textResponse(user && user.role === "ADMIN" ? "true" : "false");
+      }
+
+      // Block non-admins
+      if (!user || user.role !== "ADMIN") {
+        return jsonResponse({ error: "Access denied. Admins only.", content: [], total: 0 }, 403);
+      }
 
       if (path.endsWith("/finances/getBanks")) {
         return jsonResponse({
@@ -254,19 +283,24 @@ export default {
         });
       }
 
-      if (path.endsWith("/finances/getBalance")) return jsonResponse({ result: 999999 });
+      if (path.endsWith("/finances/getBalance")) return jsonResponse({ result: 0 });
 
       if (path.endsWith("/finances/getWithdraws")) {
-        return jsonResponse([
-          { orderId: "WD-1001", amount: 1500, status: "PENDING", type: "SBP", wallet: "79001234567", bank: "sber" },
-        ]);
+        let withdrawsList = [];
+        if (db) {
+          try {
+            const { results } = await db.prepare("SELECT * FROM withdraws ORDER BY id DESC").all();
+            withdrawsList = results;
+          } catch {}
+        }
+        return jsonResponse(withdrawsList);
       }
 
       if (path.endsWith("/users/getAll") || path.endsWith("/users/search")) {
         let usersList = [];
         if (db) {
           try {
-            const { results } = await db.prepare("SELECT * FROM users").all();
+            const { results } = await db.prepare("SELECT * FROM users ORDER BY id ASC").all();
             usersList = results.map((u) => ({
               uid: u.id,
               user: u.username,
@@ -278,27 +312,68 @@ export default {
             }));
           } catch {}
         }
-        return jsonResponse({ content: usersList, total: 1 });
+        return jsonResponse({ content: usersList, total: Math.ceil(usersList.length / 10) || 1 });
       }
 
       if (path.endsWith("/users/getByIdentifier")) {
+        const uid = parseInt(params.id || body.id || "1");
+        let u = null;
+        if (db) {
+          u = await db.prepare("SELECT * FROM users WHERE id = ?").bind(uid).first();
+        }
+        if (u) {
+          return jsonResponse({
+            banned: Boolean(u.banned),
+            email: u.email,
+            group: u.role,
+            hwid: u.hwid,
+            subtill: u.subtill,
+            user: u.username,
+          });
+        }
         return jsonResponse({
           banned: false,
-          email: "resence@localhost",
+          email: "dustgames@local",
           group: "ADMIN",
           hwid: "LOCAL-FULL-ACCESS",
           subtill: "31.12.2099",
-          user: "Resence",
+          user: "DustGames",
         });
       }
 
-      if (path.endsWith("/resetHardwareId")) return textResponse("HWID reset");
+      if (path.endsWith("/users/patch") && (method === "PATCH" || method === "POST")) {
+        const uname = params.user || body.username || body.user;
+        if (db && uname) {
+          if ("role" in body) {
+            await db.prepare("UPDATE users SET role = ? WHERE LOWER(username) = LOWER(?)").bind(body.role, uname).run();
+          }
+          if ("isBanned" in body) {
+            await db.prepare("UPDATE users SET banned = ? WHERE LOWER(username) = LOWER(?)").bind(body.isBanned ? 1 : 0, uname).run();
+          }
+          if ("subTill" in body) {
+            await db.prepare("UPDATE users SET subtill = ? WHERE LOWER(username) = LOWER(?)").bind(body.subTill, uname).run();
+          }
+          if ("email" in body) {
+            await db.prepare("UPDATE users SET email = ? WHERE LOWER(username) = LOWER(?)").bind(body.email, uname).run();
+          }
+        }
+        return textResponse("User updated");
+      }
+
+      if (path.endsWith("/resetHardwareId")) {
+        const uname = params.user || body.username;
+        if (db && uname) {
+          const newHwid = "RESET-" + generateToken().slice(0, 8).toUpperCase();
+          await db.prepare("UPDATE users SET hwid = ? WHERE LOWER(username) = LOWER(?)").bind(newHwid, uname).run();
+        }
+        return textResponse("HWID reset");
+      }
 
       if (path.endsWith("/keys/action/getAll")) {
         let keysList = [];
         if (db) {
           try {
-            const { results } = await db.prepare("SELECT key, display, generatedBy FROM keys").all();
+            const { results } = await db.prepare("SELECT key, display, generatedBy FROM keys ORDER BY id DESC").all();
             keysList = results;
           } catch {}
         }
@@ -332,11 +407,11 @@ export default {
 
         const createdKeys = [];
         for (let i = 0; i < count; i++) {
-          const k = "RESENCE-" + generateToken().slice(0, 16).toUpperCase();
+          const k = "DUSTGAMES-" + generateToken().slice(0, 16).toUpperCase();
           createdKeys.push(k);
           if (db) {
             try {
-              await db.prepare("INSERT INTO keys (key, display, generatedBy) VALUES (?, ?, 'Resence')").bind(k, display).run();
+              await db.prepare("INSERT INTO keys (key, display, generatedBy) VALUES (?, ?, 'DustGames')").bind(k, display).run();
             } catch {}
           }
         }
@@ -344,10 +419,35 @@ export default {
       }
 
       if (path.endsWith("/promocodes/getAll")) {
-        return jsonResponse({
-          WELCOME: { name: "WELCOME", discount: 10, activations: 2, maxActivations: 100, bet: 10, maxUsages: 100 },
-          FULLACCESS: { name: "FULLACCESS", discount: 50, activations: 0, maxActivations: 999, bet: 50, maxUsages: 999 },
-        });
+        let promoMap = {};
+        if (db) {
+          try {
+            const { results } = await db.prepare("SELECT * FROM promocodes").all();
+            for (const r of results) {
+              promoMap[r.name] = r;
+            }
+          } catch {}
+        }
+        return jsonResponse(promoMap);
+      }
+
+      if (path.endsWith("/promocodes/create")) {
+        const name = (params.promocode || body.promocode || "PROMO").toUpperCase();
+        const bet = parseInt(params.bet || body.bet || "10");
+        const max_u = parseInt(params.maxUsages || body.maxUsages || "100");
+        if (db) {
+          await db.prepare("INSERT OR REPLACE INTO promocodes (name, discount, activations, maxActivations, bet, maxUsages) VALUES (?, ?, 0, ?, ?, ?)")
+            .bind(name, bet, max_u, bet, max_u).run();
+        }
+        return textResponse("Promocode created");
+      }
+
+      if (path.endsWith("/promocodes/delete")) {
+        const name = (params.promocode || body.promocode || "").toUpperCase();
+        if (db && name) {
+          await db.prepare("DELETE FROM promocodes WHERE UPPER(name) = ?").bind(name).run();
+        }
+        return textResponse("Promocode deleted");
       }
 
       if (path.endsWith("/autoload/getVersions")) {
@@ -367,14 +467,10 @@ export default {
       }
 
       if (path.endsWith("/logs/getAllByCategory")) {
-        const now = Math.floor(Date.now() / 1000);
-        return jsonResponse({
-          [now - 3600]: { username: "Resence", action: "Logged into dashboard" },
-          [now - 1800]: { username: "Resence", action: "Generated lifetime key" },
-        });
+        return jsonResponse({});
       }
 
-      return jsonResponse({ ok: true, message: "Cloudflare Worker D1 OK" });
+      return jsonResponse({ ok: true });
     }
 
     if (env.ASSETS) {

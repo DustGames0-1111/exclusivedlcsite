@@ -21,7 +21,7 @@ def post(path, params=None):
 def main():
     login = post(
         "/ajax/users/auth/default",
-        {"hCaptcha": "x", "username": "None", "password": "YWRtaW4="},
+        {"hCaptcha": "x", "username": "Resence", "password": "YWRtaW4="},
     )
     assert login.get("authStatus") is True, login
     tok = login["token"]

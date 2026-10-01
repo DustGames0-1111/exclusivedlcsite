@@ -1,12 +1,12 @@
 {
-  "shortClientName": "None",
-  "clientName": "NONE",
+  "shortClientName": "Resence",
+  "clientName": "RESENCE",
   "version": "1.16.5",
-  "supportEmail": "support@none.local",
+  "supportEmail": "support@resence.local",
   "url": "localhost",
   "ajaxUrl": "http://127.0.0.1:8080/ajax/",
   "funpayLink": "#",
-  "clientColor": "#8be9fd",
+  "clientColor": "#b3b0f5",
   "socials": {
     "discord": "#",
     "telegram": "#"

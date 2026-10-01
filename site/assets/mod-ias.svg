@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%">
+  <defs>
+    <radialGradient id="ias-glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#0284c7" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="ias-arrow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#0ea5e9"/>
+    </linearGradient>
+    <filter id="ias-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#0ea5e9" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+  <rect width="100" height="100" rx="24" fill="#0c1524"/>
+  <circle cx="50" cy="50" r="44" fill="url(#ias-glow)"/>
+  <g filter="url(#ias-shadow)">
+    <!-- Minecraft Steve Avatar Head in Center -->
+    <rect x="34" y="32" width="32" height="32" rx="4" fill="#d49b78"/>
+    <!-- Hair -->
+    <path d="M 34 32 L 66 32 L 66 40 L 58 40 L 58 42 L 50 42 L 50 40 L 42 40 L 42 42 L 34 42 Z" fill="#4a2e18"/>
+    <!-- Eyes -->
+    <rect x="36" y="44" width="6" height="4" fill="#ffffff"/>
+    <rect x="38" y="44" width="4" height="4" fill="#4040a0"/>
+    <rect x="58" y="44" width="6" height="4" fill="#ffffff"/>
+    <rect x="58" y="44" width="4" height="4" fill="#4040a0"/>
+    <!-- Nose -->
+    <rect x="46" y="48" width="8" height="4" fill="#b87b58"/>
+    <!-- Mouth / Beard -->
+    <rect x="44" y="54" width="12" height="4" fill="#4a2e18"/>
+    <rect x="46" y="52" width="8" height="2" fill="#c08060"/>
+
+    <!-- Circular Swap / Switch Arrows -->
+    <!-- Top Arrow (Clockwise) -->
+    <path d="M 24 50 A 28 28 0 0 1 74 32" fill="none" stroke="url(#ias-arrow)" stroke-width="4.5" stroke-linecap="round"/>
+    <polygon points="73,25 81,33 71,39" fill="#38bdf8"/>
+    <!-- Bottom Arrow (Clockwise) -->
+    <path d="M 76 50 A 28 28 0 0 1 26 68" fill="none" stroke="url(#ias-arrow)" stroke-width="4.5" stroke-linecap="round"/>
+    <polygon points="27,75 19,67 29,61" fill="#38bdf8"/>
+  </g>
+</svg>

@@ -17,8 +17,8 @@ SUB_FOREVER = (NOW + timedelta(days=36500)).strftime("%d.%m.%Y")
 
 ADMIN = {
     "id": 1,
-    "username": "None",
-    "email": "none@localhost",
+    "username": "Resence",
+    "email": "resence@localhost",
     "isEmailVerified": True,
     "role": "ADMIN",
     "banned": False,
@@ -28,7 +28,7 @@ ADMIN = {
 }
 
 USERS: dict[str, dict] = {
-    "None": dict(ADMIN),
+    "Resence": dict(ADMIN),
     "demo": {
         **ADMIN,
         "id": 2,
@@ -51,19 +51,19 @@ TOKENS: dict[str, str] = {}
 # In-memory dashboard data
 KEYS: list[dict] = [
     {
-        "key": "NONE-AAAA-BBBB-CCCC-DDDD",
+        "key": "RESENCE-AAAA-BBBB-CCCC-DDDD",
         "display": "Lifetime",
-        "generatedBy": "None",
+        "generatedBy": "Resence",
     },
     {
-        "key": "NONE-1111-2222-3333-4444",
+        "key": "RESENCE-1111-2222-3333-4444",
         "display": "30 days",
-        "generatedBy": "None",
+        "generatedBy": "Resence",
     },
     {
-        "key": "NONE-BETA-KEY-0001",
+        "key": "RESENCE-BETA-KEY-0001",
         "display": "BETA 1.21.4",
-        "generatedBy": "None",
+        "generatedBy": "Resence",
     },
 ]
 
@@ -90,11 +90,11 @@ PROMOCODES: dict[str, dict] = {
 # timestamp -> log entry
 LOGS: dict[str, dict] = {
     str(int(time.time()) - 3600): {
-        "username": "None",
+        "username": "Resence",
         "action": "Logged into dashboard",
     },
     str(int(time.time()) - 1800): {
-        "username": "None",
+        "username": "Resence",
         "action": "Generated lifetime key",
     },
     str(int(time.time()) - 600): {
@@ -256,7 +256,7 @@ class Handler(SimpleHTTPRequestHandler):
 
         # ---- auth ----
         if path == "/ajax/users/auth/default" and method == "POST":
-            username = params.get("username") or "None"
+            username = params.get("username") or "Resence"
             if username not in USERS:
                 USERS[username] = {
                     **ADMIN,
@@ -361,7 +361,7 @@ class Handler(SimpleHTTPRequestHandler):
                 200,
                 {
                     "bet": 15,
-                    "code": "NONE",
+                    "code": "RESENCE",
                     "paymentBet": 50,
                     "payments": payments,
                     "totalAmount": sum(p["amount"] for p in payments),
@@ -472,7 +472,7 @@ class Handler(SimpleHTTPRequestHandler):
                     display = prod["display"] if prod else "Product"
                 lines = []
                 for _ in range(count):
-                    key = "NONE-" + secrets.token_hex(8).upper()
+                    key = "RESENCE-" + secrets.token_hex(8).upper()
                     KEYS.append({"key": key, "display": display, "generatedBy": user["username"]})
                     lines.append(key)
                 LOGS[str(int(time.time()))] = {
@@ -557,7 +557,34 @@ class Handler(SimpleHTTPRequestHandler):
             if path.endswith("/autoload/getVersions"):
                 return self._json(200, VERSIONS)
 
-            if path.endswith("/autoload/uploadVersion"):
+            
+            # ---- media video config ----
+            if path.endswith("/media/getVideo"):
+                cfg_path = ROOT / "config.json"
+                vurl = ""
+                if cfg_path.exists():
+                    try:
+                        cfg_data = json.loads(cfg_path.read_text(encoding="utf-8"))
+                        vurl = cfg_data.get("media", {}).get("first", "")
+                    except Exception:
+                        pass
+                return self._json(200, {"videoUrl": vurl})
+
+            if path.endswith("/media/setVideo"):
+                raw_url = str(params.get("videoUrl") or body.get("videoUrl") or "").strip()
+                import re as _re
+                m = _re.search(r'(?:watch\?v=|youtu\.be/|shorts/|embed/|^)([a-zA-Z0-9_-]{11})', raw_url)
+                embed_url = f"https://www.youtube.com/embed/{m.group(1)}" if m else raw_url
+                cfg_path = ROOT / "config.json"
+                if cfg_path.exists():
+                    try:
+                        cfg_data = json.loads(cfg_path.read_text(encoding="utf-8"))
+                        cfg_data.setdefault("media", {})["first"] = embed_url
+                        cfg_path.write_text(json.dumps(cfg_data, indent=2, ensure_ascii=False), encoding="utf-8")
+                    except Exception as e:
+                        return self._text(500, f"Error writing config: {e}")
+                return self._json(200, {"status": "ok", "videoUrl": embed_url})
+if path.endswith("/autoload/uploadVersion"):
                 return self._text(200, "Version uploaded successfully")
 
             # ---- finances / withdraw ----
@@ -636,9 +663,9 @@ class Handler(SimpleHTTPRequestHandler):
 
 
 def main():
-    seed = issue_token("None")
+    seed = issue_token("Resence")
     print(f"Serving {ROOT} on http://127.0.0.1:{PORT}/", flush=True)
-    print("Admin: None / admin  (ADMIN + lifetime)", flush=True)
+    print("Admin: Resence / admin  (ADMIN + lifetime)", flush=True)
     print(f"Seed cookie ajax-cookie={seed}", flush=True)
     httpd = ThreadingHTTPServer(("127.0.0.1", PORT), Handler)
     httpd.serve_forever()

@@ -3,17 +3,18 @@ setlocal EnableExtensions
 chcp 65001 >nul
 cd /d "%~dp0"
 
-title None local server
+title Resence local server
 echo ========================================
-echo   None site - local server
+echo   Resence site - local server
 echo   http://127.0.0.1:8080/
-echo   Login: None / admin
+echo   Login: Resence / admin
 echo ========================================
 echo.
 
-REM Prefer real Python, not Windows Store stub
+REM Locate Python
 set "PY="
-if exist "%LocalAppData%\Programs\Python\Python312\python.exe" set "PY=%LocalAppData%\Programs\Python\Python312\python.exe"
+if exist "%LocalAppData%\Python\bin\python.exe" set "PY=%LocalAppData%\Python\bin\python.exe"
+if not defined PY if exist "%LocalAppData%\Programs\Python\Python312\python.exe" set "PY=%LocalAppData%\Programs\Python\Python312\python.exe"
 if not defined PY if exist "%LocalAppData%\Programs\Python\Python311\python.exe" set "PY=%LocalAppData%\Programs\Python\Python311\python.exe"
 if not defined PY if exist "%LocalAppData%\Programs\Python\Python313\python.exe" set "PY=%LocalAppData%\Programs\Python\Python313\python.exe"
 if not defined PY (
@@ -54,16 +55,18 @@ for /f "tokens=5" %%P in ('netstat -ano ^| findstr /R /C:":8080 .*LISTENING"') d
 
 echo Starting server...
 if /I "%PY%"=="py" (
-  start "None server" /MIN cmd /k py -3 -u "%~dp0server.py"
+  start "Resence server" /MIN cmd /k "py -3 -u server.py"
 ) else (
-  start "None server" /MIN cmd /k "%PY%" -u "%~dp0server.py"
+  start "Resence server" /MIN cmd /k ""%PY%" -u server.py"
 )
 
 REM Wait until http://127.0.0.1:8080 answers (up to ~20s)
 set /a tries=0
 :waitloop
 set /a tries+=1
-powershell -NoProfile -Command "try { $r = Invoke-WebRequest -UseBasicParsing -Uri 'http://127.0.0.1:8080/' -TimeoutSec 1; if ($r.StatusCode -ge 200) { exit 0 } else { exit 1 } } catch { exit 1 }"
+curl.exe -s -f -o nul http://127.0.0.1:8080/ >nul 2>&1
+if %errorlevel%==0 goto ready
+powershell -NoProfile -Command "try { $r = Invoke-WebRequest -UseBasicParsing -Uri 'http://127.0.0.1:8080/' -TimeoutSec 1; if ($r.StatusCode -ge 200) { exit 0 } else { exit 1 } } catch { exit 1 }" >nul 2>&1
 if %errorlevel%==0 goto ready
 if %tries% GEQ 20 goto fail
 ping -n 2 127.0.0.1 >nul
@@ -74,7 +77,7 @@ echo Server is up.
 echo Opening browser...
 start "" "http://127.0.0.1:8080/"
 echo.
-echo Done. Keep the minimized "None server" window open.
+echo Done. Keep the minimized "Resence server" window open.
 echo Close that window ^(or press Ctrl+C there^) to stop the site.
 echo.
 pause
@@ -82,7 +85,7 @@ exit /b 0
 
 :fail
 echo [ERROR] Server did not start on port 8080.
-echo Open the minimized "None server" window and read the error.
+echo Open the minimized "Resence server" window and read the error.
 echo.
 pause
 exit /b 1

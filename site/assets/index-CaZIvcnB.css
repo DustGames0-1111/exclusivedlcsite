@@ -719,3 +719,29 @@ html:not(.dark) .mod-card {
 html:not(.dark) .mod-card:hover {
   background: rgba(0, 0, 0, 0.08) !important;
 }
+
+
+/* Fix support card image & button overlap */
+._productRight_cmjx9_1216 {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  gap: 14px !important;
+  height: 100% !important;
+}
+
+._productRight_cmjx9_1216 ._productImage_cmjx9_944 {
+  height: 185px !important;
+  margin-bottom: 10px !important;
+}
+
+._productRight_cmjx9_1216 ._productContactButton_cmjx9_1243 {
+  margin-top: auto !important;
+  position: relative !important;
+  z-index: 2 !important;
+}
+
+._productRight_cmjx9_1216 ._productContactButton_cmjx9_1243 button {
+  position: relative !important;
+  z-index: 2 !important;
+}

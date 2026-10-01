@@ -59,6 +59,9 @@ def issue_token(username: str) -> str:
 
 
 def session_payload(user: dict, token: str) -> dict:
+    regdate = user.get("regdate")
+    if not regdate or regdate == "01.01.2024":
+        regdate = datetime.now(timezone.utc).strftime("%d.%m.%Y")
     return {
         "authStatus": True,
         "authMessage": "OK",
@@ -71,7 +74,7 @@ def session_payload(user: dict, token: str) -> dict:
         "token": token,
         "hwid": user["hwid"],
         "subtill": user["subtill"],
-        "regdate": user["regdate"],
+        "regdate": regdate,
     }
 
 

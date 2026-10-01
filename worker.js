@@ -231,6 +231,7 @@ export default {
       if (!user) {
         return jsonResponse({ authStatus: false, authMessage: "No session" });
       }
+      const displayRegdate = (!user.regdate || user.regdate === "01.01.2024") ? getFormattedDate() : user.regdate;
       return jsonResponse({
         authStatus: true,
         authMessage: "OK",
@@ -243,7 +244,7 @@ export default {
         token,
         hwid: user.hwid,
         subtill: user.subtill,
-        regdate: user.regdate,
+        regdate: displayRegdate,
       });
     }
 
@@ -363,6 +364,7 @@ export default {
               banned: Boolean(u.banned),
               hwid: u.hwid,
               subtill: u.subtill,
+              regdate: (!u.regdate || u.regdate === "01.01.2024") ? getFormattedDate() : u.regdate,
             }));
           } catch {}
         }

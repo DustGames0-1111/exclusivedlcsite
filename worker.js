@@ -254,17 +254,17 @@ export default {
     // ==================== PAYMENTS ENDPOINTS ====================
     if (path === "/ajax/payments/getAll") {
       return jsonResponse([
-        { type: 1, price: 339, time: 30 },
-        { type: 2, price: 489, time: 365 },
-        { type: 3, price: 629, time: 999 },
-        { type: 4, price: 299 },
+        { type: 1, price: 199, time: 30 },
+        { type: 2, price: 299, time: 365 },
+        { type: 3, price: 499, time: 999 },
+        { type: 4, price: 149 },
       ]);
     }
 
     if (path === "/ajax/payments/additional/getAll") {
       return jsonResponse([
-        { display: "BETA 1.21.11", price: 899, id: 101, role: "BETA" },
-        { display: "BETA 1.21.11 + LifeTime", price: 1399, id: 102, role: "BETA", time: 999 },
+        { display: "BETA 1.21.11", price: 499, id: 101, role: "BETA" },
+        { display: "BETA 1.21.11 + LifeTime", price: 899, id: 102, role: "BETA", time: 999 },
       ]);
     }
 
@@ -276,7 +276,7 @@ export default {
       ]);
     }
 
-    if (path === "/ajax/payments/applyPromocode" || path === "/ajax/payments/applyPaymentPromocode") {
+    if (path === "/ajax/payments/applyPromocode" || path === "/ajax/payments/applyPaymentPromocode" || path === "/ajax/payments/promocodes/apply") {
       const promo = (params.promocode || params.code || body.promocode || "").toUpperCase();
       if (db) {
         const row = await db.prepare("SELECT discount FROM promocodes WHERE UPPER(name) = ?").bind(promo).first();
@@ -285,7 +285,7 @@ export default {
       return jsonResponse({ status: 404, message: "PROMO_CODE_NOT_FOUND" }, 404);
     }
 
-    if (path === "/ajax/payments/createPayment") {
+    if (path === "/ajax/payments/createPayment" || path === "/ajax/payments/frontend/create") {
       return jsonResponse({ status: 200, data: "https://pay.example.com" });
     }
 
@@ -436,8 +436,8 @@ export default {
 
       if (path.endsWith("/keys/getAdditionalProducts")) {
         return jsonResponse([
-          { display: "BETA 1.21.11", price: 899, id: 101, role: "BETA" },
-          { display: "BETA 1.21.11 + LifeTime", price: 1399, id: 102, role: "BETA", time: 999 },
+          { display: "BETA 1.21.11", price: 499, id: 101, role: "BETA" },
+          { display: "BETA 1.21.11 + LifeTime", price: 899, id: 102, role: "BETA", time: 999 },
         ]);
       }
 

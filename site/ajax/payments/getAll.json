@@ -1,21 +1,21 @@
 [
   {
     "type": 1,
-    "price": 339,
+    "price": 199,
     "time": 30
   },
   {
     "type": 2,
-    "price": 489,
+    "price": 299,
     "time": 365
   },
   {
     "type": 3,
-    "price": 629,
+    "price": 499,
     "time": 999
   },
   {
     "type": 4,
-    "price": 299
+    "price": 149
   }
 ]

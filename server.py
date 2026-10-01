@@ -47,8 +47,8 @@ BANKS: dict[str, dict] = {
 }
 
 ADDITIONAL_PRODUCTS = [
-    {"display": "BETA 1.21.11", "price": 899, "id": 101, "role": "BETA"},
-    {"display": "BETA 1.21.11 + LifeTime", "price": 1399, "id": 102, "role": "BETA", "time": 999},
+    {"display": "BETA 1.21.11", "price": 499, "id": 101, "role": "BETA"},
+    {"display": "BETA 1.21.11 + LifeTime", "price": 899, "id": 102, "role": "BETA", "time": 999},
 ]
 
 
@@ -290,10 +290,10 @@ class Handler(SimpleHTTPRequestHandler):
 
         if path == "/ajax/payments/getAll":
             return self._json(200, read_payments("getAll.json") or [
-                {"type": 1, "price": 339, "time": 30},
-                {"type": 2, "price": 489, "time": 365},
-                {"type": 3, "price": 629, "time": 999},
-                {"type": 4, "price": 299},
+                {"type": 1, "price": 199, "time": 30},
+                {"type": 2, "price": 299, "time": 365},
+                {"type": 3, "price": 499, "time": 999},
+                {"type": 4, "price": 149},
             ])
 
         if path == "/ajax/payments/additional/getAll":

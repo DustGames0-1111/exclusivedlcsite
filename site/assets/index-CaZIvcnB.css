@@ -745,3 +745,10 @@ html:not(.dark) .mod-card:hover {
   position: relative !important;
   z-index: 2 !important;
 }
+
+
+/* Smooth Pricing Switcher Slider */
+._activeBackground_cmjx9_870 {
+  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), transform 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  will-change: width, transform !important;
+}

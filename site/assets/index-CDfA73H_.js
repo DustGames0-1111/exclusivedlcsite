@@ -88,15 +88,27 @@ var PricingPage_ = () => {
     j = window.innerWidth <= 768,
     [M, te] = (0, w.useState)({ width: 0, transform: "translateX(0px)" });
   (0, w.useEffect)(() => {
-    let e = A.current[k];
-    if (!e) return;
-    let t = e.offsetWidth,
-      r = A.current.slice(0, k).reduce((e, t) => e + t.offsetWidth, 0);
-    te({
-      width: t,
-      transform: j ? `translateX(${k * 32}px)` : `translateX(${r}px)`,
-    });
-  }, [k, C.length]);
+    let update = () => {
+      let e = A.current[k];
+      if (!e) return;
+      let t = e.offsetWidth,
+        r = e.offsetLeft;
+      te({
+        width: t,
+        transform: `translateX(${r}px)`,
+      });
+    };
+    update();
+    let anim = requestAnimationFrame(update);
+    let t1 = setTimeout(update, 50);
+    let t2 = setTimeout(update, 200);
+    let t3 = setTimeout(update, 500);
+    window.addEventListener("resize", update);
+    document.fonts?.ready.then(update);
+    return () => {
+      cancelAnimationFrame(anim), clearTimeout(t1), clearTimeout(t2), clearTimeout(t3), window.removeEventListener("resize", update);
+    };
+  }, [k, E.length, C.length]);
   let subList = Array.isArray(C) ? C.filter((e) => e && e.time) : [];
   let otherList = Array.isArray(C) ? C.filter((e) => e && !e.time) : [];
   let addList = Array.isArray(E) ? E : [];

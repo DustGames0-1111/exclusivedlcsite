@@ -1,8 +1,12 @@
-name = "myclient"
+name = "exclusivedlcsite"
+main = "worker.js"
 compatibility_date = "2024-01-01"
-pages_build_output_dir = "site"
+
+[assets]
+directory = "./site"
+binding = "ASSETS"
 
 [[d1_databases]]
 binding = "DB"
 database_name = "client-db"
-database_id = "xxxx-xxxx-xxxx-xxxx" # Replace with your D1 database ID from Cloudflare
+database_id = "xxxx-xxxx-xxxx-xxxx"

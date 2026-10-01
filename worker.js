@@ -1,5 +1,5 @@
 /**
- * Cloudflare Worker for API + D1 Database
+ * Cloudflare Worker with D1 Database + Static Assets (Single Fullstack Worker)
  */
 
 function jsonResponse(data, status = 200) {
@@ -40,6 +40,7 @@ export default {
     const path = url.pathname.replace(/\/$/, "");
     const method = request.method.toUpperCase();
 
+    // CORS Preflight
     if (method === "OPTIONS") {
       return new Response(null, {
         status: 204,
@@ -49,6 +50,11 @@ export default {
           "Access-Control-Allow-Headers": "*",
         },
       });
+    }
+
+    // If NOT an API route, serve static assets (HTML, JS, CSS, images)
+    if (!path.startsWith("/ajax") && env.ASSETS) {
+      return env.ASSETS.fetch(request);
     }
 
     const params = {};
@@ -369,6 +375,10 @@ export default {
       }
 
       return jsonResponse({ ok: true, message: "Cloudflare Worker D1 OK" });
+    }
+
+    if (env.ASSETS) {
+      return env.ASSETS.fetch(request);
     }
 
     return jsonResponse({ ok: true, authStatus: true });

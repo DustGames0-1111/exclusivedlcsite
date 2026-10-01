@@ -263,8 +263,8 @@ export default {
 
     if (path === "/ajax/payments/additional/getAll") {
       return jsonResponse([
-        { display: "BETA 1.21.4", price: 899, id: 101, role: "BETA" },
-        { display: "BETA 1.21.4 + LifeTime", price: 1399, id: 102, role: "BETA", time: 999 },
+        { display: "BETA 1.21.11", price: 899, id: 101, role: "BETA" },
+        { display: "BETA 1.21.11 + LifeTime", price: 1399, id: 102, role: "BETA", time: 999 },
       ]);
     }
 
@@ -436,8 +436,8 @@ export default {
 
       if (path.endsWith("/keys/getAdditionalProducts")) {
         return jsonResponse([
-          { display: "BETA 1.21.4", price: 899, id: 101, role: "BETA" },
-          { display: "BETA 1.21.4 + LifeTime", price: 1399, id: 102, role: "BETA", time: 999 },
+          { display: "BETA 1.21.11", price: 899, id: 101, role: "BETA" },
+          { display: "BETA 1.21.11 + LifeTime", price: 1399, id: 102, role: "BETA", time: 999 },
         ]);
       }
 
@@ -497,7 +497,7 @@ export default {
       if (path.endsWith("/autoload/getVersions")) {
         return jsonResponse({
           "1.16.5": { display: "1.16.5", identify: "1.16.5" },
-          "1.21.4": { display: "1.21.4 BETA", identify: "1.21.4" },
+          "1.21.11": { display: "1.21.11 BETA", identify: "1.21.11" },
         });
       }
 

@@ -38,7 +38,7 @@ LOGS: dict[str, dict] = {}
 WITHDRAWS: list[dict] = []
 VERSIONS: dict[str, dict] = {
     "1.16.5": {"display": "1.16.5", "identify": "1.16.5"},
-    "1.21.4": {"display": "1.21.4 BETA", "identify": "1.21.4"},
+    "1.21.11": {"display": "1.21.11 BETA", "identify": "1.21.11"},
 }
 BANKS: dict[str, dict] = {
     "sber": {"name": "Sberbank", "id": "sber"},
@@ -47,8 +47,8 @@ BANKS: dict[str, dict] = {
 }
 
 ADDITIONAL_PRODUCTS = [
-    {"display": "BETA 1.21.4", "price": 899, "id": 101, "role": "BETA"},
-    {"display": "BETA 1.21.4 + LifeTime", "price": 1399, "id": 102, "role": "BETA", "time": 999},
+    {"display": "BETA 1.21.11", "price": 899, "id": 101, "role": "BETA"},
+    {"display": "BETA 1.21.11 + LifeTime", "price": 1399, "id": 102, "role": "BETA", "time": 999},
 ]
 
 

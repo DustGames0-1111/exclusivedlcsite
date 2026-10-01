@@ -4,7 +4,7 @@
   "version": "1.16.5",
   "supportEmail": "support@resence.local",
   "url": "localhost",
-  "ajaxUrl": "http://127.0.0.1:8080/ajax/",
+  "ajaxUrl": "/ajax/",
   "funpayLink": "#",
   "clientColor": "#b3b0f5",
   "socials": {

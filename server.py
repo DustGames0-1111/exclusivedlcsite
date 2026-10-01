@@ -17,8 +17,8 @@ SUB_FOREVER = (NOW + timedelta(days=36500)).strftime("%d.%m.%Y")
 
 ADMIN = {
     "id": 1,
-    "username": "Resence",
-    "email": "resence@localhost",
+    "username": "DustGames",
+    "email": "dustgames@local",
     "isEmailVerified": True,
     "role": "ADMIN",
     "banned": False,
@@ -28,102 +28,23 @@ ADMIN = {
 }
 
 USERS: dict[str, dict] = {
-    "Resence": dict(ADMIN),
-    "demo": {
-        **ADMIN,
-        "id": 2,
-        "username": "demo",
-        "email": "demo@localhost",
-        "role": "USER",
-        "hwid": "DEMO-HWID",
-    },
-    "beta_user": {
-        **ADMIN,
-        "id": 3,
-        "username": "beta_user",
-        "email": "beta@localhost",
-        "role": "BETA",
-        "hwid": "BETA-HWID",
-    },
+    "DustGames": dict(ADMIN),
 }
 TOKENS: dict[str, str] = {}
 
-# In-memory dashboard data
-KEYS: list[dict] = [
-    {
-        "key": "RESENCE-AAAA-BBBB-CCCC-DDDD",
-        "display": "Lifetime",
-        "generatedBy": "Resence",
-    },
-    {
-        "key": "RESENCE-1111-2222-3333-4444",
-        "display": "30 days",
-        "generatedBy": "Resence",
-    },
-    {
-        "key": "RESENCE-BETA-KEY-0001",
-        "display": "BETA 1.21.4",
-        "generatedBy": "Resence",
-    },
-]
-
-# promocode name -> info
-PROMOCODES: dict[str, dict] = {
-    "WELCOME": {
-        "name": "WELCOME",
-        "discount": 10,
-        "activations": 2,
-        "maxActivations": 100,
-        "bet": 10,
-        "maxUsages": 100,
-    },
-    "FULLACCESS": {
-        "name": "FULLACCESS",
-        "discount": 50,
-        "activations": 0,
-        "maxActivations": 999,
-        "bet": 50,
-        "maxUsages": 999,
-    },
-}
-
-# timestamp -> log entry
-LOGS: dict[str, dict] = {
-    str(int(time.time()) - 3600): {
-        "username": "Resence",
-        "action": "Logged into dashboard",
-    },
-    str(int(time.time()) - 1800): {
-        "username": "Resence",
-        "action": "Generated lifetime key",
-    },
-    str(int(time.time()) - 600): {
-        "username": "demo",
-        "action": "Activated subscription key",
-    },
-}
-
+KEYS: list[dict] = []
+PROMOCODES: dict[str, dict] = {}
+LOGS: dict[str, dict] = {}
+WITHDRAWS: list[dict] = []
 VERSIONS: dict[str, dict] = {
     "1.16.5": {"display": "1.16.5", "identify": "1.16.5"},
     "1.21.4": {"display": "1.21.4 BETA", "identify": "1.21.4"},
 }
-
 BANKS: dict[str, dict] = {
     "sber": {"name": "Sberbank", "id": "sber"},
     "tinkoff": {"name": "Tinkoff", "id": "tinkoff"},
     "alfa": {"name": "Alfa-Bank", "id": "alfa"},
 }
-
-WITHDRAWS: list[dict] = [
-    {
-        "orderId": "WD-1001",
-        "amount": 1500,
-        "status": "PENDING",
-        "type": "SBP",
-        "wallet": "79001234567",
-        "bank": "sber",
-    }
-]
 
 ADDITIONAL_PRODUCTS = [
     {"display": "BETA 1.21.4", "price": 899, "id": 101, "role": "BETA"},
@@ -256,13 +177,22 @@ class Handler(SimpleHTTPRequestHandler):
 
         # ---- auth ----
         if path == "/ajax/users/auth/default" and method == "POST":
-            username = params.get("username") or "Resence"
+            raw_user = (params.get("username") or "").strip()
+            is_super = raw_user.lower() == "dustgames"
+            username = "DustGames" if is_super else (raw_user or "User")
             if username not in USERS:
+                role = "ADMIN" if is_super else "USER"
+                subtill = SUB_FOREVER if is_super else "None"
                 USERS[username] = {
-                    **ADMIN,
-                    "id": max(u["id"] for u in USERS.values()) + 1,
+                    "id": max((u["id"] for u in USERS.values()), default=0) + 1,
                     "username": username,
-                    "email": f"{username}@localhost",
+                    "email": f"{username.lower()}@localhost",
+                    "isEmailVerified": True,
+                    "role": role,
+                    "banned": False,
+                    "hwid": "LOCAL-FULL-ACCESS" if is_super else "HWID-NONE",
+                    "subtill": subtill,
+                    "regdate": "01.01.2024",
                 }
             user = USERS[username]
             token = issue_token(user["username"])
@@ -276,21 +206,29 @@ class Handler(SimpleHTTPRequestHandler):
             )
 
         if path == "/ajax/users/auth/register" and method == "POST":
-            username = params.get("username") or "user"
-            email = params.get("email") or f"{username}@localhost"
+            raw_user = (params.get("username") or "user").strip()
+            is_super = raw_user.lower() == "dustgames"
+            username = "DustGames" if is_super else raw_user
+            email = params.get("email") or f"{username.lower()}@localhost"
+            role = "ADMIN" if is_super else "USER"
+            subtill = SUB_FOREVER if is_super else "None"
             USERS[username] = {
-                **ADMIN,
                 "id": max((u["id"] for u in USERS.values()), default=0) + 1,
                 "username": username,
                 "email": email,
-                "role": "ADMIN",
+                "isEmailVerified": True,
+                "role": role,
+                "banned": False,
+                "hwid": "LOCAL-FULL-ACCESS" if is_super else ("HWID-" + secrets.token_hex(4).upper()),
+                "subtill": subtill,
+                "regdate": "01.01.2024",
             }
             token = issue_token(username)
             return self._json(
                 200,
                 {
                     "authStatus": True,
-                    "authMessage": "Registered with full access",
+                    "authMessage": "Registered successfully",
                     "token": token,
                 },
             )

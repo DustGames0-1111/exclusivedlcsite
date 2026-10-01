@@ -783,7 +783,7 @@ var ev = () => {
               className: "custom-footer-sparkle",
               children: "✦",
             }),
-            (0, I.jsx)("span", { children: "Resence" }),
+            (0, I.jsx)("span", { children: "Exclusive" }),
           ],
         }),
         (0, I.jsxs)("div", {
@@ -820,7 +820,7 @@ var ev = () => {
         }),
         (0, I.jsx)("div", {
           className: "custom-footer-copyright",
-          children: "© 2026 Resence. All rights reserved.",
+          children: "© 2026 Exclusive. All rights reserved.",
         }),
       ],
     }),

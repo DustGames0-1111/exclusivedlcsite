@@ -1,8 +1,8 @@
 {
-  "shortClientName": "Resence",
-  "clientName": "RESENCE",
+  "shortClientName": "Exclusive",
+  "clientName": "EXCLUSIVE",
   "version": "1.16.5",
-  "supportEmail": "support@resence.local",
+  "supportEmail": "support@exclusive.local",
   "url": "localhost",
   "ajaxUrl": "/ajax/",
   "funpayLink": "#",

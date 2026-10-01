@@ -336,7 +336,7 @@ class Handler(SimpleHTTPRequestHandler):
                 200,
                 {
                     "bet": 15,
-                    "code": "RESENCE",
+                    "code": "EXCLUSIVE",
                     "paymentBet": 50,
                     "payments": payments,
                     "totalAmount": sum(p["amount"] for p in payments),
@@ -447,7 +447,7 @@ class Handler(SimpleHTTPRequestHandler):
                     display = prod["display"] if prod else "Product"
                 lines = []
                 for _ in range(count):
-                    key = "RESENCE-" + secrets.token_hex(8).upper()
+                    key = "EXCLUSIVE-" + secrets.token_hex(8).upper()
                     KEYS.append({"key": key, "display": display, "generatedBy": user["username"]})
                     lines.append(key)
                 LOGS[str(int(time.time()))] = {
@@ -638,9 +638,9 @@ if path.endswith("/autoload/uploadVersion"):
 
 
 def main():
-    seed = issue_token("Resence")
+    seed = issue_token("Exclusive")
     print(f"Serving {ROOT} on http://127.0.0.1:{PORT}/", flush=True)
-    print("Admin: Resence / admin  (ADMIN + lifetime)", flush=True)
+    print("Admin: Exclusive / admin  (ADMIN + lifetime)", flush=True)
     print(f"Seed cookie ajax-cookie={seed}", flush=True)
     httpd = ThreadingHTTPServer(("127.0.0.1", PORT), Handler)
     httpd.serve_forever()

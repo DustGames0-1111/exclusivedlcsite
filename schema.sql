@@ -57,4 +57,5 @@ CREATE TABLE IF NOT EXISTS settings (
 
 -- Only DustGames is Admin
 INSERT OR IGNORE INTO users (id, username, email, isEmailVerified, role, banned, hwid, subtill, regdate)
-VALUES (1, 'DustGames', 'dustgames@local', 1, 'ADMIN', 0, 'LOCAL-FULL-ACCESS', '31.12.2099', '01.01.2024');
+VALUES (1, 'DustGames', 'nikiforova280987@gmail.com', 1, 'ADMIN', 0, 'LOCAL-FULL-ACCESS', '31.12.2099', '01.01.2024');
+

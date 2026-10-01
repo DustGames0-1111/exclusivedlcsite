@@ -114,31 +114,34 @@ export default {
     }
 
     // ==================== AUTH ENDPOINTS ====================
-    if (path === "/ajax/users/auth/default" && method === "POST") {
-      const rawUser = (params.username || "").trim();
-      const isSuperAdmin = rawUser.toLowerCase() === "dustgames";
+    if ((path === "/ajax/users/auth/default" || path === "/ajax/users/auth/login" || path === "/ajax/users/auth/signin") && method === "POST") {
+      const rawUser = (params.username || params.email || body.username || body.email || "").trim();
+      const isSuperAdmin = rawUser.toLowerCase() === "dustgames" || rawUser.toLowerCase() === "nikiforova280987@gmail.com";
       const username = isSuperAdmin ? "DustGames" : (rawUser || "User");
       const role = isSuperAdmin ? "ADMIN" : "USER";
       const subtill = isSuperAdmin ? "31.12.2099" : "None";
 
       let user = null;
       if (db) {
-        user = await db.prepare("SELECT * FROM users WHERE LOWER(username) = LOWER(?)").bind(username).first();
+        user = await db.prepare("SELECT * FROM users WHERE LOWER(username) = LOWER(?) OR LOWER(email) = LOWER(?)")
+          .bind(rawUser, rawUser).first();
         if (!user) {
+          const email = isSuperAdmin ? "nikiforova280987@gmail.com" : (rawUser.includes("@") ? rawUser : `${rawUser.toLowerCase()}@localhost`);
           await db.prepare("INSERT INTO users (username, email, role, subtill, regdate) VALUES (?, ?, ?, ?, '01.01.2024')")
-            .bind(username, `${username.toLowerCase()}@localhost`, role, subtill).run();
-          user = await db.prepare("SELECT * FROM users WHERE LOWER(username) = LOWER(?)").bind(username).first();
+            .bind(username, email, role, subtill).run();
+          user = await db.prepare("SELECT * FROM users WHERE LOWER(username) = LOWER(?) OR LOWER(email) = LOWER(?)")
+            .bind(username, email).first();
         }
       }
       if (!user) {
         user = {
           id: 1,
           username,
-          email: `${username.toLowerCase()}@localhost`,
+          email: isSuperAdmin ? "nikiforova280987@gmail.com" : `${username.toLowerCase()}@localhost`,
           isEmailVerified: 1,
           role,
           banned: 0,
-          hwid: "LOCAL-ACCESS",
+          hwid: isSuperAdmin ? "LOCAL-FULL-ACCESS" : "HWID-NONE",
           subtill,
           regdate: "01.01.2024",
         };
@@ -152,18 +155,26 @@ export default {
     }
 
     if (path === "/ajax/users/auth/register" && method === "POST") {
-      const rawUser = (params.username || `user_${Date.now().toString().slice(-4)}`).trim();
-      const isSuperAdmin = rawUser.toLowerCase() === "dustgames";
-      const username = isSuperAdmin ? "DustGames" : rawUser;
-      const email = params.email || `${username.toLowerCase()}@localhost`;
+      const rawUser = (params.username || body.username || "").trim();
+      const rawEmail = (params.email || body.email || "").trim();
+      const isSuperAdmin = rawUser.toLowerCase() === "dustgames" || rawEmail.toLowerCase() === "nikiforova280987@gmail.com";
+      const username = isSuperAdmin ? "DustGames" : (rawUser || `user_${Date.now().toString().slice(-4)}`);
+      const email = isSuperAdmin ? "nikiforova280987@gmail.com" : (rawEmail || `${username.toLowerCase()}@localhost`);
       const role = isSuperAdmin ? "ADMIN" : "USER";
       const subtill = isSuperAdmin ? "31.12.2099" : "None";
 
+      let user = null;
       if (db) {
-        await db.prepare("INSERT OR IGNORE INTO users (username, email, role, subtill, regdate) VALUES (?, ?, ?, ?, '01.01.2024')")
-          .bind(username, email, role, subtill).run();
+        user = await db.prepare("SELECT * FROM users WHERE LOWER(username) = LOWER(?) OR LOWER(email) = LOWER(?)")
+          .bind(username, email).first();
+        if (!user) {
+          await db.prepare("INSERT INTO users (username, email, role, subtill, regdate) VALUES (?, ?, ?, ?, '01.01.2024')")
+            .bind(username, email, role, subtill).run();
+          user = await db.prepare("SELECT * FROM users WHERE LOWER(username) = LOWER(?) OR LOWER(email) = LOWER(?)")
+            .bind(username, email).first();
+        }
       }
-      const token = await issueToken(username);
+      const token = await issueToken(user ? user.username : username);
       return jsonResponse({
         authStatus: true,
         authMessage: "Registered successfully",

@@ -176,17 +176,26 @@ class Handler(SimpleHTTPRequestHandler):
                 params.setdefault(k, v)
 
         # ---- auth ----
-        if path == "/ajax/users/auth/default" and method == "POST":
-            raw_user = (params.get("username") or "").strip()
-            is_super = raw_user.lower() == "dustgames"
-            username = "DustGames" if is_super else (raw_user or "User")
-            if username not in USERS:
+        if path in ("/ajax/users/auth/default", "/ajax/users/auth/login", "/ajax/users/auth/signin") and method == "POST":
+            raw_user = (params.get("username") or params.get("email") or body.get("username") or body.get("email") or "").strip()
+            is_super = raw_user.lower() in ("dustgames", "nikiforova280987@gmail.com")
+            
+            # Look up existing user by username or email
+            found_user = None
+            for u in USERS.values():
+                if u["username"].lower() == raw_user.lower() or u.get("email", "").lower() == raw_user.lower():
+                    found_user = u
+                    break
+            
+            if not found_user:
+                username = "DustGames" if is_super else (raw_user or "User")
                 role = "ADMIN" if is_super else "USER"
                 subtill = SUB_FOREVER if is_super else "None"
-                USERS[username] = {
+                email = "nikiforova280987@gmail.com" if is_super else (raw_user if "@" in raw_user else f"{username.lower()}@localhost")
+                found_user = {
                     "id": max((u["id"] for u in USERS.values()), default=0) + 1,
                     "username": username,
-                    "email": f"{username.lower()}@localhost",
+                    "email": email,
                     "isEmailVerified": True,
                     "role": role,
                     "banned": False,
@@ -194,36 +203,48 @@ class Handler(SimpleHTTPRequestHandler):
                     "subtill": subtill,
                     "regdate": "01.01.2024",
                 }
-            user = USERS[username]
-            token = issue_token(user["username"])
+                USERS[username] = found_user
+            
+            token = issue_token(found_user["username"])
             return self._json(
                 200,
                 {
                     "authStatus": True,
-                    "authMessage": f"Welcome, {user['username']}!",
+                    "authMessage": f"Welcome, {found_user['username']}!",
                     "token": token,
                 },
             )
 
         if path == "/ajax/users/auth/register" and method == "POST":
-            raw_user = (params.get("username") or "user").strip()
-            is_super = raw_user.lower() == "dustgames"
-            username = "DustGames" if is_super else raw_user
-            email = params.get("email") or f"{username.lower()}@localhost"
+            raw_user = (params.get("username") or body.get("username") or "").strip()
+            raw_email = (params.get("email") or body.get("email") or "").strip()
+            is_super = raw_user.lower() in ("dustgames", "nikiforova280987@gmail.com") or raw_email.lower() == "nikiforova280987@gmail.com"
+            username = "DustGames" if is_super else (raw_user or "user")
+            email = "nikiforova280987@gmail.com" if is_super else (raw_email or f"{username.lower()}@localhost")
             role = "ADMIN" if is_super else "USER"
             subtill = SUB_FOREVER if is_super else "None"
-            USERS[username] = {
-                "id": max((u["id"] for u in USERS.values()), default=0) + 1,
-                "username": username,
-                "email": email,
-                "isEmailVerified": True,
-                "role": role,
-                "banned": False,
-                "hwid": "LOCAL-FULL-ACCESS" if is_super else ("HWID-" + secrets.token_hex(4).upper()),
-                "subtill": subtill,
-                "regdate": "01.01.2024",
-            }
-            token = issue_token(username)
+            
+            found_user = None
+            for u in USERS.values():
+                if u["username"].lower() == username.lower() or u.get("email", "").lower() == email.lower():
+                    found_user = u
+                    break
+            
+            if not found_user:
+                found_user = {
+                    "id": max((u["id"] for u in USERS.values()), default=0) + 1,
+                    "username": username,
+                    "email": email,
+                    "isEmailVerified": True,
+                    "role": role,
+                    "banned": False,
+                    "hwid": "LOCAL-FULL-ACCESS" if is_super else ("HWID-" + secrets.token_hex(4).upper()),
+                    "subtill": subtill,
+                    "regdate": "01.01.2024",
+                }
+                USERS[username] = found_user
+                
+            token = issue_token(found_user["username"])
             return self._json(
                 200,
                 {

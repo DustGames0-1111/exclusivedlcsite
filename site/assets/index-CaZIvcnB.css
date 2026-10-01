@@ -700,3 +700,22 @@ html:not(.dark) ._product_cmjx9_923 {
   letter-spacing: -0.2px;
   white-space: nowrap;
 }
+
+
+/* Light Theme Adaptation for Supported Mods Section */
+html:not(.dark) .mods-title {
+  color: #0f172a !important;
+}
+
+html:not(.dark) .mod-name {
+  color: #1e293b !important;
+}
+
+html:not(.dark) .mod-card {
+  background: rgba(0, 0, 0, 0.04) !important;
+  border: 1px solid rgba(0, 0, 0, 0.06) !important;
+}
+
+html:not(.dark) .mod-card:hover {
+  background: rgba(0, 0, 0, 0.08) !important;
+}

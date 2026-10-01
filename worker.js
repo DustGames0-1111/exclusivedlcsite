@@ -286,7 +286,7 @@ export default {
     }
 
     if (path === "/ajax/payments/createPayment" || path === "/ajax/payments/frontend/create") {
-      return jsonResponse({ status: 200, data: "https://pay.example.com" });
+      return textResponse("Купить чит можно будет позже", 400);
     }
 
     // ==================== MEDIA / PROMO STATS ====================

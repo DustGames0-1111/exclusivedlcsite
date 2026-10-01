@@ -24,7 +24,7 @@ ADMIN = {
     "banned": False,
     "hwid": "LOCAL-FULL-ACCESS",
     "subtill": SUB_FOREVER,
-    "regdate": "01.01.2024",
+    "regdate": datetime.now(timezone.utc).strftime("%d.%m.%Y"),
 }
 
 USERS: dict[str, dict] = {
@@ -205,7 +205,7 @@ class Handler(SimpleHTTPRequestHandler):
                         "banned": False,
                         "hwid": "LOCAL-FULL-ACCESS",
                         "subtill": subtill,
-                        "regdate": "01.01.2024",
+                        "regdate": datetime.now(timezone.utc).strftime("%d.%m.%Y"),
                     }
                     USERS[username] = found_user
                 else:
@@ -249,7 +249,7 @@ class Handler(SimpleHTTPRequestHandler):
                 "banned": False,
                 "hwid": "LOCAL-FULL-ACCESS" if is_super else ("HWID-" + secrets.token_hex(4).upper()),
                 "subtill": subtill,
-                "regdate": "01.01.2024",
+                "regdate": datetime.now(timezone.utc).strftime("%d.%m.%Y"),
             }
             USERS[username] = found_user
                 

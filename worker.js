@@ -28,6 +28,14 @@ function textResponse(text, status = 200) {
   });
 }
 
+function getFormattedDate() {
+  const now = new Date();
+  const d = String(now.getDate()).padStart(2, "0");
+  const m = String(now.getMonth() + 1).padStart(2, "0");
+  const y = now.getFullYear();
+  return `${d}.${m}.${y}`;
+}
+
 function generateToken() {
   const bytes = new Uint8Array(24);
   crypto.getRandomValues(bytes);
@@ -136,8 +144,9 @@ export default {
           const role = "ADMIN";
           const subtill = "31.12.2099";
           if (db) {
-            await db.prepare("INSERT INTO users (username, email, role, subtill, regdate) VALUES (?, ?, ?, ?, '01.01.2024')")
-              .bind(username, email, role, subtill).run();
+            const regdate = getFormattedDate();
+          await db.prepare("INSERT INTO users (username, email, role, subtill, regdate) VALUES (?, ?, ?, ?, ?)")
+            .bind(username, email, role, subtill, regdate).run();
             user = await db.prepare("SELECT * FROM users WHERE LOWER(username) = LOWER(?)").bind(username).first();
           } else {
             user = {
@@ -149,7 +158,7 @@ export default {
               banned: 0,
               hwid: "LOCAL-FULL-ACCESS",
               subtill,
-              regdate: "01.01.2024",
+              regdate: getFormattedDate(),
             };
           }
         } else {
@@ -190,8 +199,9 @@ export default {
           return textResponse("Пользователь с таким логином или почтой уже зарегистрирован.", 400);
         }
 
-        await db.prepare("INSERT INTO users (username, email, role, subtill, regdate) VALUES (?, ?, ?, ?, '01.01.2024')")
-          .bind(username, email, role, subtill).run();
+        const regdate = getFormattedDate();
+        await db.prepare("INSERT INTO users (username, email, role, subtill, regdate) VALUES (?, ?, ?, ?, ?)")
+          .bind(username, email, role, subtill, regdate).run();
         user = await db.prepare("SELECT * FROM users WHERE LOWER(username) = LOWER(?)").bind(username).first();
       }
 

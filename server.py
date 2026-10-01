@@ -51,6 +51,22 @@ ADDITIONAL_PRODUCTS = [
     {"display": "BETA 1.21.11 + LifeTime", "price": 899, "id": 102, "role": "BETA", "time": 999},
 ]
 
+PAYLOADS: dict[str, dict] = {}
+
+
+def is_sub_active(subtill: str) -> bool:
+    if not subtill or subtill.lower() == "none":
+        return False
+    try:
+        parts = subtill.split(".")
+        if len(parts) == 3:
+            day, month, year = int(parts[0]), int(parts[1]), int(parts[2])
+            expiry = datetime(year, month, day, 23, 59, 59, tzinfo=timezone.utc)
+            return expiry >= datetime.now(timezone.utc)
+    except Exception:
+        pass
+    return False
+
 
 def issue_token(username: str) -> str:
     token = secrets.token_hex(24)
@@ -353,6 +369,75 @@ class Handler(SimpleHTTPRequestHandler):
                 return self._text(401, "Unauthorized")
             return self._text(200, "Promocode linked")
 
+        # ---- REMOTE LOADER & IN-MEMORY BYTECODE DELIVERY ----
+        if path == "/ajax/loader/auth" and method in ("POST", "GET"):
+            user, token = self._user_from_token(params, body)
+            hwid = str(params.get("hwid") or body.get("hwid") or "").strip()
+            version = str(params.get("version") or body.get("version") or "1.21.11").strip()
+
+            if not user:
+                return self._json(401, {"success": False, "error": "Недействительный или истекший токен."})
+
+            if user.get("banned"):
+                return self._json(403, {"success": False, "error": "Ваш аккаунт заблокирован."})
+
+            if user.get("role") != "ADMIN" and not is_sub_active(user.get("subtill", "")):
+                return self._json(403, {"success": False, "error": "Подписка не активна. Продлите на exclusivedlc.fun"})
+
+            if hwid:
+                user_hwid = str(user.get("hwid") or "").strip()
+                is_reset = not user_hwid or user_hwid == "HWID-NONE" or user_hwid.startswith("RESET-")
+                if is_reset:
+                    user["hwid"] = hwid
+                elif user_hwid.upper() != hwid.upper() and user_hwid != "LOCAL-FULL-ACCESS" and user.get("role") != "ADMIN":
+                    return self._json(403, {"success": False, "error": "Несовпадение HWID. Сбросьте привязку в профиле."})
+
+            return self._json(200, {
+                "success": True,
+                "username": user["username"],
+                "role": user["role"],
+                "subtill": user["subtill"],
+                "version": version,
+                "message": "Авторизация лоадера успешна",
+            })
+
+        if path == "/ajax/loader/payload" and method == "POST":
+            user, token = self._user_from_token(params, body)
+            hwid = str(params.get("hwid") or body.get("hwid") or "").strip()
+            version = str(params.get("version") or body.get("version") or "1.21.11").strip()
+
+            if not user:
+                return self._json(401, {"success": False, "error": "Требуется токен авторизации."})
+
+            if user.get("banned"):
+                return self._json(403, {"success": False, "error": "Аккаунт заблокирован."})
+
+            if user.get("role") != "ADMIN" and not is_sub_active(user.get("subtill", "")):
+                return self._json(403, {"success": False, "error": "Подписка не активна."})
+
+            if hwid:
+                user_hwid = str(user.get("hwid") or "").strip()
+                is_reset = not user_hwid or user_hwid == "HWID-NONE" or user_hwid.startswith("RESET-")
+                if is_reset:
+                    user["hwid"] = hwid
+                elif user_hwid.upper() != hwid.upper() and user_hwid != "LOCAL-FULL-ACCESS" and user.get("role") != "ADMIN":
+                    return self._json(403, {"success": False, "error": "Привязка HWID не совпадает."})
+
+            payload_obj = PAYLOADS.get(version)
+            if not payload_obj:
+                return self._json(404, {
+                    "success": False,
+                    "error": f"Байткод чита для версии {version} еще не загружен на сервер.",
+                })
+
+            return self._json(200, {
+                "success": True,
+                "version": version,
+                "entryClass": payload_obj.get("entry_class", "ru.exclusive.client.Main"),
+                "payload": payload_obj.get("payload_data", ""),
+                "updatedAt": payload_obj.get("updated_at", datetime.now(timezone.utc).isoformat()),
+            })
+
         # ---- admin / friends ----
         if path.startswith("/ajax/admin/") or path.startswith("/ajax/friends/"):
             user, token = self._user_from_token(params, body)
@@ -562,8 +647,50 @@ class Handler(SimpleHTTPRequestHandler):
                     except Exception as e:
                         return self._text(500, f"Error writing config: {e}")
                 return self._json(200, {"status": "ok", "videoUrl": embed_url})
-if path.endswith("/autoload/uploadVersion"):
+
+            if path.endswith("/autoload/uploadVersion"):
                 return self._text(200, "Version uploaded successfully")
+
+            # ---- loader payloads management ----
+            if path.endswith("/loader/uploadPayload") and method == "POST":
+                version = str(params.get("version") or body.get("version") or "1.21.11").strip()
+                entry_class = str(params.get("entry_class") or params.get("entryClass") or body.get("entry_class") or body.get("entryClass") or "ru.exclusive.client.Main").strip()
+                payload_data = str(params.get("payload") or body.get("payload") or params.get("payload_data") or body.get("payload_data") or "").strip()
+
+                if not payload_data:
+                    return self._json(400, {"success": False, "error": "Отсутствуют данные payload (base64)."})
+
+                PAYLOADS[version] = {
+                    "version": version,
+                    "entry_class": entry_class,
+                    "payload_data": payload_data,
+                    "updated_at": datetime.now(timezone.utc).isoformat(),
+                }
+                return self._json(200, {
+                    "success": True,
+                    "message": f"Payload для версии {version} успешно сохранен на сервере.",
+                    "version": version,
+                    "entryClass": entry_class,
+                    "bytesLength": len(payload_data),
+                })
+
+            if path.endswith("/loader/listPayloads"):
+                items = [
+                    {
+                        "version": p["version"],
+                        "entry_class": p["entry_class"],
+                        "size": len(p["payload_data"]),
+                        "updated_at": p["updated_at"],
+                    }
+                    for p in PAYLOADS.values()
+                ]
+                return self._json(200, items)
+
+            if path.endswith("/loader/deletePayload") and method == "POST":
+                version = str(params.get("version") or body.get("version") or "").strip()
+                if version in PAYLOADS:
+                    del PAYLOADS[version]
+                return self._json(200, {"success": True, "message": f"Payload версии {version} удален."})
 
             # ---- finances / withdraw ----
             if path.endswith("/finances/getBalance"):

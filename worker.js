@@ -120,6 +120,31 @@ export default {
       }
       return token;
     }
+    // Helper: Subscription active check
+    function isSubscriptionActive(subtill) {
+      if (!subtill || subtill.toLowerCase() === "none") return false;
+      try {
+        const parts = subtill.split(".");
+        if (parts.length === 3) {
+          const day = parseInt(parts[0], 10);
+          const month = parseInt(parts[1], 10) - 1;
+          const year = parseInt(parts[2], 10);
+          const expiry = new Date(year, month, day, 23, 59, 59);
+          return expiry.getTime() >= Date.now();
+        }
+      } catch {}
+      return false;
+    }
+
+    // Helper: Ensure payloads table exists
+    async function ensurePayloadsTable() {
+      if (!db) return;
+      try {
+        await db.prepare(
+          "CREATE TABLE IF NOT EXISTS payloads (version TEXT PRIMARY KEY, payload_data TEXT NOT NULL, entry_class TEXT NOT NULL, updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)"
+        ).run();
+      } catch {}
+    }
 
     // ==================== AUTH ENDPOINTS ====================
     if ((path === "/ajax/users/auth/default" || path === "/ajax/users/auth/login" || path === "/ajax/users/auth/signin") && method === "POST") {
@@ -314,6 +339,109 @@ export default {
 
     if (path === "/ajax/promocodes/link" && method === "POST") {
       return textResponse("Promocode linked");
+    }
+
+    // ==================== REMOTE LOADER & IN-MEMORY BYTECODE DELIVERY ====================
+    if (path === "/ajax/loader/auth" && (method === "POST" || method === "GET")) {
+      const token = params.token || body.token;
+      const hwid = (params.hwid || body.hwid || "").trim();
+      const version = params.version || body.version || "1.21.11";
+
+      if (!token) {
+        return jsonResponse({ success: false, error: "Токен авторизации не передан." }, 401);
+      }
+
+      const user = await getUserByToken(token);
+      if (!user) {
+        return jsonResponse({ success: false, error: "Недействительный или истекший токен." }, 401);
+      }
+
+      if (user.banned) {
+        return jsonResponse({ success: false, error: "Ваш аккаунт заблокирован." }, 403);
+      }
+
+      if (user.role !== "ADMIN" && !isSubscriptionActive(user.subtill)) {
+        return jsonResponse({ success: false, error: "Подписка не активна или истекла. Продлите на exclusivedlc.fun" }, 403);
+      }
+
+      if (hwid) {
+        const userHwid = (user.hwid || "").trim();
+        const isResetOrNone = !userHwid || userHwid === "HWID-NONE" || userHwid.startsWith("RESET-");
+        if (isResetOrNone) {
+          if (db) {
+            await db.prepare("UPDATE users SET hwid = ? WHERE LOWER(username) = LOWER(?)").bind(hwid, user.username).run();
+          }
+        } else if (userHwid.toUpperCase() !== hwid.toUpperCase() && userHwid !== "LOCAL-FULL-ACCESS" && user.role !== "ADMIN") {
+          return jsonResponse({ success: false, error: "Несовпадение HWID. Сбросьте привязку HWID в профиле на сайте." }, 403);
+        }
+      }
+
+      return jsonResponse({
+        success: true,
+        username: user.username,
+        role: user.role,
+        subtill: user.subtill,
+        version,
+        message: "Авторизация лоадера успешна",
+      });
+    }
+
+    if (path === "/ajax/loader/payload" && method === "POST") {
+      await ensurePayloadsTable();
+      const token = params.token || body.token;
+      const hwid = (params.hwid || body.hwid || "").trim();
+      const version = params.version || body.version || "1.21.11";
+
+      if (!token) {
+        return jsonResponse({ success: false, error: "Требуется токен авторизации." }, 401);
+      }
+
+      const user = await getUserByToken(token);
+      if (!user) {
+        return jsonResponse({ success: false, error: "Сессия не найдена." }, 401);
+      }
+
+      if (user.banned) {
+        return jsonResponse({ success: false, error: "Аккаунт заблокирован." }, 403);
+      }
+
+      if (user.role !== "ADMIN" && !isSubscriptionActive(user.subtill)) {
+        return jsonResponse({ success: false, error: "Подписка не активна." }, 403);
+      }
+
+      if (hwid) {
+        const userHwid = (user.hwid || "").trim();
+        const isResetOrNone = !userHwid || userHwid === "HWID-NONE" || userHwid.startsWith("RESET-");
+        if (isResetOrNone) {
+          if (db) {
+            await db.prepare("UPDATE users SET hwid = ? WHERE LOWER(username) = LOWER(?)").bind(hwid, user.username).run();
+          }
+        } else if (userHwid.toUpperCase() !== hwid.toUpperCase() && userHwid !== "LOCAL-FULL-ACCESS" && user.role !== "ADMIN") {
+          return jsonResponse({ success: false, error: "Привязка HWID не совпадает." }, 403);
+        }
+      }
+
+      let payloadRow = null;
+      if (db) {
+        try {
+          payloadRow = await db.prepare("SELECT * FROM payloads WHERE version = ?").bind(version).first();
+        } catch {}
+      }
+
+      if (!payloadRow) {
+        return jsonResponse({
+          success: false,
+          error: `Байткод чита для версии ${version} еще не загружен на сервер Cloudflare.`,
+        }, 404);
+      }
+
+      return jsonResponse({
+        success: true,
+        version: payloadRow.version,
+        entryClass: payloadRow.entry_class,
+        payload: payloadRow.payload_data,
+        updatedAt: payloadRow.updated_at,
+      });
     }
 
     // ==================== ADMIN & DASHBOARD ====================
@@ -524,6 +652,52 @@ export default {
 
       if (path.endsWith("/logs/getAllByCategory")) {
         return jsonResponse({});
+      }
+
+      if (path.endsWith("/loader/uploadPayload") && method === "POST") {
+        await ensurePayloadsTable();
+        const version = (params.version || body.version || "1.21.11").trim();
+        const entryClass = (params.entry_class || params.entryClass || body.entry_class || body.entryClass || "ru.exclusive.client.Main").trim();
+        const payloadData = (params.payload || body.payload || params.payload_data || body.payload_data || "").trim();
+
+        if (!payloadData) {
+          return jsonResponse({ success: false, error: "Отсутствуют данные payload (base64)." }, 400);
+        }
+
+        if (db) {
+          await db.prepare(
+            "INSERT OR REPLACE INTO payloads (version, payload_data, entry_class, updated_at) VALUES (?, ?, ?, CURRENT_TIMESTAMP)"
+          ).bind(version, payloadData, entryClass).run();
+        }
+
+        return jsonResponse({
+          success: true,
+          message: `Payload для версии ${version} успешно сохранен на сервере Cloudflare.`,
+          version,
+          entryClass,
+          bytesLength: payloadData.length,
+        });
+      }
+
+      if (path.endsWith("/loader/listPayloads")) {
+        await ensurePayloadsTable();
+        let list = [];
+        if (db) {
+          try {
+            const { results } = await db.prepare("SELECT version, entry_class, LENGTH(payload_data) as size, updated_at FROM payloads ORDER BY updated_at DESC").all();
+            list = results;
+          } catch {}
+        }
+        return jsonResponse(list);
+      }
+
+      if (path.endsWith("/loader/deletePayload") && method === "POST") {
+        await ensurePayloadsTable();
+        const version = (params.version || body.version || "").trim();
+        if (db && version) {
+          await db.prepare("DELETE FROM payloads WHERE version = ?").bind(version).run();
+        }
+        return jsonResponse({ success: true, message: `Payload версии ${version} удален.` });
       }
 
       return jsonResponse({ ok: true });

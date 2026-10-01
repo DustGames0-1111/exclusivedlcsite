@@ -50,9 +50,11 @@ CREATE TABLE IF NOT EXISTS withdraws (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS settings (
-    key TEXT PRIMARY KEY,
-    value TEXT NOT NULL
+CREATE TABLE IF NOT EXISTS payloads (
+    version TEXT PRIMARY KEY,
+    payload_data TEXT NOT NULL,
+    entry_class TEXT NOT NULL,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Only DustGames is Admin

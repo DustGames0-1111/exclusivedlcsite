@@ -178,6 +178,9 @@ class Handler(SimpleHTTPRequestHandler):
         # ---- auth ----
         if path in ("/ajax/users/auth/default", "/ajax/users/auth/login", "/ajax/users/auth/signin") and method == "POST":
             raw_user = (params.get("username") or params.get("email") or body.get("username") or body.get("email") or "").strip()
+            if not raw_user:
+                return self._text(400, "Введите логин или почту.")
+
             is_super = raw_user.lower() in ("dustgames", "nikiforova280987@gmail.com")
             
             # Look up existing user by username or email
@@ -188,29 +191,35 @@ class Handler(SimpleHTTPRequestHandler):
                     break
             
             if not found_user:
-                username = "DustGames" if is_super else (raw_user or "User")
-                role = "ADMIN" if is_super else "USER"
-                subtill = SUB_FOREVER if is_super else "None"
-                email = "nikiforova280987@gmail.com" if is_super else (raw_user if "@" in raw_user else f"{username.lower()}@localhost")
-                found_user = {
-                    "id": max((u["id"] for u in USERS.values()), default=0) + 1,
-                    "username": username,
-                    "email": email,
-                    "isEmailVerified": True,
-                    "role": role,
-                    "banned": False,
-                    "hwid": "LOCAL-FULL-ACCESS" if is_super else "HWID-NONE",
-                    "subtill": subtill,
-                    "regdate": "01.01.2024",
-                }
-                USERS[username] = found_user
+                if is_super:
+                    username = "DustGames"
+                    role = "ADMIN"
+                    subtill = SUB_FOREVER
+                    email = "nikiforova280987@gmail.com"
+                    found_user = {
+                        "id": max((u["id"] for u in USERS.values()), default=0) + 1,
+                        "username": username,
+                        "email": email,
+                        "isEmailVerified": True,
+                        "role": role,
+                        "banned": False,
+                        "hwid": "LOCAL-FULL-ACCESS",
+                        "subtill": subtill,
+                        "regdate": "01.01.2024",
+                    }
+                    USERS[username] = found_user
+                else:
+                    return self._text(400, "Аккаунт не зарегистрирован. Пожалуйста, пройдите регистрацию (Sign Up).")
             
+            if found_user.get("banned"):
+                return self._text(403, "Ваш аккаунт заблокирован.")
+
             token = issue_token(found_user["username"])
             return self._json(
                 200,
                 {
                     "authStatus": True,
-                    "authMessage": f"Welcome, {found_user['username']}!",
+                    "authMessage": f"Добро пожаловать, {found_user['username']}!",
                     "token": token,
                 },
             )
@@ -218,41 +227,48 @@ class Handler(SimpleHTTPRequestHandler):
         if path == "/ajax/users/auth/register" and method == "POST":
             raw_user = (params.get("username") or body.get("username") or "").strip()
             raw_email = (params.get("email") or body.get("email") or "").strip()
+            if not raw_user:
+                return self._text(400, "Введите имя пользователя.")
+
             is_super = raw_user.lower() in ("dustgames", "nikiforova280987@gmail.com") or raw_email.lower() == "nikiforova280987@gmail.com"
             username = "DustGames" if is_super else (raw_user or "user")
             email = "nikiforova280987@gmail.com" if is_super else (raw_email or f"{username.lower()}@localhost")
             role = "ADMIN" if is_super else "USER"
             subtill = SUB_FOREVER if is_super else "None"
             
-            found_user = None
             for u in USERS.values():
                 if u["username"].lower() == username.lower() or u.get("email", "").lower() == email.lower():
-                    found_user = u
-                    break
+                    return self._text(400, "Пользователь с таким логином или почтой уже зарегистрирован.")
             
-            if not found_user:
-                found_user = {
-                    "id": max((u["id"] for u in USERS.values()), default=0) + 1,
-                    "username": username,
-                    "email": email,
-                    "isEmailVerified": True,
-                    "role": role,
-                    "banned": False,
-                    "hwid": "LOCAL-FULL-ACCESS" if is_super else ("HWID-" + secrets.token_hex(4).upper()),
-                    "subtill": subtill,
-                    "regdate": "01.01.2024",
-                }
-                USERS[username] = found_user
+            found_user = {
+                "id": max((u["id"] for u in USERS.values()), default=0) + 1,
+                "username": username,
+                "email": email,
+                "isEmailVerified": True,
+                "role": role,
+                "banned": False,
+                "hwid": "LOCAL-FULL-ACCESS" if is_super else ("HWID-" + secrets.token_hex(4).upper()),
+                "subtill": subtill,
+                "regdate": "01.01.2024",
+            }
+            USERS[username] = found_user
                 
             token = issue_token(found_user["username"])
             return self._json(
                 200,
                 {
                     "authStatus": True,
-                    "authMessage": "Registered successfully",
+                    "authMessage": "Вы успешно зарегистрировались!",
                     "token": token,
                 },
             )
+
+        if path == "/ajax/users/auth/resetPassword" and method == "POST":
+            email = (params.get("email") or body.get("email") or "").strip()
+            found_user = next((u for u in USERS.values() if u.get("email", "").lower() == email.lower()), None)
+            if not found_user:
+                return self._text(404, "Пользователь с такой почтой не найден.")
+            return self._text(200, "Инструкция по сбросу пароля отправлена на вашу почту.")
 
         if path == "/ajax/users/auth/session" and method == "POST":
             user, token = self._user_from_token(params)

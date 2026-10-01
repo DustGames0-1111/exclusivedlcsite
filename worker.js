@@ -116,40 +116,55 @@ export default {
     // ==================== AUTH ENDPOINTS ====================
     if ((path === "/ajax/users/auth/default" || path === "/ajax/users/auth/login" || path === "/ajax/users/auth/signin") && method === "POST") {
       const rawUser = (params.username || params.email || body.username || body.email || "").trim();
-      const isSuperAdmin = rawUser.toLowerCase() === "dustgames" || rawUser.toLowerCase() === "nikiforova280987@gmail.com";
-      const username = isSuperAdmin ? "DustGames" : (rawUser || "User");
-      const role = isSuperAdmin ? "ADMIN" : "USER";
-      const subtill = isSuperAdmin ? "31.12.2099" : "None";
+      if (!rawUser) {
+        return textResponse("Введите логин или почту.", 400);
+      }
 
+      const isSuperAdmin = rawUser.toLowerCase() === "dustgames" || rawUser.toLowerCase() === "nikiforova280987@gmail.com";
+      
       let user = null;
       if (db) {
         user = await db.prepare("SELECT * FROM users WHERE LOWER(username) = LOWER(?) OR LOWER(email) = LOWER(?)")
           .bind(rawUser, rawUser).first();
-        if (!user) {
-          const email = isSuperAdmin ? "nikiforova280987@gmail.com" : (rawUser.includes("@") ? rawUser : `${rawUser.toLowerCase()}@localhost`);
-          await db.prepare("INSERT INTO users (username, email, role, subtill, regdate) VALUES (?, ?, ?, ?, '01.01.2024')")
-            .bind(username, email, role, subtill).run();
-          user = await db.prepare("SELECT * FROM users WHERE LOWER(username) = LOWER(?) OR LOWER(email) = LOWER(?)")
-            .bind(username, email).first();
+      }
+
+      // If user does not exist in DB
+      if (!user) {
+        if (isSuperAdmin) {
+          const email = "nikiforova280987@gmail.com";
+          const username = "DustGames";
+          const role = "ADMIN";
+          const subtill = "31.12.2099";
+          if (db) {
+            await db.prepare("INSERT INTO users (username, email, role, subtill, regdate) VALUES (?, ?, ?, ?, '01.01.2024')")
+              .bind(username, email, role, subtill).run();
+            user = await db.prepare("SELECT * FROM users WHERE LOWER(username) = LOWER(?)").bind(username).first();
+          } else {
+            user = {
+              id: 1,
+              username,
+              email,
+              isEmailVerified: 1,
+              role,
+              banned: 0,
+              hwid: "LOCAL-FULL-ACCESS",
+              subtill,
+              regdate: "01.01.2024",
+            };
+          }
+        } else {
+          return textResponse("Аккаунт не зарегистрирован. Пожалуйста, пройдите регистрацию (Sign Up).", 400);
         }
       }
-      if (!user) {
-        user = {
-          id: 1,
-          username,
-          email: isSuperAdmin ? "nikiforova280987@gmail.com" : `${username.toLowerCase()}@localhost`,
-          isEmailVerified: 1,
-          role,
-          banned: 0,
-          hwid: isSuperAdmin ? "LOCAL-FULL-ACCESS" : "HWID-NONE",
-          subtill,
-          regdate: "01.01.2024",
-        };
+
+      if (user.banned) {
+        return textResponse("Ваш аккаунт заблокирован.", 403);
       }
+
       const token = await issueToken(user.username);
       return jsonResponse({
         authStatus: true,
-        authMessage: `Welcome, ${user.username}!`,
+        authMessage: `Добро пожаловать, ${user.username}!`,
         token,
       });
     }
@@ -157,29 +172,47 @@ export default {
     if (path === "/ajax/users/auth/register" && method === "POST") {
       const rawUser = (params.username || body.username || "").trim();
       const rawEmail = (params.email || body.email || "").trim();
+      if (!rawUser) {
+        return textResponse("Введите имя пользователя.", 400);
+      }
+
       const isSuperAdmin = rawUser.toLowerCase() === "dustgames" || rawEmail.toLowerCase() === "nikiforova280987@gmail.com";
-      const username = isSuperAdmin ? "DustGames" : (rawUser || `user_${Date.now().toString().slice(-4)}`);
+      const username = isSuperAdmin ? "DustGames" : rawUser;
       const email = isSuperAdmin ? "nikiforova280987@gmail.com" : (rawEmail || `${username.toLowerCase()}@localhost`);
       const role = isSuperAdmin ? "ADMIN" : "USER";
       const subtill = isSuperAdmin ? "31.12.2099" : "None";
 
       let user = null;
       if (db) {
-        user = await db.prepare("SELECT * FROM users WHERE LOWER(username) = LOWER(?) OR LOWER(email) = LOWER(?)")
+        const existing = await db.prepare("SELECT * FROM users WHERE LOWER(username) = LOWER(?) OR LOWER(email) = LOWER(?)")
           .bind(username, email).first();
-        if (!user) {
-          await db.prepare("INSERT INTO users (username, email, role, subtill, regdate) VALUES (?, ?, ?, ?, '01.01.2024')")
-            .bind(username, email, role, subtill).run();
-          user = await db.prepare("SELECT * FROM users WHERE LOWER(username) = LOWER(?) OR LOWER(email) = LOWER(?)")
-            .bind(username, email).first();
+        if (existing) {
+          return textResponse("Пользователь с таким логином или почтой уже зарегистрирован.", 400);
         }
+
+        await db.prepare("INSERT INTO users (username, email, role, subtill, regdate) VALUES (?, ?, ?, ?, '01.01.2024')")
+          .bind(username, email, role, subtill).run();
+        user = await db.prepare("SELECT * FROM users WHERE LOWER(username) = LOWER(?)").bind(username).first();
       }
+
       const token = await issueToken(user ? user.username : username);
       return jsonResponse({
         authStatus: true,
-        authMessage: "Registered successfully",
+        authMessage: "Вы успешно зарегистрировались!",
         token,
       });
+    }
+
+    if (path === "/ajax/users/auth/resetPassword" && method === "POST") {
+      const email = (params.email || body.email || "").trim();
+      let user = null;
+      if (db && email) {
+        user = await db.prepare("SELECT * FROM users WHERE LOWER(email) = LOWER(?)").bind(email).first();
+      }
+      if (!user) {
+        return textResponse("Пользователь с такой почтой не найден.", 404);
+      }
+      return textResponse("Инструкция по сбросу пароля отправлена на вашу почту.");
     }
 
     if (path === "/ajax/users/auth/session" && method === "POST") {

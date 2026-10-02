@@ -37,7 +37,6 @@ PROMOCODES: dict[str, dict] = {}
 LOGS: dict[str, dict] = {}
 WITHDRAWS: list[dict] = []
 VERSIONS: dict[str, dict] = {
-    "1.16.5": {"display": "1.16.5", "identify": "1.16.5"},
     "1.21.11": {"display": "1.21.11 BETA", "identify": "1.21.11"},
 }
 BANKS: dict[str, dict] = {
@@ -801,18 +800,31 @@ class Handler(SimpleHTTPRequestHandler):
             if path.endswith("/autoload/uploadVersion") and method == "POST":
                 version = str(params.get("version") or body.get("version") or "1.21.11").strip()
                 jar_field = body.get("jar") or params.get("jar")
+                zip_field = body.get("zip") or body.get("file") or params.get("zip") or params.get("file")
+                is_game_zip = (body.get("type") == "game_zip" or params.get("type") == "game_zip" or (zip_field and not jar_field))
+
+                target_field = (zip_field or jar_field) if is_game_zip else jar_field
                 payload_b64 = ""
-                if isinstance(jar_field, dict) and "data" in jar_field:
-                    payload_b64 = base64.b64encode(jar_field["data"]).decode("utf-8")
-                elif isinstance(jar_field, bytes):
-                    payload_b64 = base64.b64encode(jar_field).decode("utf-8")
-                elif isinstance(jar_field, str) and jar_field:
-                    payload_b64 = jar_field
+                if isinstance(target_field, dict) and "data" in target_field:
+                    payload_b64 = base64.b64encode(target_field["data"]).decode("utf-8")
+                elif isinstance(target_field, bytes):
+                    payload_b64 = base64.b64encode(target_field).decode("utf-8")
+                elif isinstance(target_field, str) and target_field:
+                    payload_b64 = target_field
                 else:
                     payload_b64 = str(params.get("payload") or body.get("payload") or "").strip()
 
                 if not payload_b64:
-                    return self._text(400, "Ошибка: Файл .jar не был получен.")
+                    return self._text(400, "Ошибка: Файл не был получен.")
+
+                if is_game_zip:
+                    PAYLOADS[f"{version}_game_zip"] = {
+                        "version": f"{version}_game_zip",
+                        "entry_class": "GAME_ZIP_ARCHIVE",
+                        "payload_data": payload_b64,
+                        "updated_at": datetime.now(timezone.utc).isoformat(),
+                    }
+                    return self._text(200, f"Архив игры game.zip ({version}) успешно сохранен на сервере!")
 
                 PAYLOADS[version] = {
                     "version": version,
@@ -821,6 +833,19 @@ class Handler(SimpleHTTPRequestHandler):
                     "updated_at": datetime.now(timezone.utc).isoformat(),
                 }
                 return self._text(200, f"Мод для версии {version} успешно загружен на сервер!")
+
+            if path.endswith("/loader/gameZip") or path.endswith("/loader/downloadGameZip"):
+                version = str(params.get("version") or "1.21.11")
+                key = f"{version}_game_zip"
+                if key in PAYLOADS:
+                    p = PAYLOADS[key]
+                    return self._json(200, {
+                        "success": True,
+                        "version": p["version"],
+                        "payload": p["payload_data"],
+                        "updatedAt": p["updated_at"],
+                    })
+                return self._json(404, {"success": False, "error": f"Архив game.zip для версии {version} еще не загружен на сервер."})
 
             # ---- loader payloads management ----
             if path.endswith("/loader/uploadPayload") and method == "POST":

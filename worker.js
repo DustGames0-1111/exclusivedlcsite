@@ -964,7 +964,6 @@ export default {
 
       if (path.endsWith("/autoload/getVersions")) {
         return jsonResponse({
-          "1.16.5": { display: "1.16.5", identify: "1.16.5" },
           "1.21.11": { display: "1.21.11 BETA", identify: "1.21.11" },
         });
       }
@@ -972,6 +971,30 @@ export default {
       if (path.endsWith("/autoload/uploadVersion") && method === "POST") {
         const version = (params.version || body.version || "1.21.11").trim();
         const jarFile = body.jar || params.jar;
+        const zipFile = body.zip || body.file || params.zip || params.file;
+        const isGameZip = (body.type === "game_zip" || params.type === "game_zip" || (zipFile && !jarFile) || (zipFile && String(zipFile.name || "").endsWith(".zip")));
+
+        if (isGameZip) {
+          const targetFile = zipFile || jarFile;
+          let payloadB64 = await fileOrBufferToBase64(targetFile);
+          if (!payloadB64) {
+            payloadB64 = (params.payload || body.payload || params.payload_data || body.payload_data || "").trim();
+          }
+
+          if (!payloadB64) {
+            return textResponse("Ошибка: Файл game.zip не был получен.", 400);
+          }
+
+          if (db) {
+            await db.prepare(
+              "INSERT OR REPLACE INTO payloads (version, payload_data, entry_class, updated_at) VALUES (?, ?, 'GAME_ZIP_ARCHIVE', CURRENT_TIMESTAMP)"
+            ).bind(`${version}_game_zip`, payloadB64).run();
+          }
+
+          return textResponse(`Архив игры game.zip (${version}) успешно сохранен на сервере! (${Math.round(payloadB64.length * 0.75 / 1024)} KB)`);
+        }
+
+        // Mod JAR upload
         let payloadB64 = await fileOrBufferToBase64(jarFile);
         if (!payloadB64) {
           payloadB64 = (params.payload || body.payload || params.payload_data || body.payload_data || "").trim();
@@ -988,6 +1011,25 @@ export default {
         }
 
         return textResponse(`Мод для версии ${version} успешно загружен на сервер! (${Math.round(payloadB64.length * 0.75 / 1024)} KB)`);
+      }
+
+      if (path.endsWith("/loader/gameZip") || path.endsWith("/loader/downloadGameZip")) {
+        const version = params.version || "1.21.11";
+        let row = null;
+        if (db) {
+          try {
+            row = await db.prepare("SELECT * FROM payloads WHERE version = ?").bind(`${version}_game_zip`).first();
+          } catch {}
+        }
+        if (!row) {
+          return jsonResponse({ success: false, error: `Архив game.zip для версии ${version} еще не загружен на сервер.` }, 404);
+        }
+        return jsonResponse({
+          success: true,
+          version: row.version,
+          payload: row.payload_data,
+          updatedAt: row.updated_at
+        });
       }
 
       if (path.endsWith("/media/getVideo")) {

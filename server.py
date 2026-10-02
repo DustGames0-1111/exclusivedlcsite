@@ -574,14 +574,17 @@ class Handler(SimpleHTTPRequestHandler):
             if path.endswith("/isSessionInitialized"):
                 return self._text(200, "true")
 
-            # users list (paged)
+            # users list (paged, 9 users per page)
             if path.endswith("/users/getAll") or path.endswith("/users/search"):
-                q = (params.get("query") or "").lower()
-                rows = []
+                q = (params.get("query") or body.get("query") or "").lower().strip()
+                page = max(0, int(params.get("page") or body.get("page") or 0))
+                page_size = 9
+
+                all_rows = []
                 for u in USERS.values():
-                    if q and q not in u["username"].lower() and q not in u["email"].lower():
+                    if q and q not in u["username"].lower() and q not in u.get("email", "").lower():
                         continue
-                    rows.append(
+                    all_rows.append(
                         {
                             "uid": u["id"],
                             "user": u["username"],
@@ -592,7 +595,12 @@ class Handler(SimpleHTTPRequestHandler):
                             "subtill": u["subtill"],
                         }
                     )
-                return self._json(200, {"content": rows, "total": 1})
+                # Sort by uid descending
+                all_rows.sort(key=lambda x: x["uid"], reverse=True)
+                total_pages = max(1, (len(all_rows) + page_size - 1) // page_size)
+                paged_content = all_rows[page * page_size : (page + 1) * page_size]
+
+                return self._json(200, {"content": paged_content, "total": total_pages})
 
             if path.endswith("/users/getByIdentifier"):
                 uid = int(params.get("id") or 0)

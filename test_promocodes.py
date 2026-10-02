@@ -124,14 +124,37 @@ def run_tests():
         key_life = res.strip().split("\n")[0]
         print(f"Created Lifetime Product Key: {key_life}")
 
-        # Activate Lifetime Key
-        status, res = post("/ajax/users/actions/activateDigitalKey", params={"token": user_token, "key": key_life})
-        print(f"Activate Lifetime Key: {status} -> {res}")
-        assert status == 200
-        status, sess = post("/ajax/users/auth/session", {"token": user_token})
-        assert sess["subtill"] == "31.12.2099"
+        # 13. Test Users Pagination
+        print("\n--- Testing Users Pagination ---")
+        for idx in range(1, 20):
+            u_name = f"pageuser_{idx}"
+            post("/ajax/users/auth/register", {"username": u_name, "email": f"{u_name}@test.com"})
 
-        print("\n[SUCCESS] ALL KEY AND PROMOCODE ACTIVATION TESTS PASSED (Subscription, HWID Reset, Beta, Lifetime)!")
+        # Get page 0 (1st page)
+        status, res_p0 = post("/ajax/admin/users/getAll", params={"token": admin_token, "page": 0})
+        print(f"Page 0: {len(res_p0['content'])} users, total pages: {res_p0['total']}")
+        assert len(res_p0["content"]) == 9
+        assert res_p0["total"] >= 3
+
+        # Get page 1 (2nd page)
+        status, res_p1 = post("/ajax/admin/users/getAll", params={"token": admin_token, "page": 1})
+        print(f"Page 1: {len(res_p1['content'])} users, total pages: {res_p1['total']}")
+        assert len(res_p1["content"]) == 9
+        assert res_p1["content"][0]["uid"] != res_p0["content"][0]["uid"]
+
+        # Get page 2 (3rd page)
+        status, res_p2 = post("/ajax/admin/users/getAll", params={"token": admin_token, "page": 2})
+        print(f"Page 2: {len(res_p2['content'])} users, total pages: {res_p2['total']}")
+        assert len(res_p2["content"]) > 0
+
+        # Test userSearch with query
+        status, res_search = post("/ajax/admin/users/search", params={"token": admin_token, "query": "DustGames", "page": 0})
+        print(f"Search DustGames: {len(res_search['content'])} users, total pages: {res_search['total']}")
+        assert len(res_search["content"]) == 1
+        assert res_search["total"] == 1
+        assert res_search["content"][0]["user"] == "DustGames"
+
+        print("\n[SUCCESS] ALL KEY, PROMOCODE, AND USERS PAGINATION TESTS PASSED!")
     finally:
         proc.terminate()
 

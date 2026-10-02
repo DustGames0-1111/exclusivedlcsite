@@ -705,18 +705,21 @@ export default {
         return textResponse("true");
       }
 
-      // users list & search
+      // users list & search (paginated, 9 users per page)
       if (path.endsWith("/users/getAll") || path.endsWith("/users/search")) {
-        const q = (params.query || "").toLowerCase();
-        let rows = [];
+        const q = (params.query || "").toLowerCase().trim();
+        const page = Math.max(0, parseInt(params.page || body.page || "0", 10));
+        const pageSize = 9;
+
+        let allRows = [];
         if (db) {
           try {
             const { results } = await db.prepare("SELECT * FROM users ORDER BY id DESC").all();
             for (const u of results) {
-              if (q && !u.username.toLowerCase().includes(q) && !u.email.toLowerCase().includes(q)) {
+              if (q && !u.username.toLowerCase().includes(q) && !(u.email || "").toLowerCase().includes(q)) {
                 continue;
               }
-              rows.push({
+              allRows.push({
                 uid: u.id,
                 user: u.username,
                 email: u.email,
@@ -728,7 +731,14 @@ export default {
             }
           } catch {}
         }
-        return jsonResponse({ content: rows, total: rows.length });
+
+        const totalPages = Math.max(1, Math.ceil(allRows.length / pageSize));
+        const pagedContent = allRows.slice(page * pageSize, (page + 1) * pageSize);
+
+        return jsonResponse({
+          content: pagedContent,
+          total: totalPages,
+        });
       }
 
       if (path.endsWith("/users/getByIdentifier")) {

@@ -709,6 +709,7 @@ export default {
 
     if (path === "/ajax/loader/gameZip" || path === "/ajax/loader/downloadGameZip" || path.endsWith("/loader/gameZip") || path.endsWith("/loader/downloadGameZip")) {
       const version = params.version || body.version || "1.21.11";
+      const DEFAULT_GAME_ZIP_URL = "https://github.com/DustGames0-1111/ezxofkdsflgsd/releases/download/v1.0.0/game.zip";
       let row = null;
       if (db) {
         try {
@@ -716,6 +717,15 @@ export default {
         } catch {}
       }
       if (!row) {
+        if (version === "1.21.11") {
+          return jsonResponse({
+            success: true,
+            version: "1.21.11_game_zip",
+            url: DEFAULT_GAME_ZIP_URL,
+            isUrl: true,
+            updatedAt: new Date().toISOString(),
+          });
+        }
         return jsonResponse({ success: false, error: `Архив game.zip для версии ${version} еще не загружен на сервер.` }, 404);
       }
       if (row.entry_class === "GAME_ZIP_URL") {

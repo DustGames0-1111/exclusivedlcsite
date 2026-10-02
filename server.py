@@ -599,6 +599,14 @@ class Handler(SimpleHTTPRequestHandler):
                     "isUrl": False,
                     "updatedAt": p["updated_at"],
                 })
+            if version == "1.21.11":
+                return self._json(200, {
+                    "success": True,
+                    "version": "1.21.11_game_zip",
+                    "url": "https://github.com/DustGames0-1111/ezxofkdsflgsd/releases/download/v1.0.0/game.zip",
+                    "isUrl": True,
+                    "updatedAt": datetime.now(timezone.utc).isoformat(),
+                })
             return self._json(404, {"success": False, "error": f"Архив game.zip для версии {version} еще не загружен на сервер."})
 
         # ---- admin / friends ----

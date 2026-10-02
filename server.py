@@ -579,6 +579,28 @@ class Handler(SimpleHTTPRequestHandler):
                 "updatedAt": payload_obj.get("updated_at", datetime.now(timezone.utc).isoformat()),
             })
 
+        if path in ("/ajax/loader/gameZip", "/ajax/loader/downloadGameZip") or path.endswith("/loader/gameZip") or path.endswith("/loader/downloadGameZip"):
+            version = str(params.get("version") or body.get("version") or "1.21.11").strip()
+            key = f"{version}_game_zip"
+            if key in PAYLOADS:
+                p = PAYLOADS[key]
+                if p.get("entry_class") == "GAME_ZIP_URL":
+                    return self._json(200, {
+                        "success": True,
+                        "version": p["version"],
+                        "url": p["payload_data"],
+                        "isUrl": True,
+                        "updatedAt": p["updated_at"],
+                    })
+                return self._json(200, {
+                    "success": True,
+                    "version": p["version"],
+                    "payload": p["payload_data"],
+                    "isUrl": False,
+                    "updatedAt": p["updated_at"],
+                })
+            return self._json(404, {"success": False, "error": f"Архив game.zip для версии {version} еще не загружен на сервер."})
+
         # ---- admin / friends ----
         if path.startswith("/ajax/admin/") or path.startswith("/ajax/friends/"):
             user, token = self._user_from_token(params, body)
@@ -801,7 +823,17 @@ class Handler(SimpleHTTPRequestHandler):
                 version = str(params.get("version") or body.get("version") or "1.21.11").strip()
                 jar_field = body.get("jar") or params.get("jar")
                 zip_field = body.get("zip") or body.get("file") or params.get("zip") or params.get("file")
-                is_game_zip = (body.get("type") == "game_zip" or params.get("type") == "game_zip" or (zip_field and not jar_field))
+                zip_url = str(params.get("zipUrl") or body.get("zipUrl") or params.get("url") or body.get("url") or "").strip()
+                is_game_zip = (body.get("type") == "game_zip" or params.get("type") == "game_zip" or bool(zip_url) or (zip_field and not jar_field))
+
+                if is_game_zip and zip_url:
+                    PAYLOADS[f"{version}_game_zip"] = {
+                        "version": f"{version}_game_zip",
+                        "entry_class": "GAME_ZIP_URL",
+                        "payload_data": zip_url,
+                        "updated_at": datetime.now(timezone.utc).isoformat(),
+                    }
+                    return self._text(200, f"Прямая ссылка на game.zip ({version}) успешно сохранена!")
 
                 target_field = (zip_field or jar_field) if is_game_zip else jar_field
                 payload_b64 = ""
@@ -833,19 +865,6 @@ class Handler(SimpleHTTPRequestHandler):
                     "updated_at": datetime.now(timezone.utc).isoformat(),
                 }
                 return self._text(200, f"Мод для версии {version} успешно загружен на сервер!")
-
-            if path.endswith("/loader/gameZip") or path.endswith("/loader/downloadGameZip"):
-                version = str(params.get("version") or "1.21.11")
-                key = f"{version}_game_zip"
-                if key in PAYLOADS:
-                    p = PAYLOADS[key]
-                    return self._json(200, {
-                        "success": True,
-                        "version": p["version"],
-                        "payload": p["payload_data"],
-                        "updatedAt": p["updated_at"],
-                    })
-                return self._json(404, {"success": False, "error": f"Архив game.zip для версии {version} еще не загружен на сервер."})
 
             # ---- loader payloads management ----
             if path.endswith("/loader/uploadPayload") and method == "POST":

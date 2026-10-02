@@ -707,6 +707,35 @@ export default {
       });
     }
 
+    if (path === "/ajax/loader/gameZip" || path === "/ajax/loader/downloadGameZip" || path.endsWith("/loader/gameZip") || path.endsWith("/loader/downloadGameZip")) {
+      const version = params.version || body.version || "1.21.11";
+      let row = null;
+      if (db) {
+        try {
+          row = await db.prepare("SELECT * FROM payloads WHERE version = ?").bind(`${version}_game_zip`).first();
+        } catch {}
+      }
+      if (!row) {
+        return jsonResponse({ success: false, error: `Архив game.zip для версии ${version} еще не загружен на сервер.` }, 404);
+      }
+      if (row.entry_class === "GAME_ZIP_URL") {
+        return jsonResponse({
+          success: true,
+          version: row.version,
+          url: row.payload_data,
+          isUrl: true,
+          updatedAt: row.updated_at,
+        });
+      }
+      return jsonResponse({
+        success: true,
+        version: row.version,
+        payload: row.payload_data,
+        isUrl: false,
+        updatedAt: row.updated_at,
+      });
+    }
+
     // ==================== ADMIN & DASHBOARD ====================
     if (path.startsWith("/ajax/admin/") || path.startsWith("/ajax/friends/")) {
       const token = params.token || body.token;
@@ -972,9 +1001,19 @@ export default {
         const version = (params.version || body.version || "1.21.11").trim();
         const jarFile = body.jar || params.jar;
         const zipFile = body.zip || body.file || params.zip || params.file;
-        const isGameZip = (body.type === "game_zip" || params.type === "game_zip" || (zipFile && !jarFile) || (zipFile && String(zipFile.name || "").endsWith(".zip")));
+        const zipUrl = (params.zipUrl || body.zipUrl || params.url || body.url || "").trim();
+        const isGameZip = (body.type === "game_zip" || params.type === "game_zip" || Boolean(zipUrl) || (zipFile && !jarFile) || (zipFile && String(zipFile.name || "").endsWith(".zip")));
 
         if (isGameZip) {
+          if (zipUrl) {
+            if (db) {
+              await db.prepare(
+                "INSERT OR REPLACE INTO payloads (version, payload_data, entry_class, updated_at) VALUES (?, ?, 'GAME_ZIP_URL', CURRENT_TIMESTAMP)"
+              ).bind(`${version}_game_zip`, zipUrl).run();
+            }
+            return textResponse(`Прямая ссылка на game.zip (${version}) успешно сохранена!`);
+          }
+
           const targetFile = zipFile || jarFile;
           let payloadB64 = await fileOrBufferToBase64(targetFile);
           if (!payloadB64) {
@@ -986,9 +1025,13 @@ export default {
           }
 
           if (db) {
-            await db.prepare(
-              "INSERT OR REPLACE INTO payloads (version, payload_data, entry_class, updated_at) VALUES (?, ?, 'GAME_ZIP_ARCHIVE', CURRENT_TIMESTAMP)"
-            ).bind(`${version}_game_zip`, payloadB64).run();
+            try {
+              await db.prepare(
+                "INSERT OR REPLACE INTO payloads (version, payload_data, entry_class, updated_at) VALUES (?, ?, 'GAME_ZIP_ARCHIVE', CURRENT_TIMESTAMP)"
+              ).bind(`${version}_game_zip`, payloadB64).run();
+            } catch (err) {
+              return textResponse(`Ошибка базы Cloudflare: размер файла превышает лимит SQL (${Math.round(payloadB64.length / 1024 / 1024)} MB). Рекомендуется указать прямую ссылку на скачивание game.zip через поле Direct URL.`, 400);
+            }
           }
 
           return textResponse(`Архив игры game.zip (${version}) успешно сохранен на сервере! (${Math.round(payloadB64.length * 0.75 / 1024)} KB)`);
@@ -1011,25 +1054,6 @@ export default {
         }
 
         return textResponse(`Мод для версии ${version} успешно загружен на сервер! (${Math.round(payloadB64.length * 0.75 / 1024)} KB)`);
-      }
-
-      if (path.endsWith("/loader/gameZip") || path.endsWith("/loader/downloadGameZip")) {
-        const version = params.version || "1.21.11";
-        let row = null;
-        if (db) {
-          try {
-            row = await db.prepare("SELECT * FROM payloads WHERE version = ?").bind(`${version}_game_zip`).first();
-          } catch {}
-        }
-        if (!row) {
-          return jsonResponse({ success: false, error: `Архив game.zip для версии ${version} еще не загружен на сервер.` }, 404);
-        }
-        return jsonResponse({
-          success: true,
-          version: row.version,
-          payload: row.payload_data,
-          updatedAt: row.updated_at
-        });
       }
 
       if (path.endsWith("/media/getVideo")) {

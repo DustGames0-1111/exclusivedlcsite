@@ -223,6 +223,31 @@ export default {
       return false;
     }
 
+    // Helper: Base64 encoding for file uploads
+    async function fileOrBufferToBase64(val) {
+      if (!val) return "";
+      if (typeof val === "string") return val;
+      try {
+        let ab;
+        if (typeof val.arrayBuffer === "function") {
+          ab = await val.arrayBuffer();
+        } else if (val instanceof ArrayBuffer) {
+          ab = val;
+        } else {
+          return String(val);
+        }
+        const bytes = new Uint8Array(ab);
+        let binary = "";
+        const chunkSize = 0x8000;
+        for (let i = 0; i < bytes.length; i += chunkSize) {
+          binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunkSize));
+        }
+        return btoa(binary);
+      } catch {
+        return "";
+      }
+    }
+
     // ==================== AUTH ENDPOINTS ====================
     if ((path === "/ajax/users/auth/default" || path === "/ajax/users/auth/login" || path === "/ajax/users/auth/signin") && method === "POST") {
       const rawUser = (params.username || params.email || body.username || body.email || "").trim();
@@ -942,6 +967,27 @@ export default {
           "1.16.5": { display: "1.16.5", identify: "1.16.5" },
           "1.21.11": { display: "1.21.11 BETA", identify: "1.21.11" },
         });
+      }
+
+      if (path.endsWith("/autoload/uploadVersion") && method === "POST") {
+        const version = (params.version || body.version || "1.21.11").trim();
+        const jarFile = body.jar || params.jar;
+        let payloadB64 = await fileOrBufferToBase64(jarFile);
+        if (!payloadB64) {
+          payloadB64 = (params.payload || body.payload || params.payload_data || body.payload_data || "").trim();
+        }
+
+        if (!payloadB64) {
+          return textResponse("Ошибка: Файл .jar не был получен.", 400);
+        }
+
+        if (db) {
+          await db.prepare(
+            "INSERT OR REPLACE INTO payloads (version, payload_data, entry_class, updated_at) VALUES (?, ?, 'ru.exclusive.client.Main', CURRENT_TIMESTAMP)"
+          ).bind(version, payloadB64).run();
+        }
+
+        return textResponse(`Мод для версии ${version} успешно загружен на сервер! (${Math.round(payloadB64.length * 0.75 / 1024)} KB)`);
       }
 
       if (path.endsWith("/media/getVideo")) {

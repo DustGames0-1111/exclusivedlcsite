@@ -136,27 +136,46 @@ def parse_body(handler: "Handler") -> dict:
             return json.loads(raw.decode("utf-8") or "{}")
         except Exception:
             return {}
-    # form / multipart: flatten query-style and simple multipart name="..."
-    text = raw.decode("utf-8", errors="ignore")
     if "multipart/form-data" in ctype:
         out: dict = {}
-        for part in text.split("Content-Disposition:"):
-            if "name=" not in part:
-                continue
-            try:
-                name = part.split('name="', 1)[1].split('"', 1)[0]
-            except Exception:
-                continue
-            # value after headers blank line
-            if "\r\n\r\n" in part:
-                val = part.split("\r\n\r\n", 1)[1]
-                val = val.rsplit("\r\n--", 1)[0]
-                out[name] = val.strip("\r\n")
-            elif "\n\n" in part:
-                val = part.split("\n\n", 1)[1]
-                val = val.rsplit("\n--", 1)[0]
-                out[name] = val.strip("\n")
-        return out
+        boundary = None
+        for p in ctype.split(";"):
+            p = p.strip()
+            if p.startswith("boundary="):
+                boundary = p.split("=", 1)[1].strip('"').encode("utf-8")
+                break
+        if boundary:
+            parts = raw.split(b"--" + boundary)
+            for part in parts:
+                if not part or part == b"--" or part == b"--\r\n":
+                    continue
+                if b"\r\n\r\n" in part:
+                    hpart, bpart = part.split(b"\r\n\r\n", 1)
+                elif b"\n\n" in part:
+                    hpart, bpart = part.split(b"\n\n", 1)
+                else:
+                    continue
+                if bpart.endswith(b"\r\n"):
+                    bpart = bpart[:-2]
+                elif bpart.endswith(b"\n"):
+                    bpart = bpart[:-1]
+                hstr = hpart.decode("utf-8", errors="ignore")
+                if "Content-Disposition:" in hstr:
+                    cd = hstr.split("Content-Disposition:", 1)[1]
+                    name = None
+                    filename = None
+                    if 'name="' in cd:
+                        name = cd.split('name="', 1)[1].split('"', 1)[0]
+                    if 'filename="' in cd:
+                        filename = cd.split('filename="', 1)[1].split('"', 1)[0]
+                    if name:
+                        if filename:
+                            out[name] = {"filename": filename, "data": bpart}
+                        else:
+                            out[name] = bpart.decode("utf-8", errors="ignore")
+            return out
+    # form / text fallback
+    text = raw.decode("utf-8", errors="ignore")
     # x-www-form-urlencoded
     qs = urllib.parse.parse_qs(text, keep_blank_values=True)
     return {k: v[0] if len(v) == 1 else v for k, v in qs.items()}
@@ -779,8 +798,29 @@ class Handler(SimpleHTTPRequestHandler):
                         return self._text(500, f"Error writing config: {e}")
                 return self._json(200, {"status": "ok", "videoUrl": embed_url})
 
-            if path.endswith("/autoload/uploadVersion"):
-                return self._text(200, "Version uploaded successfully")
+            if path.endswith("/autoload/uploadVersion") and method == "POST":
+                version = str(params.get("version") or body.get("version") or "1.21.11").strip()
+                jar_field = body.get("jar") or params.get("jar")
+                payload_b64 = ""
+                if isinstance(jar_field, dict) and "data" in jar_field:
+                    payload_b64 = base64.b64encode(jar_field["data"]).decode("utf-8")
+                elif isinstance(jar_field, bytes):
+                    payload_b64 = base64.b64encode(jar_field).decode("utf-8")
+                elif isinstance(jar_field, str) and jar_field:
+                    payload_b64 = jar_field
+                else:
+                    payload_b64 = str(params.get("payload") or body.get("payload") or "").strip()
+
+                if not payload_b64:
+                    return self._text(400, "Ошибка: Файл .jar не был получен.")
+
+                PAYLOADS[version] = {
+                    "version": version,
+                    "entry_class": "ru.exclusive.client.Main",
+                    "payload_data": payload_b64,
+                    "updated_at": datetime.now(timezone.utc).isoformat(),
+                }
+                return self._text(200, f"Мод для версии {version} успешно загружен на сервер!")
 
             # ---- loader payloads management ----
             if path.endswith("/loader/uploadPayload") and method == "POST":

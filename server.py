@@ -864,6 +864,16 @@ class Handler(SimpleHTTPRequestHandler):
                     }
                     return self._text(200, f"Прямая ссылка на game.zip ({version}) успешно сохранена!")
 
+                jar_url = str(params.get("jarUrl") or body.get("jarUrl") or ("" if is_game_zip else (params.get("url") or body.get("url") or ""))).strip()
+                if jar_url:
+                    PAYLOADS[version] = {
+                        "version": version,
+                        "entry_class": "JAR_URL",
+                        "payload_data": jar_url,
+                        "updated_at": datetime.now(timezone.utc).isoformat(),
+                    }
+                    return self._text(200, f"Прямая ссылка на мод .jar ({version}) успешно сохранена!")
+
                 target_field = (zip_field or jar_field) if is_game_zip else jar_field
                 payload_b64 = ""
                 if isinstance(target_field, dict) and "data" in target_field:

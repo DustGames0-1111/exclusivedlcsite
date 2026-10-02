@@ -1073,6 +1073,16 @@ export default {
           return textResponse(`Архив игры game.zip (${version}) успешно сохранен на сервере! (${Math.round(payloadB64.length * 0.75 / 1024)} KB)`);
         }
 
+        const jarUrl = (params.jarUrl || body.jarUrl || (!isGameZip && (body.url || params.url)) || "").trim();
+        if (jarUrl) {
+          if (db) {
+            await db.prepare(
+              "INSERT OR REPLACE INTO payloads (version, payload_data, entry_class, updated_at) VALUES (?, ?, 'JAR_URL', CURRENT_TIMESTAMP)"
+            ).bind(version, jarUrl).run();
+          }
+          return textResponse(`Прямая ссылка на мод .jar (${version}) успешно сохранена!`);
+        }
+
         // Mod JAR upload
         let payloadB64 = await fileOrBufferToBase64(jarFile);
         if (!payloadB64) {

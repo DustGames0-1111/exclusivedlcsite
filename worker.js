@@ -425,17 +425,21 @@ export default {
           const newHwid = "RESET-" + generateToken().slice(0, 8).toUpperCase();
           await db.prepare("UPDATE users SET hwid = ? WHERE LOWER(username) = LOWER(?)").bind(newHwid, user.username).run();
           message = "Привязка HWID успешно сброшена!";
-        } else if (display.includes("beta")) {
+        } else if (display.includes("lifetime") || display.includes("forever") || display.includes("999")) {
+          const newSubtill = "31.12.2099";
+          const newRole = display.includes("beta") ? "BETA" : user.role;
+          await db.prepare("UPDATE users SET subtill = ?, role = ? WHERE LOWER(username) = LOWER(?)")
+            .bind(newSubtill, newRole, user.username).run();
+          message = "Активирована вечная подписка (LifeTime)!";
+        } else if (display === "beta" || (display.includes("beta") && !display.includes("day"))) {
           await db.prepare("UPDATE users SET role = 'BETA' WHERE LOWER(username) = LOWER(?)").bind(user.username).run();
           message = "Статус BETA успешно активирован!";
         } else {
-          // Subscription key
+          // Subscription key (e.g. "30 days", "60 days", "365 days")
           let days = 30;
           const matchDays = display.match(/(\d+)\s*days?/i);
           if (matchDays) {
             days = parseInt(matchDays[1], 10);
-          } else if (display.includes("lifetime") || display.includes("forever") || display.includes("999")) {
-            days = 9999;
           }
           const newSubtill = addDaysToDate(user.subtill, days);
           await db.prepare("UPDATE users SET subtill = ? WHERE LOWER(username) = LOWER(?)").bind(newSubtill, user.username).run();
@@ -443,7 +447,9 @@ export default {
         }
 
         // Delete used single-use key
-        await db.prepare("DELETE FROM keys WHERE id = ?").bind(keyRow.id).run();
+        try {
+          await db.prepare("DELETE FROM keys WHERE id = ?").bind(keyRow.id).run();
+        } catch {}
         return textResponse(message);
       }
 

@@ -84,18 +84,54 @@ def run_tests():
 
         # 8. Create Keys via multiactions: 30 days subscription
         status, res = post("/ajax/admin/multiactions/keys/subscription", params={"token": admin_token, "count": 1, "days": 60})
-        key = res.strip().split("\n")[0]
-        print(f"Created Key: {key}")
+        key_sub = res.strip().split("\n")[0]
+        print(f"Created Subscription Key: {key_sub}")
 
         # 9. Activate Key as user
-        status, res = post("/ajax/users/actions/activateDigitalKey", params={"token": user_token, "key": key})
-        print(f"Activate Key: {status} -> {res}")
+        status, res = post("/ajax/users/actions/activateDigitalKey", params={"token": user_token, "key": key_sub})
+        print(f"Activate Subscription Key: {status} -> {res}")
         assert status == 200
 
         status, sess = post("/ajax/users/auth/session", {"token": user_token})
-        print(f"Session after key: subtill={sess.get('subtill')}")
+        print(f"Session after subscription key: subtill={sess.get('subtill')}")
 
-        print("\n[SUCCESS] ALL PROMOCODE AND KEY ACTIVATION TESTS PASSED!")
+        # 10. Create Hardware Reset Key
+        status, res = post("/ajax/admin/multiactions/keys/hardwareReset", params={"token": admin_token, "count": 1})
+        key_hwid = res.strip().split("\n")[0]
+        print(f"Created HWID Reset Key: {key_hwid}")
+
+        # Activate HWID Key
+        status, res = post("/ajax/users/actions/activateDigitalKey", params={"token": user_token, "key": key_hwid})
+        print(f"Activate HWID Key: {status} -> {res}")
+        assert status == 200
+        status, sess = post("/ajax/users/auth/session", {"token": user_token})
+        assert sess["hwid"].startswith("RESET-")
+
+        # 11. Create Beta Key
+        status, res = post("/ajax/admin/multiactions/keys/beta", params={"token": admin_token, "count": 1})
+        key_beta = res.strip().split("\n")[0]
+        print(f"Created Beta Key: {key_beta}")
+
+        # Activate Beta Key
+        status, res = post("/ajax/users/actions/activateDigitalKey", params={"token": user_token, "key": key_beta})
+        print(f"Activate Beta Key: {status} -> {res}")
+        assert status == 200
+        status, sess = post("/ajax/users/auth/session", {"token": user_token})
+        assert sess["role"] == "BETA"
+
+        # 12. Create Lifetime Product Key
+        status, res = post("/ajax/admin/multiactions/keys/additionalProduct", params={"token": admin_token, "count": 1, "productId": 102})
+        key_life = res.strip().split("\n")[0]
+        print(f"Created Lifetime Product Key: {key_life}")
+
+        # Activate Lifetime Key
+        status, res = post("/ajax/users/actions/activateDigitalKey", params={"token": user_token, "key": key_life})
+        print(f"Activate Lifetime Key: {status} -> {res}")
+        assert status == 200
+        status, sess = post("/ajax/users/auth/session", {"token": user_token})
+        assert sess["subtill"] == "31.12.2099"
+
+        print("\n[SUCCESS] ALL KEY AND PROMOCODE ACTIVATION TESTS PASSED (Subscription, HWID Reset, Beta, Lifetime)!")
     finally:
         proc.terminate()
 

@@ -368,7 +368,12 @@ class Handler(SimpleHTTPRequestHandler):
                 if "hardware" in display or "hwid" in display or "reset" in display:
                     user["hwid"] = "RESET-" + secrets.token_hex(4).upper()
                     message = "Привязка HWID успешно сброшена!"
-                elif "beta" in display:
+                elif "lifetime" in display or "forever" in display or "999" in display:
+                    user["subtill"] = "31.12.2099"
+                    if "beta" in display:
+                        user["role"] = "BETA"
+                    message = "Активирована вечная подписка (LifeTime)!"
+                elif display == "beta" or (("beta" in display) and ("day" not in display)):
                     user["role"] = "BETA"
                     message = "Статус BETA успешно активирован!"
                 else:
@@ -377,8 +382,6 @@ class Handler(SimpleHTTPRequestHandler):
                     m = _re.search(r'(\d+)\s*days?', display)
                     if m:
                         days = int(m.group(1))
-                    elif "lifetime" in display or "forever" in display or "999" in display:
-                        days = 9999
                     new_subtill = add_days_to_date(user.get("subtill", "None"), days)
                     user["subtill"] = new_subtill
                     message = f"Ключ активирован! Подписка продлена до {new_subtill}"

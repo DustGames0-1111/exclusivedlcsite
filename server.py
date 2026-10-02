@@ -52,6 +52,27 @@ ADDITIONAL_PRODUCTS = [
 ]
 
 PAYLOADS: dict[str, dict] = {}
+PROMOCODE_USAGES: set[tuple[str, str]] = set()
+
+
+def add_days_to_date(current_subtill: str, days_to_add: int) -> str:
+    base_date = datetime.now(timezone.utc)
+    if current_subtill and current_subtill.lower() != "none":
+        try:
+            parts = current_subtill.split(".")
+            if len(parts) == 3:
+                day, month, year = int(parts[0]), int(parts[1]), int(parts[2])
+                cur_exp = datetime(year, month, day, 23, 59, 59, tzinfo=timezone.utc)
+                if cur_exp > base_date:
+                    base_date = cur_exp
+        except Exception:
+            pass
+
+    if days_to_add >= 999 or days_to_add >= 3650:
+        return "31.12.2099"
+
+    new_date = base_date + timedelta(days=days_to_add)
+    return new_date.strftime("%d.%m.%Y")
 
 
 def is_sub_active(subtill: str) -> bool:
@@ -306,6 +327,105 @@ class Handler(SimpleHTTPRequestHandler):
             if not user:
                 return self._text(401, "Unauthorized")
             return self._text(200, "OK")
+
+        if path == "/ajax/users/auth/2fa/generate" and method == "POST":
+            return self._json(200, {
+                "qr": "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=otpauth://totp/Exclusive:DustGames?secret=JBSWY3DPEHPK3PXP",
+                "code": "JBSWY3DPEHPK3PXP",
+            })
+
+        if path == "/ajax/email/setup" and method == "POST":
+            user, _ = self._user_from_token(params, body)
+            email = (params.get("email") or body.get("email") or "").strip()
+            if not email:
+                return self._text(400, "Invalid mail")
+            if not user:
+                return self._text(401, "Unauthorized")
+            user["email"] = email
+            return self._text(200, "Email успешно обновлен!")
+
+        if path == "/ajax/user/subscriptions/getAdditionalSubscriptions":
+            return self._json(200, [])
+
+        # ---- KEY & PROMOCODE ACTIVATION ----
+        if path in ("/ajax/users/actions/activateDigitalKey", "/ajax/users/actions/activateKey") and method in ("POST", "GET"):
+            user, token = self._user_from_token(params, body)
+            raw_key = (params.get("key") or body.get("key") or params.get("code") or body.get("code") or "").strip()
+
+            if not user:
+                return self._text(401, "The entered session has expired. Please log in again.")
+
+            if not raw_key:
+                return self._text(400, "The entered key cannot be empty.")
+
+            input_upper = raw_key.upper()
+
+            # 1. Check if it's a Digital Key in KEYS
+            found_key = next((k for k in KEYS if k.get("key", "").upper() == input_upper), None)
+            if found_key:
+                display = (found_key.get("display") or "").lower()
+                message = ""
+                if "hardware" in display or "hwid" in display or "reset" in display:
+                    user["hwid"] = "RESET-" + secrets.token_hex(4).upper()
+                    message = "Привязка HWID успешно сброшена!"
+                elif "beta" in display:
+                    user["role"] = "BETA"
+                    message = "Статус BETA успешно активирован!"
+                else:
+                    days = 30
+                    import re as _re
+                    m = _re.search(r'(\d+)\s*days?', display)
+                    if m:
+                        days = int(m.group(1))
+                    elif "lifetime" in display or "forever" in display or "999" in display:
+                        days = 9999
+                    new_subtill = add_days_to_date(user.get("subtill", "None"), days)
+                    user["subtill"] = new_subtill
+                    message = f"Ключ активирован! Подписка продлена до {new_subtill}"
+
+                KEYS.remove(found_key)
+                return self._text(200, message)
+
+            # 2. Check if it's a Promocode in PROMOCODES
+            found_promo_name = next((name for name in PROMOCODES if name.upper() == input_upper), None)
+            if found_promo_name:
+                promo = PROMOCODES[found_promo_name]
+                uname = user["username"].lower()
+
+                if (input_upper, uname) in PROMOCODE_USAGES:
+                    return self._text(400, "The entered promo code has already been used on your account.")
+
+                max_act = promo.get("maxActivations") or promo.get("maxUsages") or 0
+                cur_act = promo.get("activations") or 0
+                if max_act > 0 and cur_act >= max_act:
+                    return self._text(400, "The entered promo code has reached its maximum activations limit.")
+
+                parts = []
+                if "HWID" in input_upper or "RESET" in input_upper:
+                    user["hwid"] = "RESET-" + secrets.token_hex(4).upper()
+                    parts.append("Сброс HWID выполнен")
+
+                if "BETA" in input_upper:
+                    user["role"] = "BETA"
+                    parts.append("Статус BETA получен")
+
+                days = promo.get("bet") or promo.get("discount") or 0
+                if days <= 0 and "HWID" not in input_upper:
+                    days = 30
+
+                if days > 0:
+                    new_subtill = add_days_to_date(user.get("subtill", "None"), days)
+                    user["subtill"] = new_subtill
+                    parts.append(f"Подписка продлена до {new_subtill}")
+
+                promo["activations"] = cur_act + 1
+                PROMOCODE_USAGES.add((input_upper, uname))
+
+                result_msg = ("Промокод активирован! " + ", ".join(parts)) if parts else "Промокод успешно активирован!"
+                return self._text(200, result_msg)
+
+            # 3. Not found
+            return self._text(404, "The entered key or promo code does not exist.")
 
         if path == "/ajax/payments/getAll":
             return self._json(200, read_payments("getAll.json") or [

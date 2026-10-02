@@ -1,5 +1,6 @@
 /**
  * Cloudflare Worker with D1 Database + Static Assets (Single Fullstack Worker)
+ * Exclusivedlcsite Worker - Handles Auth, Admin, Keys, Promocodes, and Loaders
  */
 
 function jsonResponse(data, status = 200) {
@@ -33,6 +34,34 @@ function getFormattedDate() {
   const d = String(now.getDate()).padStart(2, "0");
   const m = String(now.getMonth() + 1).padStart(2, "0");
   const y = now.getFullYear();
+  return `${d}.${m}.${y}`;
+}
+
+function addDaysToDate(currentSubtill, daysToAdd) {
+  let baseDate = new Date();
+  if (currentSubtill && currentSubtill.toLowerCase() !== "none") {
+    try {
+      const parts = currentSubtill.split(".");
+      if (parts.length === 3) {
+        const d = parseInt(parts[0], 10);
+        const m = parseInt(parts[1], 10) - 1;
+        const y = parseInt(parts[2], 10);
+        const curExpiry = new Date(y, m, d, 23, 59, 59);
+        if (curExpiry.getTime() > baseDate.getTime()) {
+          baseDate = curExpiry;
+        }
+      }
+    } catch {}
+  }
+
+  if (daysToAdd >= 999 || daysToAdd >= 3650) {
+    return "31.12.2099";
+  }
+
+  baseDate.setDate(baseDate.getDate() + daysToAdd);
+  const d = String(baseDate.getDate()).padStart(2, "0");
+  const m = String(baseDate.getMonth() + 1).padStart(2, "0");
+  const y = baseDate.getFullYear();
   return `${d}.${m}.${y}`;
 }
 
@@ -98,6 +127,63 @@ export default {
 
     const db = env.DB;
 
+    // Helper: Ensure all necessary DB tables exist
+    async function ensureAllTables() {
+      if (!db) return;
+      try {
+        await db.prepare(`CREATE TABLE IF NOT EXISTS users (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          username TEXT UNIQUE,
+          email TEXT UNIQUE,
+          role TEXT DEFAULT 'USER',
+          banned INTEGER DEFAULT 0,
+          hwid TEXT,
+          subtill TEXT DEFAULT 'None',
+          regdate TEXT,
+          isEmailVerified INTEGER DEFAULT 1
+        )`).run();
+
+        await db.prepare(`CREATE TABLE IF NOT EXISTS tokens (
+          token TEXT PRIMARY KEY,
+          username TEXT
+        )`).run();
+
+        await db.prepare(`CREATE TABLE IF NOT EXISTS keys (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          key TEXT UNIQUE,
+          display TEXT,
+          generatedBy TEXT,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )`).run();
+
+        await db.prepare(`CREATE TABLE IF NOT EXISTS promocodes (
+          name TEXT PRIMARY KEY,
+          discount INTEGER DEFAULT 10,
+          activations INTEGER DEFAULT 0,
+          maxActivations INTEGER DEFAULT 100,
+          bet INTEGER DEFAULT 10,
+          maxUsages INTEGER DEFAULT 100
+        )`).run();
+
+        await db.prepare(`CREATE TABLE IF NOT EXISTS promocode_usages (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          promocode TEXT,
+          username TEXT,
+          activated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          UNIQUE(promocode, username)
+        )`).run();
+
+        await db.prepare(`CREATE TABLE IF NOT EXISTS payloads (
+          version TEXT PRIMARY KEY,
+          payload_data TEXT NOT NULL,
+          entry_class TEXT NOT NULL,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )`).run();
+      } catch {}
+    }
+
+    await ensureAllTables();
+
     // Helper: Get user by token
     async function getUserByToken(token) {
       if (!token || !db) return null;
@@ -120,6 +206,7 @@ export default {
       }
       return token;
     }
+
     // Helper: Subscription active check
     function isSubscriptionActive(subtill) {
       if (!subtill || subtill.toLowerCase() === "none") return false;
@@ -134,16 +221,6 @@ export default {
         }
       } catch {}
       return false;
-    }
-
-    // Helper: Ensure payloads table exists
-    async function ensurePayloadsTable() {
-      if (!db) return;
-      try {
-        await db.prepare(
-          "CREATE TABLE IF NOT EXISTS payloads (version TEXT PRIMARY KEY, payload_data TEXT NOT NULL, entry_class TEXT NOT NULL, updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)"
-        ).run();
-      } catch {}
     }
 
     // ==================== AUTH ENDPOINTS ====================
@@ -170,8 +247,8 @@ export default {
           const subtill = "31.12.2099";
           if (db) {
             const regdate = getFormattedDate();
-          await db.prepare("INSERT INTO users (username, email, role, subtill, regdate) VALUES (?, ?, ?, ?, ?)")
-            .bind(username, email, role, subtill, regdate).run();
+            await db.prepare("INSERT INTO users (username, email, role, subtill, regdate) VALUES (?, ?, ?, ?, ?)")
+              .bind(username, email, role, subtill, regdate).run();
             user = await db.prepare("SELECT * FROM users WHERE LOWER(username) = LOWER(?)").bind(username).first();
           } else {
             user = {
@@ -287,6 +364,162 @@ export default {
       return textResponse("OK");
     }
 
+    if (path === "/ajax/users/auth/2fa/generate" && method === "POST") {
+      return jsonResponse({
+        qr: "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=otpauth://totp/Exclusive:DustGames?secret=JBSWY3DPEHPK3PXP",
+        code: "JBSWY3DPEHPK3PXP",
+      });
+    }
+
+    if (path === "/ajax/email/setup" && method === "POST") {
+      const token = params.token || body.token;
+      const email = (params.email || body.email || "").trim();
+      if (!email) return textResponse("Invalid mail", 400);
+      const user = await getUserByToken(token);
+      if (!user) return textResponse("Unauthorized", 401);
+      if (db) {
+        await db.prepare("UPDATE users SET email = ? WHERE LOWER(username) = LOWER(?)").bind(email, user.username).run();
+      }
+      return textResponse("Email успешно обновлен!");
+    }
+
+    if (path === "/ajax/user/subscriptions/getAdditionalSubscriptions") {
+      return jsonResponse([]);
+    }
+
+    // ==================== KEY & PROMOCODE ACTIVATION (CABINET) ====================
+    if ((path === "/ajax/users/actions/activateDigitalKey" || path.endsWith("/activateDigitalKey")) && (method === "POST" || method === "GET")) {
+      const token = params.token || body.token;
+      const rawKey = (params.key || body.key || params.code || body.code || "").trim();
+
+      if (!token) {
+        return textResponse("The entered key is invalid. (Unauthorized)", 401);
+      }
+
+      const user = await getUserByToken(token);
+      if (!user) {
+        return textResponse("The entered session has expired. Please log in again.", 401);
+      }
+
+      if (!rawKey) {
+        return textResponse("The entered key cannot be empty.", 400);
+      }
+
+      if (!db) {
+        return textResponse("Database connection unavailable.", 500);
+      }
+
+      const inputUpper = rawKey.toUpperCase();
+
+      // 1. Check if it's a Digital Key in `keys` table
+      let keyRow = null;
+      try {
+        keyRow = await db.prepare("SELECT * FROM keys WHERE UPPER(key) = ?").bind(inputUpper).first();
+      } catch {}
+
+      if (keyRow) {
+        const display = (keyRow.display || "").toLowerCase();
+        let message = "";
+
+        if (display.includes("hardware") || display.includes("hwid") || display.includes("reset")) {
+          const newHwid = "RESET-" + generateToken().slice(0, 8).toUpperCase();
+          await db.prepare("UPDATE users SET hwid = ? WHERE LOWER(username) = LOWER(?)").bind(newHwid, user.username).run();
+          message = "Привязка HWID успешно сброшена!";
+        } else if (display.includes("beta")) {
+          await db.prepare("UPDATE users SET role = 'BETA' WHERE LOWER(username) = LOWER(?)").bind(user.username).run();
+          message = "Статус BETA успешно активирован!";
+        } else {
+          // Subscription key
+          let days = 30;
+          const matchDays = display.match(/(\d+)\s*days?/i);
+          if (matchDays) {
+            days = parseInt(matchDays[1], 10);
+          } else if (display.includes("lifetime") || display.includes("forever") || display.includes("999")) {
+            days = 9999;
+          }
+          const newSubtill = addDaysToDate(user.subtill, days);
+          await db.prepare("UPDATE users SET subtill = ? WHERE LOWER(username) = LOWER(?)").bind(newSubtill, user.username).run();
+          message = `Ключ активирован! Подписка продлена до ${newSubtill}`;
+        }
+
+        // Delete used single-use key
+        await db.prepare("DELETE FROM keys WHERE id = ?").bind(keyRow.id).run();
+        return textResponse(message);
+      }
+
+      // 2. Check if it's a Promocode in `promocodes` table
+      let promoRow = null;
+      try {
+        promoRow = await db.prepare("SELECT * FROM promocodes WHERE UPPER(name) = ?").bind(inputUpper).first();
+      } catch {}
+
+      if (promoRow) {
+        // Check if user already used this promocode
+        let usage = null;
+        try {
+          usage = await db.prepare("SELECT * FROM promocode_usages WHERE UPPER(promocode) = ? AND LOWER(username) = LOWER(?)")
+            .bind(inputUpper, user.username).first();
+        } catch {}
+
+        if (usage) {
+          return textResponse("The entered promo code has already been used on your account.", 400);
+        }
+
+        // Check activation limit
+        const maxAct = promoRow.maxActivations || promoRow.maxUsages || 0;
+        const curAct = promoRow.activations || 0;
+        if (maxAct > 0 && curAct >= maxAct) {
+          return textResponse("The entered promo code has reached its maximum activations limit.", 400);
+        }
+
+        let messageParts = [];
+
+        // Check if promocode resets HWID
+        if (inputUpper.includes("HWID") || inputUpper.includes("RESET")) {
+          const newHwid = "RESET-" + generateToken().slice(0, 8).toUpperCase();
+          await db.prepare("UPDATE users SET hwid = ? WHERE LOWER(username) = LOWER(?)").bind(newHwid, user.username).run();
+          messageParts.push("Сброс HWID выполнен");
+        }
+
+        // Check if promocode grants BETA
+        if (inputUpper.includes("BETA")) {
+          await db.prepare("UPDATE users SET role = 'BETA' WHERE LOWER(username) = LOWER(?)").bind(user.username).run();
+          messageParts.push("Статус BETA получен");
+        }
+
+        // Subscription days from bet / discount
+        let days = promoRow.bet || promoRow.discount || 0;
+        if (days <= 0 && !inputUpper.includes("HWID")) {
+          days = 30; // Default 30 days if standard promo
+        }
+
+        if (days > 0) {
+          const newSubtill = addDaysToDate(user.subtill, days);
+          await db.prepare("UPDATE users SET subtill = ? WHERE LOWER(username) = LOWER(?)").bind(newSubtill, user.username).run();
+          messageParts.push(`Подписка продлена до ${newSubtill}`);
+        }
+
+        // Record usage
+        try {
+          await db.prepare("INSERT INTO promocode_usages (promocode, username) VALUES (?, ?)").bind(inputUpper, user.username).run();
+        } catch {}
+
+        // Increment activations
+        try {
+          await db.prepare("UPDATE promocodes SET activations = activations + 1 WHERE UPPER(name) = ?").bind(inputUpper).run();
+        } catch {}
+
+        const resultMsg = messageParts.length > 0
+          ? `Промокод активирован! ${messageParts.join(", ")}`
+          : "Промокод успешно активирован!";
+
+        return textResponse(resultMsg);
+      }
+
+      // 3. Not found
+      return textResponse("The entered key or promo code does not exist.", 404);
+    }
+
     // ==================== PAYMENTS ENDPOINTS ====================
     if (path === "/ajax/payments/getAll") {
       return jsonResponse([
@@ -387,7 +620,6 @@ export default {
     }
 
     if (path === "/ajax/loader/payload" && method === "POST") {
-      await ensurePayloadsTable();
       const token = params.token || body.token;
       const hwid = (params.hwid || body.hwid || "").trim();
       const version = params.version || body.version || "1.21.11";
@@ -449,58 +681,52 @@ export default {
       const token = params.token || body.token;
       const user = await getUserByToken(token);
 
-      if (path.endsWith("/isSessionInitialized")) {
-        return textResponse(user && user.role === "ADMIN" ? "true" : "false");
+      // getBanks is public in panel
+      if (!user && path.endsWith("/finances/getBanks")) {
+        return jsonResponse([
+          { enumName: "TINKOFF", displayName: "Тинькофф Банк (Т-Банк)" },
+          { enumName: "SBERBANK", displayName: "Сбербанк" },
+          { enumName: "ALFABANK", displayName: "Альфа-Банк" },
+        ]);
       }
 
-      // Block non-admins
-      if (!user || user.role !== "ADMIN") {
-        return jsonResponse({ error: "Access denied. Admins only.", content: [], total: 0 }, 403);
+      if (!user) {
+        return textResponse("Unauthorized", 401);
       }
 
-      if (path.endsWith("/finances/getBanks")) {
-        return jsonResponse({
-          sber: { name: "Sberbank", id: "sber" },
-          tinkoff: { name: "Tinkoff", id: "tinkoff" },
-          alfa: { name: "Alfa-Bank", id: "alfa" },
-        });
+      // session check
+      if (path.endsWith("/states/isSessionInitialized")) {
+        return textResponse("true");
       }
 
-      if (path.endsWith("/finances/getBalance")) return jsonResponse({ result: 0 });
-
-      if (path.endsWith("/finances/getWithdraws")) {
-        let withdrawsList = [];
-        if (db) {
-          try {
-            const { results } = await db.prepare("SELECT * FROM withdraws ORDER BY id DESC").all();
-            withdrawsList = results;
-          } catch {}
-        }
-        return jsonResponse(withdrawsList);
-      }
-
+      // users list & search
       if (path.endsWith("/users/getAll") || path.endsWith("/users/search")) {
-        let usersList = [];
+        const q = (params.query || "").toLowerCase();
+        let rows = [];
         if (db) {
           try {
-            const { results } = await db.prepare("SELECT * FROM users ORDER BY id ASC").all();
-            usersList = results.map((u) => ({
-              uid: u.id,
-              user: u.username,
-              email: u.email,
-              group: u.role,
-              banned: Boolean(u.banned),
-              hwid: u.hwid,
-              subtill: u.subtill,
-              regdate: (!u.regdate || u.regdate === "01.01.2024") ? getFormattedDate() : u.regdate,
-            }));
+            const { results } = await db.prepare("SELECT * FROM users ORDER BY id DESC").all();
+            for (const u of results) {
+              if (q && !u.username.toLowerCase().includes(q) && !u.email.toLowerCase().includes(q)) {
+                continue;
+              }
+              rows.push({
+                uid: u.id,
+                user: u.username,
+                email: u.email,
+                group: u.role,
+                banned: Boolean(u.banned),
+                hwid: u.hwid,
+                subtill: u.subtill,
+              });
+            }
           } catch {}
         }
-        return jsonResponse({ content: usersList, total: Math.ceil(usersList.length / 10) || 1 });
+        return jsonResponse({ content: rows, total: rows.length });
       }
 
       if (path.endsWith("/users/getByIdentifier")) {
-        const uid = parseInt(params.id || body.id || "1");
+        const uid = parseInt(params.id || body.id || "1", 10);
         let u = null;
         if (db) {
           u = await db.prepare("SELECT * FROM users WHERE id = ?").bind(uid).first();
@@ -553,6 +779,7 @@ export default {
         return textResponse("HWID reset");
       }
 
+      // Keys endpoints
       if (path.endsWith("/keys/action/getAll")) {
         let keysList = [];
         if (db) {
@@ -582,16 +809,20 @@ export default {
       }
 
       if (path.includes("/multiactions/keys/")) {
-        const count = Math.min(Math.max(parseInt(params.count || body.count || "1"), 1), 50);
+        const count = Math.min(Math.max(parseInt(params.count || body.count || "1", 10), 1), 50);
         const days = params.days || body.days || "";
         let display = "Custom";
-        if (path.endsWith("/subscription")) display = days ? `${days} days` : "Subscription";
+        if (path.endsWith("/subscription")) display = days ? `${days} days` : "30 days";
         else if (path.endsWith("/hardwareReset")) display = "Hardware Reset";
         else if (path.endsWith("/beta")) display = "BETA";
+        else if (path.endsWith("/additionalProduct")) {
+          const prodId = params.productId || body.productId;
+          display = (prodId == "102") ? "BETA 1.21.11 + LifeTime" : "BETA 1.21.11";
+        }
 
         const createdKeys = [];
         for (let i = 0; i < count; i++) {
-          const k = "DUSTGAMES-" + generateToken().slice(0, 16).toUpperCase();
+          const k = "EXCLUSIVE-" + generateToken().slice(0, 16).toUpperCase();
           createdKeys.push(k);
           if (db) {
             try {
@@ -602,6 +833,7 @@ export default {
         return textResponse(createdKeys.join("\n"));
       }
 
+      // Promocodes endpoints
       if (path.endsWith("/promocodes/getAll")) {
         let promoMap = {};
         if (db) {
@@ -615,23 +847,78 @@ export default {
         return jsonResponse(promoMap);
       }
 
+      if (path.endsWith("/promocodes/get")) {
+        const name = (params.promocode || body.promocode || "").trim().toUpperCase();
+        let row = null;
+        if (db && name) {
+          try {
+            row = await db.prepare("SELECT * FROM promocodes WHERE UPPER(name) = ?").bind(name).first();
+          } catch {}
+        }
+        if (!row) {
+          row = { name, discount: 0, activations: 0, maxActivations: 0, bet: 0, maxUsages: 0 };
+        }
+        return jsonResponse(row);
+      }
+
       if (path.endsWith("/promocodes/create")) {
-        const name = (params.promocode || body.promocode || "PROMO").toUpperCase();
-        const bet = parseInt(params.bet || body.bet || "10");
-        const max_u = parseInt(params.maxUsages || body.maxUsages || "100");
-        if (db) {
-          await db.prepare("INSERT OR REPLACE INTO promocodes (name, discount, activations, maxActivations, bet, maxUsages) VALUES (?, ?, 0, ?, ?, ?)")
-            .bind(name, bet, max_u, bet, max_u).run();
+        const name = (params.promocode || body.promocode || "PROMO").trim().toUpperCase();
+        const bet = parseInt(params.bet || body.bet || "10", 10);
+        const max_u = parseInt(params.maxUsages || body.maxUsages || "100", 10);
+        if (db && name) {
+          try {
+            await db.prepare(
+              "INSERT INTO promocodes (name, discount, activations, maxActivations, bet, maxUsages) VALUES (?, ?, 0, ?, ?, ?) ON CONFLICT(name) DO UPDATE SET discount = ?, maxActivations = ?, bet = ?, maxUsages = ?"
+            ).bind(name, bet, max_u, bet, max_u, bet, max_u, bet, max_u).run();
+          } catch {
+            await db.prepare(
+              "INSERT OR REPLACE INTO promocodes (name, discount, activations, maxActivations, bet, maxUsages) VALUES (?, ?, 0, ?, ?, ?)"
+            ).bind(name, bet, max_u, bet, max_u).run();
+          }
         }
         return textResponse("Promocode created");
       }
 
+      if (path.endsWith("/promocodes/patch")) {
+        const name = (params.promocode || body.promocode || "").trim().toUpperCase();
+        if (db && name) {
+          const bet = parseInt(params.bet || body.bet || "10", 10);
+          const max_u = parseInt(params.maxUsages || body.maxUsages || "100", 10);
+          await db.prepare(
+            "UPDATE promocodes SET discount = ?, bet = ?, maxActivations = ?, maxUsages = ? WHERE UPPER(name) = ?"
+          ).bind(bet, bet, max_u, max_u, name).run();
+        }
+        return textResponse("Promocode updated");
+      }
+
       if (path.endsWith("/promocodes/delete")) {
-        const name = (params.promocode || body.promocode || "").toUpperCase();
+        const name = (params.promocode || body.promocode || "").trim().toUpperCase();
         if (db && name) {
           await db.prepare("DELETE FROM promocodes WHERE UPPER(name) = ?").bind(name).run();
+          try {
+            await db.prepare("DELETE FROM promocode_usages WHERE UPPER(promocode) = ?").bind(name).run();
+          } catch {}
         }
         return textResponse("Promocode deleted");
+      }
+
+      if (path.endsWith("/promocodes/resetUsages")) {
+        const name = (params.promocode || body.promocode || "").trim().toUpperCase();
+        if (db && name) {
+          await db.prepare("UPDATE promocodes SET activations = 0 WHERE UPPER(name) = ?").bind(name).run();
+          try {
+            await db.prepare("DELETE FROM promocode_usages WHERE UPPER(promocode) = ?").bind(name).run();
+          } catch {}
+        }
+        return textResponse("Usages reset");
+      }
+
+      if (path.endsWith("/promocodes/statistic/get")) {
+        return jsonResponse({ payments: [], total: 0 });
+      }
+
+      if (path.endsWith("/promocodes/statistic/clearPayments")) {
+        return textResponse("Statistics cleared");
       }
 
       if (path.endsWith("/autoload/getVersions")) {
@@ -655,7 +942,6 @@ export default {
       }
 
       if (path.endsWith("/loader/uploadPayload") && method === "POST") {
-        await ensurePayloadsTable();
         const version = (params.version || body.version || "1.21.11").trim();
         const entryClass = (params.entry_class || params.entryClass || body.entry_class || body.entryClass || "ru.exclusive.client.Main").trim();
         const payloadData = (params.payload || body.payload || params.payload_data || body.payload_data || "").trim();
@@ -680,7 +966,6 @@ export default {
       }
 
       if (path.endsWith("/loader/listPayloads")) {
-        await ensurePayloadsTable();
         let list = [];
         if (db) {
           try {
@@ -692,7 +977,6 @@ export default {
       }
 
       if (path.endsWith("/loader/deletePayload") && method === "POST") {
-        await ensurePayloadsTable();
         const version = (params.version || body.version || "").trim();
         if (db && version) {
           await db.prepare("DELETE FROM payloads WHERE version = ?").bind(version).run();

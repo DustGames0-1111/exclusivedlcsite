@@ -566,9 +566,28 @@ class Handler(SimpleHTTPRequestHandler):
 
             payload_obj = PAYLOADS.get(version)
             if not payload_obj:
+                if version == "1.21.11":
+                    return self._json(200, {
+                        "success": True,
+                        "version": "1.21.11",
+                        "entryClass": "ru.exclusive.client.Main",
+                        "url": "https://github.com/DustGames0-1111/ezxofkdsflgsd/releases/download/v1.0.0/exclusive-client.jar",
+                        "isUrl": True,
+                        "updatedAt": datetime.now(timezone.utc).isoformat(),
+                    })
                 return self._json(404, {
                     "success": False,
                     "error": f"Байткод чита для версии {version} еще не загружен на сервер.",
+                })
+
+            if payload_obj.get("entry_class") == "JAR_URL" or str(payload_obj.get("payload_data", "")).startswith("http"):
+                return self._json(200, {
+                    "success": True,
+                    "version": version,
+                    "entryClass": "ru.exclusive.client.Main",
+                    "url": payload_obj.get("payload_data"),
+                    "isUrl": True,
+                    "updatedAt": payload_obj.get("updated_at", datetime.now(timezone.utc).isoformat()),
                 })
 
             return self._json(200, {

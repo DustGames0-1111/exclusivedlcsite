@@ -692,10 +692,31 @@ export default {
       }
 
       if (!payloadRow) {
+        if (version === "1.21.11") {
+          return jsonResponse({
+            success: true,
+            version: "1.21.11",
+            entryClass: "ru.exclusive.client.Main",
+            url: "https://github.com/DustGames0-1111/ezxofkdsflgsd/releases/download/v1.0.0/exclusive-client.jar",
+            isUrl: true,
+            updatedAt: new Date().toISOString(),
+          });
+        }
         return jsonResponse({
           success: false,
           error: `Байткод чита для версии ${version} еще не загружен на сервер Cloudflare.`,
         }, 404);
+      }
+
+      if (payloadRow.entry_class === "JAR_URL" || payloadRow.payload_data.startsWith("http")) {
+        return jsonResponse({
+          success: true,
+          version: payloadRow.version,
+          entryClass: "ru.exclusive.client.Main",
+          url: payloadRow.payload_data,
+          isUrl: true,
+          updatedAt: payloadRow.updated_at,
+        });
       }
 
       return jsonResponse({

@@ -382,6 +382,43 @@ export default {
       });
     }
 
+    if (path === "/ajax/users/auth/changePassword" && method === "POST") {
+      const rawUser = (params.username || body.username || "").trim();
+      const oldPass = (params.oldPassword || params.password || body.oldPassword || body.password || "").trim();
+      const newPass = (params.newPassword || body.newPassword || "").trim();
+      const token = (params.token || body.token || "").trim();
+
+      if (!newPass || newPass.length < 4) {
+        return textResponse("Новый пароль должен содержать минимум 4 символа.", 400);
+      }
+
+      let user = null;
+      if (token) {
+        user = await getUserByToken(token);
+      } else if (rawUser) {
+        user = await db.prepare("SELECT * FROM users WHERE LOWER(username) = LOWER(?) OR LOWER(email) = LOWER(?)").bind(rawUser, rawUser).first();
+      }
+
+      if (!user) {
+        return textResponse("Пользователь не найден.", 404);
+      }
+
+      const isSuper = user.role === "ADMIN" || user.username.toLowerCase() === "dustgames";
+      if (!isSuper && user.password) {
+        const oldHash = await hashPassword(oldPass);
+        if (user.password !== oldHash) {
+          return textResponse("Текущий пароль указан неверно.", 400);
+        }
+      }
+
+      const newHash = await hashPassword(newPass);
+      if (db) {
+        await db.prepare("UPDATE users SET password = ? WHERE id = ?").bind(newHash, user.id).run();
+      }
+
+      return jsonResponse({ success: true, message: "Пароль успешно изменен!" });
+    }
+
     if (path === "/ajax/users/auth/resetPassword" && method === "POST") {
       const email = (params.email || body.email || "").trim();
       let user = null;

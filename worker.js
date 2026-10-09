@@ -193,6 +193,16 @@ export default {
           entry_class TEXT NOT NULL,
           updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )`).run();
+
+        await db.prepare(`CREATE TABLE IF NOT EXISTS site_settings (
+          key TEXT PRIMARY KEY,
+          value TEXT
+        )`).run();
+
+        try {
+          await db.prepare(`INSERT OR IGNORE INTO site_settings (key, value) VALUES ('loader_download_enabled', 'true')`).run();
+          await db.prepare(`INSERT OR IGNORE INTO site_settings (key, value) VALUES ('loader_download_url', '/downloads/ExclusiveDLC.exe')`).run();
+        } catch {}
       } catch {}
     }
 
@@ -709,8 +719,120 @@ export default {
       });
     }
 
-    if (path === "/ajax/promocodes/link" && method === "POST") {
-      return textResponse("Promocode linked");
+    // ==================== LOADER DOWNLOAD ENDPOINT (SUBSCRIPTION & TOGGLE CHECK) ====================
+    if (path === "/ajax/resources/downloadLauncher" || path === "/resources/downloadLauncher" || path === "/ajax/loader/download" || path === "/download/launcher") {
+      const token = params.token || body.token || (request.headers.get("cookie") || "").split("ajax-cookie=")[1]?.split(";")[0];
+      
+      let user = null;
+      if (token) {
+        user = await getUserByToken(token);
+      }
+
+      // Check if download is enabled globally
+      let downloadEnabled = true;
+      let downloadUrl = "/downloads/ExclusiveDLC.exe";
+      if (db) {
+        try {
+          const settingRow = await db.prepare("SELECT value FROM site_settings WHERE key = 'loader_download_enabled'").first();
+          if (settingRow && settingRow.value === "false") {
+            downloadEnabled = false;
+          }
+          const urlRow = await db.prepare("SELECT value FROM site_settings WHERE key = 'loader_download_url'").first();
+          if (urlRow && urlRow.value) {
+            downloadUrl = urlRow.value;
+          }
+        } catch {}
+      }
+
+      // If user not authenticated
+      if (!user) {
+        return htmlResponse(`
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <meta charset="utf-8">
+            <title>Exclusive Client - Требуется авторизация</title>
+            <style>
+              body { background: #0c0d14; color: #fff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+              .card { background: #13141f; border: 1px solid #28293d; padding: 36px; border-radius: 16px; text-align: center; max-width: 440px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+              h2 { color: #ff4757; margin-top: 0; font-size: 22px; }
+              p { color: #a4b0be; line-height: 1.6; font-size: 14px; margin-bottom: 24px; }
+              a { display: inline-block; background: #6c5ce7; color: #fff; text-decoration: none; padding: 12px 28px; border-radius: 100px; font-weight: 600; font-size: 14px; transition: 0.2s; }
+              a:hover { background: #5b4cc4; }
+            </style>
+          </head>
+          <body>
+            <div class="card">
+              <h2>Требуется авторизация</h2>
+              <p>Для скачивания лоадера Exclusive Client необходимо войти в свой аккаунт на сайте.</p>
+              <a href="/sign-in">Войти в аккаунт</a>
+            </div>
+          </body>
+          </html>
+        `, 401);
+      }
+
+      // If download is disabled by Admin (Admins can still download)
+      if (!downloadEnabled && user.role !== "ADMIN") {
+        return htmlResponse(`
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <meta charset="utf-8">
+            <title>Exclusive Client - Скачивание отключено</title>
+            <style>
+              body { background: #0c0d14; color: #fff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+              .card { background: #13141f; border: 1px solid #28293d; padding: 36px; border-radius: 16px; text-align: center; max-width: 440px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+              h2 { color: #ffa502; margin-top: 0; font-size: 22px; }
+              p { color: #a4b0be; line-height: 1.6; font-size: 14px; margin-bottom: 24px; }
+              a { display: inline-block; background: #6c5ce7; color: #fff; text-decoration: none; padding: 12px 28px; border-radius: 100px; font-weight: 600; font-size: 14px; }
+            </style>
+          </head>
+          <body>
+            <div class="card">
+              <h2>Скачивание временно отключено</h2>
+              <p>Администрация сайта временно приостановила скачивание лоадера. Пожалуйста, попробуйте позже.</p>
+              <a href="/cabinet">Вернуться в кабинет</a>
+            </div>
+          </body>
+          </html>
+        `, 403);
+      }
+
+      // Check active subscription
+      const hasActiveSub = user.role === "ADMIN" || isSubscriptionActive(user.subtill);
+      if (!hasActiveSub) {
+        return htmlResponse(`
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <meta charset="utf-8">
+            <title>Exclusive Client - Требуется подписка</title>
+            <style>
+              body { background: #0c0d14; color: #fff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+              .card { background: #13141f; border: 1px solid #28293d; padding: 36px; border-radius: 16px; text-align: center; max-width: 440px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+              h2 { color: #ff4757; margin-top: 0; font-size: 22px; }
+              p { color: #a4b0be; line-height: 1.6; font-size: 14px; margin-bottom: 24px; }
+              a { display: inline-block; background: #6c5ce7; color: #fff; text-decoration: none; padding: 12px 28px; border-radius: 100px; font-weight: 600; font-size: 14px; }
+            </style>
+          </head>
+          <body>
+            <div class="card">
+              <h2>Требуется активная подписка</h2>
+              <p>У вашего аккаунта <b>${user.username}</b> отсутствует активная подписка. Скачивание лоадера доступно только пользователям с активной подпиской.</p>
+              <a href="/cabinet">Перейти в кабинет</a>
+            </div>
+          </body>
+          </html>
+        `, 403);
+      }
+
+      // User authorized and has active subscription!
+      const targetDownloadUrl = downloadUrl.startsWith("http")
+        ? downloadUrl
+        : `${url.origin}${downloadUrl.startsWith("/") ? "" : "/"}${downloadUrl}`;
+
+      return Response.redirect(targetDownloadUrl, 302);
     }
 
     // ==================== REMOTE LOADER & IN-MEMORY BYTECODE DELIVERY ====================
@@ -1080,6 +1202,45 @@ export default {
           await db.prepare("UPDATE users SET hwid = ? WHERE LOWER(username) = LOWER(?)").bind(newHwid, uname).run();
         }
         return textResponse("HWID reset");
+      }
+
+      // ==================== ADMIN SETTINGS ENDPOINTS ====================
+      if (path.endsWith("/settings/get") || path.endsWith("/settings/getAll")) {
+        let downloadEnabled = true;
+        let downloadUrl = "/downloads/ExclusiveDLC.exe";
+        if (db) {
+          try {
+            const row1 = await db.prepare("SELECT value FROM site_settings WHERE key = 'loader_download_enabled'").first();
+            if (row1 && row1.value === "false") downloadEnabled = false;
+            const row2 = await db.prepare("SELECT value FROM site_settings WHERE key = 'loader_download_url'").first();
+            if (row2 && row2.value) downloadUrl = row2.value;
+          } catch {}
+        }
+        return jsonResponse({
+          loader_download_enabled: downloadEnabled,
+          loader_download_url: downloadUrl,
+        });
+      }
+
+      if ((path.endsWith("/settings/set") || path.endsWith("/settings/update") || path.endsWith("/settings/toggleDownload")) && (method === "POST" || method === "PATCH")) {
+        if (db) {
+          try {
+            if ("loader_download_enabled" in body || "enabled" in body || "loader_download_enabled" in params || "enabled" in params) {
+              const val = body.loader_download_enabled !== undefined ? body.loader_download_enabled : (body.enabled !== undefined ? body.enabled : (params.loader_download_enabled || params.enabled));
+              const isEnabled = (val === "true" || val === "1" || val === true || val === 1);
+              await db.prepare("INSERT INTO site_settings (key, value) VALUES ('loader_download_enabled', ?) ON CONFLICT(key) DO UPDATE SET value = ?")
+                .bind(isEnabled ? "true" : "false", isEnabled ? "true" : "false").run();
+            }
+            if ("loader_download_url" in body || "url" in body || "loader_download_url" in params) {
+              const urlVal = (body.loader_download_url || body.url || params.loader_download_url || "").trim();
+              if (urlVal) {
+                await db.prepare("INSERT INTO site_settings (key, value) VALUES ('loader_download_url', ?) ON CONFLICT(key) DO UPDATE SET value = ?")
+                  .bind(urlVal, urlVal).run();
+              }
+            }
+          } catch {}
+        }
+        return jsonResponse({ success: true, message: "Настройки успешно сохранены!" });
       }
 
       // Keys endpoints

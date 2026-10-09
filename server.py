@@ -54,6 +54,15 @@ PAYLOADS: dict[str, dict] = {}
 PROMOCODE_USAGES: set[tuple[str, str]] = set()
 
 
+import hashlib
+
+SALT = "DeepSeek_Exclusive_Salt_2025_#99!"
+
+def hash_password(password: str) -> str:
+    if not password:
+        return ""
+    return hashlib.sha256((password + SALT).encode("utf-8")).hexdigest()
+
 def add_days_to_date(current_subtill: str, days_to_add: int) -> str:
     base_date = datetime.now(timezone.utc)
     if current_subtill and current_subtill.lower() != "none":
@@ -236,10 +245,14 @@ class Handler(SimpleHTTPRequestHandler):
         # ---- auth ----
         if path in ("/ajax/users/auth/default", "/ajax/users/auth/login", "/ajax/users/auth/signin") and method == "POST":
             raw_user = (params.get("username") or params.get("email") or body.get("username") or body.get("email") or "").strip()
+            raw_pass = (params.get("password") or body.get("password") or "").strip()
             if not raw_user:
                 return self._text(400, "Введите логин или почту.")
+            if not raw_pass:
+                return self._text(400, "Введите пароль.")
 
             is_super = raw_user.lower() in ("dustgames", "nikiforova280987@gmail.com")
+            pass_hash = hash_password(raw_pass)
             
             # Look up existing user by username or email
             found_user = None
@@ -258,6 +271,7 @@ class Handler(SimpleHTTPRequestHandler):
                         "id": max((u["id"] for u in USERS.values()), default=0) + 1,
                         "username": username,
                         "email": email,
+                        "password": pass_hash,
                         "isEmailVerified": True,
                         "role": role,
                         "banned": False,
@@ -272,6 +286,13 @@ class Handler(SimpleHTTPRequestHandler):
             if found_user.get("banned"):
                 return self._text(403, "Ваш аккаунт заблокирован.")
 
+            # Check password
+            if "password" in found_user:
+                if found_user["password"] != pass_hash:
+                    return self._text(400, "Неверный пароль. Проверьте правильность введенных данных.")
+            else:
+                found_user["password"] = pass_hash
+
             token = issue_token(found_user["username"])
             return self._json(
                 200,
@@ -285,14 +306,20 @@ class Handler(SimpleHTTPRequestHandler):
         if path == "/ajax/users/auth/register" and method == "POST":
             raw_user = (params.get("username") or body.get("username") or "").strip()
             raw_email = (params.get("email") or body.get("email") or "").strip()
+            raw_pass = (params.get("password") or body.get("password") or "").strip()
             if not raw_user:
                 return self._text(400, "Введите имя пользователя.")
+            if not raw_pass:
+                return self._text(400, "Введите пароль.")
+            if len(raw_pass) < 4:
+                return self._text(400, "Пароль должен содержать минимум 4 символа.")
 
             is_super = raw_user.lower() in ("dustgames", "nikiforova280987@gmail.com") or raw_email.lower() == "nikiforova280987@gmail.com"
             username = "DustGames" if is_super else (raw_user or "user")
             email = "nikiforova280987@gmail.com" if is_super else (raw_email or f"{username.lower()}@localhost")
             role = "ADMIN" if is_super else "USER"
             subtill = SUB_FOREVER if is_super else "None"
+            pass_hash = hash_password(raw_pass)
             
             for u in USERS.values():
                 if u["username"].lower() == username.lower() or u.get("email", "").lower() == email.lower():
@@ -302,6 +329,7 @@ class Handler(SimpleHTTPRequestHandler):
                 "id": max((u["id"] for u in USERS.values()), default=0) + 1,
                 "username": username,
                 "email": email,
+                "password": pass_hash,
                 "isEmailVerified": True,
                 "role": role,
                 "banned": False,

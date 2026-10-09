@@ -2,6 +2,7 @@ CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT UNIQUE NOT NULL,
     email TEXT NOT NULL,
+    password TEXT,
     isEmailVerified INTEGER DEFAULT 1,
     role TEXT DEFAULT 'USER',
     banned INTEGER DEFAULT 0,

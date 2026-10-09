@@ -29,6 +29,19 @@ function textResponse(text, status = 200) {
   });
 }
 
+function htmlResponse(html, status = 200) {
+  return new Response(String(html), {
+    status,
+    headers: {
+      "Content-Type": "text/html; charset=utf-8",
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, POST, PATCH, OPTIONS",
+      "Access-Control-Allow-Headers": "*",
+      "Cache-Control": "no-store",
+    },
+  });
+}
+
 function getFormattedDate() {
   const now = new Date();
   const d = String(now.getDate()).padStart(2, "0");
@@ -90,7 +103,7 @@ export default {
     }
 
     // If NOT an API route, serve static assets (HTML, JS, CSS, images)
-    if (!path.startsWith("/ajax") && env.ASSETS) {
+    if (!path.startsWith("/ajax") && path !== "/resources/downloadLauncher" && path !== "/download/launcher" && env.ASSETS) {
       return env.ASSETS.fetch(request);
     }
 

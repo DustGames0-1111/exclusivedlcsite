@@ -216,7 +216,40 @@ export default {
           await db.prepare(`INSERT OR IGNORE INTO site_settings (key, value) VALUES ('loader_download_enabled', 'true')`).run();
           await db.prepare(`INSERT OR IGNORE INTO site_settings (key, value) VALUES ('loader_download_url', '/downloads/ExclusiveDLC.exe')`).run();
         } catch {}
+
+        try {
+          // If Maryjainer was assigned 889 due to SQLite max(id) jump, restore to sequential UID (20)
+          const mary = await db.prepare("SELECT * FROM users WHERE LOWER(username) = 'maryjainer' AND id = 889").first();
+          if (mary) {
+            const nextFree = await getNextRegularUid();
+            await db.prepare("UPDATE users SET id = ? WHERE id = 889").bind(nextFree).run();
+          }
+        } catch {}
       } catch {}
+    }
+
+    // Helper: Calculate next sequential regular UID (skipping custom assigned IDs >= 500)
+    async function getNextRegularUid() {
+      if (!db) return 1;
+      try {
+        const { results } = await db.prepare("SELECT id FROM users ORDER BY id ASC").all();
+        if (!results || results.length === 0) return 1;
+        let maxNormal = 0;
+        const occupied = new Set();
+        for (const r of results) {
+          occupied.add(r.id);
+          if (r.id < 500 && r.id > maxNormal) {
+            maxNormal = r.id;
+          }
+        }
+        let candidate = maxNormal + 1;
+        while (occupied.has(candidate)) {
+          candidate++;
+        }
+        return candidate;
+      } catch {
+        return 1;
+      }
     }
 
     await ensureAllTables();
@@ -418,8 +451,9 @@ export default {
         }
 
         const regdate = getFormattedDate();
-        await db.prepare("INSERT INTO users (username, email, password, role, subtill, regdate) VALUES (?, ?, ?, ?, ?, ?)")
-          .bind(username, email, passHash, role, subtill, regdate).run();
+        const nextUid = await getNextRegularUid();
+        await db.prepare("INSERT INTO users (id, username, email, password, role, subtill, regdate) VALUES (?, ?, ?, ?, ?, ?, ?)")
+          .bind(nextUid, username, email, passHash, role, subtill, regdate).run();
         user = await db.prepare("SELECT * FROM users WHERE LOWER(username) = LOWER(?)").bind(username).first();
       }
 

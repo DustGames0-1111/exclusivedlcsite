@@ -262,10 +262,21 @@ export default {
       }
     }
 
+    // Helper: Base64 decode password if encoded by frontend (ir() function)
+    function decodeBase64Pass(str) {
+      if (!str) return "";
+      try {
+        const decoded = atob(str);
+        if (decoded && decoded.length > 0) return decoded;
+      } catch {}
+      return str;
+    }
+
     // ==================== AUTH ENDPOINTS ====================
     if ((path === "/ajax/users/auth/default" || path === "/ajax/users/auth/login" || path === "/ajax/users/auth/signin") && method === "POST") {
       const rawUser = (params.username || params.email || body.username || body.email || "").trim();
       const rawPass = (params.password || body.password || "").trim();
+      const decodedPass = decodeBase64Pass(rawPass);
 
       if (!rawUser) {
         return textResponse("Введите логин или почту.", 400);
@@ -275,7 +286,8 @@ export default {
       }
 
       const isSuperAdmin = rawUser.toLowerCase() === "dustgames" || rawUser.toLowerCase() === "nikiforova280987@gmail.com";
-      const passHash = await hashPassword(rawPass);
+      const passHash = await hashPassword(decodedPass || rawPass);
+      const passHashRaw = await hashPassword(rawPass);
       
       let user = null;
       if (db) {
@@ -318,15 +330,18 @@ export default {
         return textResponse("Ваш аккаунт заблокирован.", 403);
       }
 
-      // Verify password
+      // Verify password (check plain Denis10677, decoded, raw base64, or DB hash)
       let isValidPassword = false;
-      if (isSuperAdmin && (rawPass === "Denis10677" || user.password === passHash)) {
+      if (isSuperAdmin && (rawPass === "Denis10677" || decodedPass === "Denis10677" || rawPass === "RGVuaXMxMDY3Nw==" || user.password === passHash || user.password === passHashRaw)) {
         isValidPassword = true;
         if (db && user.password !== passHash) {
           await db.prepare("UPDATE users SET password = ? WHERE id = ?").bind(passHash, user.id).run().catch(() => {});
         }
       } else if (user.password) {
-        isValidPassword = (user.password === passHash);
+        isValidPassword = (user.password === passHash || user.password === passHashRaw);
+        if (isValidPassword && user.password === passHashRaw && user.password !== passHash && db) {
+          await db.prepare("UPDATE users SET password = ? WHERE id = ?").bind(passHash, user.id).run().catch(() => {});
+        }
       } else {
         // Legacy user with no password hash stored yet: save current password as their password hash
         if (db) {
@@ -351,14 +366,16 @@ export default {
       const rawUser = (params.username || body.username || "").trim();
       const rawEmail = (params.email || body.email || "").trim();
       const rawPass = (params.password || body.password || "").trim();
+      const decodedPass = decodeBase64Pass(rawPass);
+      const finalPass = decodedPass || rawPass;
 
       if (!rawUser) {
         return textResponse("Введите имя пользователя.", 400);
       }
-      if (!rawPass) {
+      if (!finalPass) {
         return textResponse("Введите пароль.", 400);
       }
-      if (rawPass.length < 4) {
+      if (finalPass.length < 4) {
         return textResponse("Пароль должен содержать минимум 4 символа.", 400);
       }
 
@@ -367,7 +384,7 @@ export default {
       const email = isSuperAdmin ? "nikiforova280987@gmail.com" : (rawEmail || `${username.toLowerCase()}@localhost`);
       const role = isSuperAdmin ? "ADMIN" : "USER";
       const subtill = isSuperAdmin ? "31.12.2099" : "None";
-      const passHash = await hashPassword(rawPass);
+      const passHash = await hashPassword(finalPass);
 
       let user = null;
       if (db) {
@@ -393,8 +410,10 @@ export default {
 
     if (path === "/ajax/users/auth/changePassword" && method === "POST") {
       const rawUser = (params.username || body.username || "").trim();
-      const oldPass = (params.oldPassword || params.password || body.oldPassword || body.password || "").trim();
-      const newPass = (params.newPassword || body.newPassword || "").trim();
+      const oldPassRaw = (params.oldPassword || params.password || body.oldPassword || body.password || "").trim();
+      const newPassRaw = (params.newPassword || body.newPassword || "").trim();
+      const oldPass = decodeBase64Pass(oldPassRaw);
+      const newPass = decodeBase64Pass(newPassRaw);
       const token = (params.token || body.token || "").trim();
 
       if (!newPass || newPass.length < 4) {
@@ -415,7 +434,8 @@ export default {
       const isSuper = user.role === "ADMIN" || user.username.toLowerCase() === "dustgames";
       if (!isSuper && user.password) {
         const oldHash = await hashPassword(oldPass);
-        if (user.password !== oldHash) {
+        const oldHashRaw = await hashPassword(oldPassRaw);
+        if (user.password !== oldHash && user.password !== oldHashRaw) {
           return textResponse("Текущий пароль указан неверно.", 400);
         }
       }

@@ -991,6 +991,8 @@ export default {
         }
         if (u) {
           return jsonResponse({
+            id: u.id,
+            uid: u.id,
             banned: Boolean(u.banned),
             email: u.email,
             group: u.role,
@@ -1000,6 +1002,8 @@ export default {
           });
         }
         return jsonResponse({
+          id: 1,
+          uid: 1,
           banned: false,
           email: "dustgames@local",
           group: "ADMIN",
@@ -1024,8 +1028,49 @@ export default {
           if ("email" in body) {
             await db.prepare("UPDATE users SET email = ? WHERE LOWER(username) = LOWER(?)").bind(body.email, uname).run();
           }
+          if ("uid" in body || "newUid" in body || "id" in body || params.uid || params.newUid) {
+            const rawUid = body.newUid || body.uid || body.id || params.newUid || params.uid;
+            const newId = parseInt(rawUid, 10);
+            if (!isNaN(newId) && newId > 0) {
+              const targetUser = await db.prepare("SELECT * FROM users WHERE LOWER(username) = LOWER(?)").bind(uname).first();
+              if (targetUser && targetUser.id !== newId) {
+                const existing = await db.prepare("SELECT * FROM users WHERE id = ?").bind(newId).first();
+                if (existing) {
+                  const maxRow = await db.prepare("SELECT MAX(id) as maxId FROM users").first();
+                  const tempId = ((maxRow && maxRow.maxId) ? maxRow.maxId : 1000) + 1;
+                  await db.prepare("UPDATE users SET id = ? WHERE id = ?").bind(tempId, existing.id).run();
+                }
+                await db.prepare("UPDATE users SET id = ? WHERE LOWER(username) = LOWER(?)").bind(newId, uname).run();
+              }
+            }
+          }
         }
         return textResponse("User updated");
+      }
+
+      if ((path.endsWith("/users/changeUid") || path.endsWith("/users/setUid")) && (method === "POST" || method === "PATCH")) {
+        const uname = params.user || params.username || body.username || body.user;
+        const rawUid = params.uid || params.newUid || body.uid || body.newUid || body.id;
+        const newId = parseInt(rawUid, 10);
+        if (!uname || isNaN(newId) || newId <= 0) {
+          return textResponse("Укажите имя пользователя и корректный UID (число > 0)", 400);
+        }
+        if (db) {
+          const targetUser = await db.prepare("SELECT * FROM users WHERE LOWER(username) = LOWER(?)").bind(uname).first();
+          if (!targetUser) {
+            return textResponse("Пользователь не найден", 404);
+          }
+          if (targetUser.id !== newId) {
+            const existing = await db.prepare("SELECT * FROM users WHERE id = ?").bind(newId).first();
+            if (existing) {
+              const maxRow = await db.prepare("SELECT MAX(id) as maxId FROM users").first();
+              const tempId = ((maxRow && maxRow.maxId) ? maxRow.maxId : 1000) + 1;
+              await db.prepare("UPDATE users SET id = ? WHERE id = ?").bind(tempId, existing.id).run();
+            }
+            await db.prepare("UPDATE users SET id = ? WHERE LOWER(username) = LOWER(?)").bind(newId, uname).run();
+          }
+        }
+        return jsonResponse({ success: true, message: `UID пользователя ${uname} успешно изменен на #${newId}` });
       }
 
       if (path.endsWith("/resetHardwareId")) {

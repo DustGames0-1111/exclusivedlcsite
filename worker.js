@@ -524,6 +524,18 @@ export default {
         return jsonResponse({ authStatus: false, authMessage: "No session" });
       }
       const displayRegdate = (!user.regdate || user.regdate === "01.01.2024") ? getFormattedDate() : user.regdate;
+      
+      let downloadEnabled = true;
+      let downloadUrl = "/downloads/ExclusiveDLC.exe";
+      if (db) {
+        try {
+          const settingRow = await db.prepare("SELECT value FROM site_settings WHERE key = 'loader_download_enabled'").first();
+          if (settingRow && settingRow.value === "false") downloadEnabled = false;
+          const urlRow = await db.prepare("SELECT value FROM site_settings WHERE key = 'loader_download_url'").first();
+          if (urlRow && urlRow.value) downloadUrl = urlRow.value;
+        } catch {}
+      }
+
       return jsonResponse({
         authStatus: true,
         authMessage: "OK",
@@ -537,6 +549,8 @@ export default {
         hwid: user.hwid,
         subtill: user.subtill,
         regdate: displayRegdate,
+        loader_download_enabled: downloadEnabled,
+        loader_download_url: downloadUrl,
       });
     }
 

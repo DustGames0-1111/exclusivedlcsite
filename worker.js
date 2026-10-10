@@ -214,7 +214,8 @@ export default {
 
         try {
           await db.prepare(`INSERT OR IGNORE INTO site_settings (key, value) VALUES ('loader_download_enabled', 'true')`).run();
-          await db.prepare(`INSERT OR IGNORE INTO site_settings (key, value) VALUES ('loader_download_url', '/downloads/ExclusiveDLC.exe')`).run();
+          await db.prepare(`INSERT OR IGNORE INTO site_settings (key, value) VALUES ('loader_download_url', '/downloads/exclusivelauncher.exe')`).run();
+          await db.prepare(`UPDATE site_settings SET value = '/downloads/exclusivelauncher.exe' WHERE key = 'loader_download_url' AND value = '/downloads/ExclusiveDLC.exe'`).run();
         } catch {}
 
         try {
@@ -526,13 +527,13 @@ export default {
       const displayRegdate = (!user.regdate || user.regdate === "01.01.2024") ? getFormattedDate() : user.regdate;
       
       let downloadEnabled = true;
-      let downloadUrl = "/downloads/ExclusiveDLC.exe";
+      let downloadUrl = "/downloads/exclusivelauncher.exe";
       if (db) {
         try {
           const settingRow = await db.prepare("SELECT value FROM site_settings WHERE key = 'loader_download_enabled'").first();
           if (settingRow && settingRow.value === "false") downloadEnabled = false;
           const urlRow = await db.prepare("SELECT value FROM site_settings WHERE key = 'loader_download_url'").first();
-          if (urlRow && urlRow.value) downloadUrl = urlRow.value;
+          if (urlRow && urlRow.value && !urlRow.value.includes("ExclusiveDLC.exe")) downloadUrl = urlRow.value;
         } catch {}
       }
 
@@ -791,7 +792,7 @@ export default {
 
       // Check if download is enabled globally
       let downloadEnabled = true;
-      let downloadUrl = "/downloads/ExclusiveDLC.exe";
+      let downloadUrl = "/downloads/exclusivelauncher.exe";
       if (db) {
         try {
           const settingRow = await db.prepare("SELECT value FROM site_settings WHERE key = 'loader_download_enabled'").first();
@@ -799,7 +800,7 @@ export default {
             downloadEnabled = false;
           }
           const urlRow = await db.prepare("SELECT value FROM site_settings WHERE key = 'loader_download_url'").first();
-          if (urlRow && urlRow.value) {
+          if (urlRow && urlRow.value && !urlRow.value.includes("ExclusiveDLC.exe")) {
             downloadUrl = urlRow.value;
           }
         } catch {}
@@ -1296,13 +1297,13 @@ export default {
       // ==================== ADMIN SETTINGS ENDPOINTS ====================
       if (path.endsWith("/settings/get") || path.endsWith("/settings/getAll")) {
         let downloadEnabled = true;
-        let downloadUrl = "/downloads/ExclusiveDLC.exe";
+        let downloadUrl = "/downloads/exclusivelauncher.exe";
         if (db) {
           try {
             const row1 = await db.prepare("SELECT value FROM site_settings WHERE key = 'loader_download_enabled'").first();
             if (row1 && row1.value === "false") downloadEnabled = false;
             const row2 = await db.prepare("SELECT value FROM site_settings WHERE key = 'loader_download_url'").first();
-            if (row2 && row2.value) downloadUrl = row2.value;
+            if (row2 && row2.value && !row2.value.includes("ExclusiveDLC.exe")) downloadUrl = row2.value;
           } catch {}
         }
         return jsonResponse({

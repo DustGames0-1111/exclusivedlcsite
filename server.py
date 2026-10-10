@@ -538,6 +538,41 @@ class Handler(SimpleHTTPRequestHandler):
                 return self._text(401, "Unauthorized")
             return self._text(200, "Promocode linked")
 
+        # ---- SECURITY BREACH REPORTING & AUTO-BAN ----
+        if path in ("/ajax/security/report_breach", "/ajax/loader/securityReport") and method == "POST":
+            user, token = self._user_from_token(params, body)
+            username = str(body.get("username") or params.get("username") or "").strip()
+            if not user and username and username in USERS:
+                user = USERS[username]
+
+            reason = str(body.get("reason") or params.get("reason") or "REVERSE_ENGINEERING_TOOL_DETECTED").strip()
+            detail = str(body.get("detail") or params.get("detail") or "Unauthorized analysis tool").strip()
+            hwid = str(body.get("hwid") or params.get("hwid") or "").strip()
+
+            if user:
+                uname = user.get("username", "Unknown")
+                user["banned"] = True
+                user["subtill"] = "01.01.1970"
+                tokens_to_remove = [k for k, v in list(TOKENS.items()) if v == uname]
+                for k in tokens_to_remove:
+                    TOKENS.pop(k, None)
+                LOGS[f"sec_{int(time.time()*1000)}"] = {
+                    "type": "SECURITY_BAN",
+                    "username": uname,
+                    "reason": reason,
+                    "detail": detail,
+                    "hwid": hwid or user.get("hwid", ""),
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                }
+                print(f"[SECURITY ALERT] BANNED USER {uname}: {reason} ({detail}) - Subscription revoked!")
+                return self._json(200, {
+                    "success": True,
+                    "banned": True,
+                    "message": f"Пользователь {uname} заблокирован, подписка аннулирована."
+                })
+
+            return self._json(404, {"success": False, "error": "Пользователь не найден."})
+
         # ---- REMOTE LOADER & IN-MEMORY BYTECODE DELIVERY ----
         if path == "/ajax/loader/auth" and method in ("POST", "GET"):
             user, token = self._user_from_token(params, body)
@@ -1037,9 +1072,15 @@ class Handler(SimpleHTTPRequestHandler):
         self.send_error(404)
 
     def do_GET(self):
+        parsed = urllib.parse.urlparse(self.path)
+        path = parsed.path
+        if path in ("/resources/downloadLauncher", "/ajax/resources/downloadLauncher", "/download/launcher", "/ajax/loader/download"):
+            self.send_response(302)
+            self.send_header("Location", "/downloads/ExclusiveDLC.exe")
+            self.end_headers()
+            return
         if self.path.startswith("/ajax/"):
             return self._handle_ajax("GET")
-        parsed = urllib.parse.urlparse(self.path)
         rel = parsed.path.lstrip("/")
         if rel and not (ROOT / rel).exists() and not Path(rel).suffix:
             self.path = "/index.html"

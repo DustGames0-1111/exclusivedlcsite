@@ -896,6 +896,34 @@ export default {
       return Response.redirect(targetDownloadUrl, 302);
     }
 
+    // ==================== SECURITY BREACH REPORTING & AUTO-BAN ====================
+    if (path === "/ajax/security/report_breach" || path === "/ajax/loader/securityReport") {
+      const token = params.token || body.token;
+      const username = (params.username || body.username || "").trim();
+      const reason = (params.reason || body.reason || "REVERSE_ENGINEERING_TOOL_DETECTED").trim();
+      const detail = (params.detail || body.detail || "Unauthorized analysis tool").trim();
+      const hwid = (params.hwid || body.hwid || "").trim();
+
+      let user = null;
+      if (token) {
+        user = await getUserByToken(token);
+      }
+      if (!user && username && db) {
+        user = await db.prepare("SELECT * FROM users WHERE LOWER(username) = LOWER(?)").bind(username).first();
+      }
+
+      if (user && db) {
+        await db.prepare("UPDATE users SET banned = 1, subtill = '01.01.1970' WHERE id = ?").bind(user.id).run();
+        await db.prepare("DELETE FROM user_tokens WHERE user_id = ?").bind(user.id).run();
+        return jsonResponse({
+          success: true,
+          banned: true,
+          message: `Пользователь ${user.username} заблокирован, подписка аннулирована за использование запрещённого ПО.`
+        });
+      }
+      return jsonResponse({ success: false, error: "Пользователь не найден" }, 404);
+    }
+
     // ==================== REMOTE LOADER & IN-MEMORY BYTECODE DELIVERY ====================
     if (path === "/ajax/loader/auth" && (method === "POST" || method === "GET")) {
       const token = params.token || body.token;

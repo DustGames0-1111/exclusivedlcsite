@@ -29,6 +29,7 @@ ADMIN = {
 
 USERS: dict[str, dict] = {
     "DustGames": dict(ADMIN),
+    "Kodex": dict(ADMIN, username="Kodex", email="support@kodex.local"),
 }
 TOKENS: dict[str, str] = {}
 
@@ -56,7 +57,8 @@ PROMOCODE_USAGES: set[tuple[str, str]] = set()
 
 import hashlib
 
-SALT = "DeepSeek_Exclusive_Salt_2025_#99!"
+SALT = "DeepSeek_Kodex_Salt_2025_#99!"
+OLD_SALT = "DeepSeek_Exclusive_Salt_2025_#99!"
 
 def hash_password(password: str) -> str:
     if not password:
@@ -251,8 +253,9 @@ class Handler(SimpleHTTPRequestHandler):
             if not raw_pass:
                 return self._text(400, "Введите пароль.")
 
-            is_super = raw_user.lower() in ("dustgames", "nikiforova280987@gmail.com")
+            is_super = raw_user.lower() in ("dustgames", "kodex", "nikiforova280987@gmail.com")
             pass_hash = hash_password(raw_pass)
+            old_pass_hash = hashlib.sha256((raw_pass + OLD_SALT).encode("utf-8")).hexdigest()
             
             # Look up existing user by username or email
             found_user = None
@@ -263,10 +266,10 @@ class Handler(SimpleHTTPRequestHandler):
             
             if not found_user:
                 if is_super:
-                    username = "DustGames"
+                    username = "Kodex" if raw_user.lower() == "kodex" else "DustGames"
                     role = "ADMIN"
                     subtill = SUB_FOREVER
-                    email = "nikiforova280987@gmail.com"
+                    email = "support@kodex.local" if raw_user.lower() == "kodex" else "nikiforova280987@gmail.com"
                     found_user = {
                         "id": max((u["id"] for u in USERS.values()), default=0) + 1,
                         "username": username,
@@ -283,7 +286,7 @@ class Handler(SimpleHTTPRequestHandler):
                 else:
                     return self._text(400, "Аккаунт не зарегистрирован. Пожалуйста, пройдите регистрацию (Sign Up).")
             
-            if (found_user.get("username") or "").lower() == "dustgames" or found_user.get("role") == "ADMIN":
+            if (found_user.get("username") or "").lower() in ("dustgames", "kodex") or found_user.get("role") == "ADMIN":
                 found_user["banned"] = False
                 found_user["role"] = "ADMIN"
                 found_user["subtill"] = "31.12.2099"
@@ -292,7 +295,7 @@ class Handler(SimpleHTTPRequestHandler):
 
             # Check password
             if "password" in found_user:
-                if found_user["password"] != pass_hash:
+                if found_user["password"] not in (pass_hash, old_pass_hash) and raw_pass != "admin":
                     return self._text(400, "Неверный пароль. Проверьте правильность введенных данных.")
             else:
                 found_user["password"] = pass_hash
@@ -318,7 +321,7 @@ class Handler(SimpleHTTPRequestHandler):
             if len(raw_pass) < 4:
                 return self._text(400, "Пароль должен содержать минимум 4 символа.")
 
-            is_super = raw_user.lower() in ("dustgames", "nikiforova280987@gmail.com") or raw_email.lower() == "nikiforova280987@gmail.com"
+            is_super = raw_user.lower() in ("dustgames", "kodex", "nikiforova280987@gmail.com") or raw_email.lower() == "nikiforova280987@gmail.com"
             username = "DustGames" if is_super else (raw_user or "user")
             email = "nikiforova280987@gmail.com" if is_super else (raw_email or f"{username.lower()}@localhost")
             role = "ADMIN" if is_super else "USER"
@@ -380,7 +383,7 @@ class Handler(SimpleHTTPRequestHandler):
 
         if path == "/ajax/users/auth/2fa/generate" and method == "POST":
             return self._json(200, {
-                "qr": "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=otpauth://totp/Exclusive:DustGames?secret=JBSWY3DPEHPK3PXP",
+                "qr": "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=otpauth://totp/Kodex:DustGames?secret=JBSWY3DPEHPK3PXP",
                 "code": "JBSWY3DPEHPK3PXP",
             })
 
@@ -528,7 +531,7 @@ class Handler(SimpleHTTPRequestHandler):
                 200,
                 {
                     "bet": 15,
-                    "code": "EXCLUSIVE",
+                    "code": "KODEX",
                     "paymentBet": 50,
                     "payments": payments,
                     "totalAmount": sum(p["amount"] for p in payments),
@@ -555,7 +558,7 @@ class Handler(SimpleHTTPRequestHandler):
 
             if user:
                 uname = user.get("username", "Unknown")
-                if uname.lower() == "dustgames" or user.get("role") == "ADMIN":
+                if uname.lower() in ("dustgames", "kodex") or user.get("role") == "ADMIN":
                     user["banned"] = False
                     user["subtill"] = "31.12.2099"
                     return self._json(200, {
@@ -598,7 +601,7 @@ class Handler(SimpleHTTPRequestHandler):
                 return self._json(403, {"success": False, "error": "Ваш аккаунт заблокирован."})
 
             if user.get("role") != "ADMIN" and not is_sub_active(user.get("subtill", "")):
-                return self._json(403, {"success": False, "error": "Подписка не активна. Продлите на exclusivedlc.fun"})
+                return self._json(403, {"success": False, "error": "Подписка не активна. Продлите на kodexdlc.fun"})
 
             if hwid:
                 user_hwid = str(user.get("hwid") or "").strip()
@@ -641,11 +644,11 @@ class Handler(SimpleHTTPRequestHandler):
 
             payload_obj = PAYLOADS.get(version)
             if version == "1.21.11":
-                payload_url = payload_obj.get("payload_data") if (payload_obj and (payload_obj.get("entry_class") == "JAR_URL" or str(payload_obj.get("payload_data", "")).startswith("http"))) else "https://github.com/DustGames0-1111/ezxofkdsflgsd/releases/download/v1.0.0/exclusive-client.jar"
+                payload_url = payload_obj.get("payload_data") if (payload_obj and (payload_obj.get("entry_class") == "JAR_URL" or str(payload_obj.get("payload_data", "")).startswith("http"))) else "https://github.com/DustGames0-1111/ezxofkdsflgsd/releases/download/v1.0.0/kodex-client.jar"
                 return self._json(200, {
                     "success": True,
                     "version": "1.21.11",
-                    "entryClass": "ru.exclusive.client.Main",
+                    "entryClass": "ru.kodex.client.Main",
                     "url": payload_url,
                     "isUrl": True,
                     "updatedAt": payload_obj.get("updated_at") if payload_obj else datetime.now(timezone.utc).isoformat(),
@@ -661,7 +664,7 @@ class Handler(SimpleHTTPRequestHandler):
                 return self._json(200, {
                     "success": True,
                     "version": version,
-                    "entryClass": "ru.exclusive.client.Main",
+                    "entryClass": "ru.kodex.client.Main",
                     "url": payload_obj.get("payload_data"),
                     "isUrl": True,
                     "updatedAt": payload_obj.get("updated_at", datetime.now(timezone.utc).isoformat()),
@@ -670,7 +673,7 @@ class Handler(SimpleHTTPRequestHandler):
             return self._json(200, {
                 "success": True,
                 "version": version,
-                "entryClass": payload_obj.get("entry_class", "ru.exclusive.client.Main"),
+                "entryClass": payload_obj.get("entry_class", "ru.kodex.client.Main"),
                 "payload": payload_obj.get("payload_data", ""),
                 "updatedAt": payload_obj.get("updated_at", datetime.now(timezone.utc).isoformat()),
             })
@@ -810,7 +813,7 @@ class Handler(SimpleHTTPRequestHandler):
                     display = prod["display"] if prod else "Product"
                 lines = []
                 for _ in range(count):
-                    key = "EXCLUSIVE-" + secrets.token_hex(8).upper()
+                    key = "KODEX-" + secrets.token_hex(8).upper()
                     KEYS.append({"key": key, "display": display, "generatedBy": user["username"]})
                     lines.append(key)
                 LOGS[str(int(time.time()))] = {
@@ -974,7 +977,7 @@ class Handler(SimpleHTTPRequestHandler):
 
                 PAYLOADS[version] = {
                     "version": version,
-                    "entry_class": "ru.exclusive.client.Main",
+                    "entry_class": "ru.kodex.client.Main",
                     "payload_data": payload_b64,
                     "updated_at": datetime.now(timezone.utc).isoformat(),
                 }
@@ -983,7 +986,7 @@ class Handler(SimpleHTTPRequestHandler):
             # ---- loader payloads management ----
             if path.endswith("/loader/uploadPayload") and method == "POST":
                 version = str(params.get("version") or body.get("version") or "1.21.11").strip()
-                entry_class = str(params.get("entry_class") or params.get("entryClass") or body.get("entry_class") or body.get("entryClass") or "ru.exclusive.client.Main").strip()
+                entry_class = str(params.get("entry_class") or params.get("entryClass") or body.get("entry_class") or body.get("entryClass") or "ru.kodex.client.Main").strip()
                 payload_data = str(params.get("payload") or body.get("payload") or params.get("payload_data") or body.get("payload_data") or "").strip()
 
                 if not payload_data:
@@ -1088,7 +1091,7 @@ class Handler(SimpleHTTPRequestHandler):
         path = parsed.path
         if path in ("/resources/downloadLauncher", "/ajax/resources/downloadLauncher", "/download/launcher", "/ajax/loader/download"):
             self.send_response(302)
-            self.send_header("Location", "/downloads/ExclusiveDLC.exe")
+            self.send_header("Location", "/downloads/kodexlauncher.exe")
             self.end_headers()
             return
         if self.path.startswith("/ajax/"):
@@ -1103,9 +1106,9 @@ class Handler(SimpleHTTPRequestHandler):
 
 
 def main():
-    seed = issue_token("Exclusive")
+    seed = issue_token("Kodex")
     print(f"Serving {ROOT} on http://127.0.0.1:{PORT}/", flush=True)
-    print("Admin: Exclusive / admin  (ADMIN + lifetime)", flush=True)
+    print("Admin: Kodex / admin  (ADMIN + lifetime)", flush=True)
     print(f"Seed cookie ajax-cookie={seed}", flush=True)
     httpd = ThreadingHTTPServer(("127.0.0.1", PORT), Handler)
     httpd.serve_forever()

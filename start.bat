@@ -3,11 +3,11 @@ setlocal EnableExtensions
 chcp 65001 >nul
 cd /d "%~dp0"
 
-title Exclusive local server
+title Kodex local server
 echo ========================================
-echo   Exclusive site - local server
+echo   Kodex site - local server
 echo   http://127.0.0.1:8080/
-echo   Login: Exclusive / admin
+echo   Login: Kodex / admin
 echo ========================================
 echo.
 
@@ -55,9 +55,9 @@ for /f "tokens=5" %%P in ('netstat -ano ^| findstr /R /C:":8080 .*LISTENING"') d
 
 echo Starting server...
 if /I "%PY%"=="py" (
-  start "Exclusive server" /MIN cmd /k "py -3 -u server.py"
+  start "Kodex server" /MIN cmd /k "py -3 -u server.py"
 ) else (
-  start "Exclusive server" /MIN cmd /k ""%PY%" -u server.py"
+  start "Kodex server" /MIN cmd /k ""%PY%" -u server.py"
 )
 
 REM Wait until http://127.0.0.1:8080 answers (up to ~20s)
@@ -77,7 +77,7 @@ echo Server is up.
 echo Opening browser...
 start "" "http://127.0.0.1:8080/"
 echo.
-echo Done. Keep the minimized "Exclusive server" window open.
+echo Done. Keep the minimized "Kodex server" window open.
 echo Close that window ^(or press Ctrl+C there^) to stop the site.
 echo.
 pause
@@ -85,7 +85,7 @@ exit /b 0
 
 :fail
 echo [ERROR] Server did not start on port 8080.
-echo Open the minimized "Exclusive server" window and read the error.
+echo Open the minimized "Kodex server" window and read the error.
 echo.
 pause
 exit /b 1

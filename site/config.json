@@ -1,8 +1,8 @@
 {
-  "shortClientName": "Exclusive",
-  "clientName": "EXCLUSIVE",
+  "shortClientName": "Kodex",
+  "clientName": "KODEX",
   "version": "1.16.5",
-  "supportEmail": "support@exclusive.local",
+  "supportEmail": "support@kodex.local",
   "url": "localhost",
   "ajaxUrl": "/ajax/",
   "funpayLink": "#",

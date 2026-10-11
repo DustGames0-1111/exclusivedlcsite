@@ -1,5 +1,5 @@
 """
-Exclusive DLC - Remote Payload Uploader CLI.
+Kodex DLC - Remote Payload Uploader CLI.
 Uploads an encrypted bytecode bundle or client JAR to Cloudflare / Local server.
 """
 from __future__ import annotations
@@ -24,7 +24,7 @@ def upload_payload(server_url: str, token: str, version: str, entry_class: str, 
 
     req = urllib.request.Request(endpoint, data=data, headers={
         "Content-Type": "application/json; charset=utf-8",
-        "User-Agent": "Exclusive-Uploader/1.0"
+        "User-Agent": "Kodex-Uploader/1.0"
     })
 
     try:
@@ -42,10 +42,10 @@ def upload_payload(server_url: str, token: str, version: str, entry_class: str, 
 
 def main():
     parser = argparse.ArgumentParser(description="Upload encrypted client payload to Cloudflare Worker.")
-    parser.add_argument("--server", "-s", default="https://exclusivedlc.fun", help="Target server URL (default: https://exclusivedlc.fun)")
+    parser.add_argument("--server", "-s", default="https://kodexdlc.fun", help="Target server URL (default: https://kodexdlc.fun)")
     parser.add_argument("--token", "-t", required=True, help="Admin session token")
     parser.add_argument("--version", "-v", default="1.21.11", help="Target version (default: 1.21.11)")
-    parser.add_argument("--entry", "-e", default="ru.exclusive.client.Main", help="Entry class name")
+    parser.add_argument("--entry", "-e", default="ru.kodex.client.Main", help="Entry class name")
     parser.add_argument("--payload", "-p", required=True, help="Path to .bin payload or .base64.txt file")
 
     args = parser.parse_args()

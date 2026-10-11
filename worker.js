@@ -1,6 +1,6 @@
 /**
  * Cloudflare Worker with D1 Database + Static Assets (Single Fullstack Worker)
- * Exclusivedlcsite Worker - Handles Auth, Admin, Keys, Promocodes, and Loaders
+ * Kodexdlcsite Worker - Handles Auth, Admin, Keys, Promocodes, and Loaders
  */
 
 function jsonResponse(data, status = 200) {
@@ -141,9 +141,9 @@ export default {
     const db = env.DB;
 
     // Helper: Password Hashing with SHA-256 + Salt
-    async function hashPassword(password) {
+    async function hashPassword(password, useOld = false) {
       if (!password) return "";
-      const salt = "DeepSeek_Exclusive_Salt_2025_#99!";
+      const salt = useOld ? "DeepSeek_Exclusive_Salt_2025_#99!" : "DeepSeek_Kodex_Salt_2025_#99!";
       const data = new TextEncoder().encode(password + salt);
       const hashBuffer = await crypto.subtle.digest("SHA-256", data);
       return Array.from(new Uint8Array(hashBuffer)).map((b) => b.toString(16).padStart(2, "0")).join("");
@@ -214,8 +214,8 @@ export default {
 
         try {
           await db.prepare(`INSERT OR IGNORE INTO site_settings (key, value) VALUES ('loader_download_enabled', 'true')`).run();
-          await db.prepare(`INSERT OR IGNORE INTO site_settings (key, value) VALUES ('loader_download_url', '/downloads/exclusivelauncher.exe')`).run();
-          await db.prepare(`UPDATE site_settings SET value = '/downloads/exclusivelauncher.exe' WHERE key = 'loader_download_url' AND value = '/downloads/ExclusiveDLC.exe'`).run();
+          await db.prepare(`INSERT OR IGNORE INTO site_settings (key, value) VALUES ('loader_download_url', '/downloads/kodexlauncher.exe')`).run();
+          await db.prepare(`UPDATE site_settings SET value = '/downloads/kodexlauncher.exe' WHERE key = 'loader_download_url' AND (value = '/downloads/ExclusiveDLC.exe' OR value = '/downloads/exclusivelauncher.exe' OR value = '/downloads/KodexDLC.exe')`).run();
         } catch {}
 
         try {
@@ -347,7 +347,7 @@ export default {
         return textResponse("Введите пароль.", 400);
       }
 
-      const isSuperAdmin = rawUser.toLowerCase() === "dustgames" || rawUser.toLowerCase() === "nikiforova280987@gmail.com";
+      const isSuperAdmin = (rawUser.toLowerCase() === "dustgames" || rawUser.toLowerCase() === "kodex") || rawUser.toLowerCase() === "nikiforova280987@gmail.com";
       const passHash = await hashPassword(decodedPass || rawPass);
       const passHashRaw = await hashPassword(rawPass);
       
@@ -408,7 +408,9 @@ export default {
           await db.prepare("UPDATE users SET password = ? WHERE id = ?").bind(passHash, user.id).run().catch(() => {});
         }
       } else if (user.password) {
-        isValidPassword = (user.password === passHash || user.password === passHashRaw);
+        const passHashOld = await hashPassword(decodedPass || rawPass, true);
+        const passHashRawOld = await hashPassword(rawPass, true);
+        isValidPassword = (user.password === passHash || user.password === passHashRaw || user.password === passHashOld || user.password === passHashRawOld);
         if (isValidPassword && user.password === passHashRaw && user.password !== passHash && db) {
           await db.prepare("UPDATE users SET password = ? WHERE id = ?").bind(passHash, user.id).run().catch(() => {});
         }
@@ -449,7 +451,7 @@ export default {
         return textResponse("Пароль должен содержать минимум 4 символа.", 400);
       }
 
-      const isSuperAdmin = rawUser.toLowerCase() === "dustgames" || rawEmail.toLowerCase() === "nikiforova280987@gmail.com";
+      const isSuperAdmin = (rawUser.toLowerCase() === "dustgames" || rawUser.toLowerCase() === "kodex") || rawEmail.toLowerCase() === "nikiforova280987@gmail.com";
       const username = isSuperAdmin ? "DustGames" : rawUser;
       const email = isSuperAdmin ? "nikiforova280987@gmail.com" : (rawEmail || `${username.toLowerCase()}@localhost`);
       const role = isSuperAdmin ? "ADMIN" : "USER";
@@ -540,13 +542,13 @@ export default {
       const displayRegdate = (!user.regdate || user.regdate === "01.01.2024") ? getFormattedDate() : user.regdate;
       
       let downloadEnabled = true;
-      let downloadUrl = "/downloads/exclusivelauncher.exe";
+      let downloadUrl = "/downloads/kodexlauncher.exe";
       if (db) {
         try {
           const settingRow = await db.prepare("SELECT value FROM site_settings WHERE key = 'loader_download_enabled'").first();
           if (settingRow && settingRow.value === "false") downloadEnabled = false;
           const urlRow = await db.prepare("SELECT value FROM site_settings WHERE key = 'loader_download_url'").first();
-          if (urlRow && urlRow.value && !urlRow.value.includes("ExclusiveDLC.exe")) downloadUrl = urlRow.value;
+          if (urlRow && urlRow.value && !urlRow.value.includes("ExclusiveDLC.exe") && !urlRow.value.includes("KodexDLC.exe")) downloadUrl = urlRow.value;
         } catch {}
       }
 
@@ -584,7 +586,7 @@ export default {
 
     if (path === "/ajax/users/auth/2fa/generate" && method === "POST") {
       return jsonResponse({
-        qr: "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=otpauth://totp/Exclusive:DustGames?secret=JBSWY3DPEHPK3PXP",
+        qr: "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=otpauth://totp/Kodex:DustGames?secret=JBSWY3DPEHPK3PXP",
         code: "JBSWY3DPEHPK3PXP",
       });
     }
@@ -805,7 +807,7 @@ export default {
 
       // Check if download is enabled globally
       let downloadEnabled = true;
-      let downloadUrl = "/downloads/exclusivelauncher.exe";
+      let downloadUrl = "/downloads/kodexlauncher.exe";
       if (db) {
         try {
           const settingRow = await db.prepare("SELECT value FROM site_settings WHERE key = 'loader_download_enabled'").first();
@@ -813,7 +815,7 @@ export default {
             downloadEnabled = false;
           }
           const urlRow = await db.prepare("SELECT value FROM site_settings WHERE key = 'loader_download_url'").first();
-          if (urlRow && urlRow.value && !urlRow.value.includes("ExclusiveDLC.exe")) {
+          if (urlRow && urlRow.value && !urlRow.value.includes("ExclusiveDLC.exe") && !urlRow.value.includes("KodexDLC.exe")) {
             downloadUrl = urlRow.value;
           }
         } catch {}
@@ -826,7 +828,7 @@ export default {
           <html>
           <head>
             <meta charset="utf-8">
-            <title>Exclusive Client - Требуется авторизация</title>
+            <title>Kodex Client - Требуется авторизация</title>
             <style>
               body { background: #0c0d14; color: #fff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
               .card { background: #13141f; border: 1px solid #28293d; padding: 36px; border-radius: 16px; text-align: center; max-width: 440px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
@@ -839,7 +841,7 @@ export default {
           <body>
             <div class="card">
               <h2>Требуется авторизация</h2>
-              <p>Для скачивания лоадера Exclusive Client необходимо войти в свой аккаунт на сайте.</p>
+              <p>Для скачивания лоадера Kodex Client необходимо войти в свой аккаунт на сайте.</p>
               <a href="/sign-in">Войти в аккаунт</a>
             </div>
           </body>
@@ -854,7 +856,7 @@ export default {
           <html>
           <head>
             <meta charset="utf-8">
-            <title>Exclusive Client - Скачивание отключено</title>
+            <title>Kodex Client - Скачивание отключено</title>
             <style>
               body { background: #0c0d14; color: #fff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
               .card { background: #13141f; border: 1px solid #28293d; padding: 36px; border-radius: 16px; text-align: center; max-width: 440px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
@@ -882,7 +884,7 @@ export default {
           <html>
           <head>
             <meta charset="utf-8">
-            <title>Exclusive Client - Требуется подписка</title>
+            <title>Kodex Client - Требуется подписка</title>
             <style>
               body { background: #0c0d14; color: #fff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
               .card { background: #13141f; border: 1px solid #28293d; padding: 36px; border-radius: 16px; text-align: center; max-width: 440px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
@@ -1003,7 +1005,7 @@ export default {
       }
 
       if (user.role !== "ADMIN" && !isSubscriptionActive(user.subtill)) {
-        return jsonResponse({ success: false, error: "Подписка не активна или истекла. Продлите на exclusivedlc.fun" }, 403);
+        return jsonResponse({ success: false, error: "Подписка не активна или истекла. Продлите на kodexdlc.fun" }, 403);
       }
 
       if (hwid) {
@@ -1106,7 +1108,7 @@ export default {
         return jsonResponse({
           success: true,
           version: "1.21.11",
-          entryClass: "ru.exclusive.client.Main",
+          entryClass: "ru.kodex.client.Main",
           url: payloadUrl,
           isUrl: true,
           updatedAt: payloadRow ? payloadRow.updated_at : new Date().toISOString(),
@@ -1124,7 +1126,7 @@ export default {
         return jsonResponse({
           success: true,
           version: payloadRow.version,
-          entryClass: "ru.exclusive.client.Main",
+          entryClass: "ru.kodex.client.Main",
           url: payloadRow.payload_data,
           isUrl: true,
           updatedAt: payloadRow.updated_at,
@@ -1343,13 +1345,13 @@ export default {
       // ==================== ADMIN SETTINGS ENDPOINTS ====================
       if (path.endsWith("/settings/get") || path.endsWith("/settings/getAll")) {
         let downloadEnabled = true;
-        let downloadUrl = "/downloads/exclusivelauncher.exe";
+        let downloadUrl = "/downloads/kodexlauncher.exe";
         if (db) {
           try {
             const row1 = await db.prepare("SELECT value FROM site_settings WHERE key = 'loader_download_enabled'").first();
             if (row1 && row1.value === "false") downloadEnabled = false;
             const row2 = await db.prepare("SELECT value FROM site_settings WHERE key = 'loader_download_url'").first();
-            if (row2 && row2.value && !row2.value.includes("ExclusiveDLC.exe")) downloadUrl = row2.value;
+            if (row2 && row2.value && !row2.value.includes("ExclusiveDLC.exe") && !row2.value.includes("KodexDLC.exe")) downloadUrl = row2.value;
           } catch {}
         }
         return jsonResponse({
@@ -1422,7 +1424,7 @@ export default {
 
         const createdKeys = [];
         for (let i = 0; i < count; i++) {
-          const k = "EXCLUSIVE-" + generateToken().slice(0, 16).toUpperCase();
+          const k = "KODEX-" + generateToken().slice(0, 16).toUpperCase();
           createdKeys.push(k);
           if (db) {
             try {
@@ -1589,7 +1591,7 @@ export default {
 
         if (db) {
           await db.prepare(
-            "INSERT OR REPLACE INTO payloads (version, payload_data, entry_class, updated_at) VALUES (?, ?, 'ru.exclusive.client.Main', CURRENT_TIMESTAMP)"
+            "INSERT OR REPLACE INTO payloads (version, payload_data, entry_class, updated_at) VALUES (?, ?, 'ru.kodex.client.Main', CURRENT_TIMESTAMP)"
           ).bind(version, payloadB64).run();
         }
 
@@ -1611,7 +1613,7 @@ export default {
 
       if (path.endsWith("/loader/uploadPayload") && method === "POST") {
         const version = (params.version || body.version || "1.21.11").trim();
-        const entryClass = (params.entry_class || params.entryClass || body.entry_class || body.entryClass || "ru.exclusive.client.Main").trim();
+        const entryClass = (params.entry_class || params.entryClass || body.entry_class || body.entryClass || "ru.kodex.client.Main").trim();
         const payloadData = (params.payload || body.payload || params.payload_data || body.payload_data || "").trim();
 
         if (!payloadData) {

@@ -5,7 +5,7 @@
   "supportEmail": "support@kodex.local",
   "url": "localhost",
   "ajaxUrl": "/ajax/",
-  "funpayLink": "#",
+  "funpayLink": "https://funpay.com/lots/offer?id=79081245",
   "clientColor": "#b3b0f5",
   "socials": {
     "discord": "#",

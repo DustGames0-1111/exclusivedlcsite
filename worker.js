@@ -776,9 +776,9 @@ export default {
     // ==================== PAYMENTS ENDPOINTS ====================
     if (path === "/ajax/payments/getAll") {
       return jsonResponse([
-        { type: 1, price: 199, time: 30 },
-        { type: 2, price: 299, time: 365 },
-        { type: 3, price: 499, time: 999 },
+        { type: 1, price: 199, time: 30, funpay: "https://funpay.com/lots/offer?id=79100256" },
+        { type: 2, price: 299, time: 90, funpay: "https://funpay.com/lots/offer?id=79100512" },
+        { type: 3, price: 399, time: 999, funpay: "https://funpay.com/lots/offer?id=79081245" },
         { type: 4, price: 149 },
       ]);
     }

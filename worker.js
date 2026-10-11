@@ -1130,7 +1130,7 @@ export default {
       if (version === "1.21.11") {
         const payloadUrl = (payloadRow && (payloadRow.entry_class === "JAR_URL" || payloadRow.payload_data.startsWith("http")))
           ? payloadRow.payload_data
-          : "https://github.com/DustGames0-1111/ezxofkdsflgsd/releases/download/v1.0.0/mods.zip";
+          : "https://github.com/DustGames0-1111/ezxofkdsflgsd/releases/download/v1.0.0/modskodex.zip";
 
         return jsonResponse({
           success: true,

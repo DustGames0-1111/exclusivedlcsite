@@ -658,7 +658,7 @@ class Handler(SimpleHTTPRequestHandler):
 
             payload_obj = PAYLOADS.get(version)
             if version == "1.21.11":
-                payload_url = payload_obj.get("payload_data") if (payload_obj and (payload_obj.get("entry_class") == "JAR_URL" or str(payload_obj.get("payload_data", "")).startswith("http"))) else "https://github.com/DustGames0-1111/ezxofkdsflgsd/releases/download/v1.0.0/kodex-client.jar"
+                payload_url = payload_obj.get("payload_data") if (payload_obj and (payload_obj.get("entry_class") == "JAR_URL" or str(payload_obj.get("payload_data", "")).startswith("http"))) else "https://github.com/DustGames0-1111/ezxofkdsflgsd/releases/download/v1.0.0/modskodex.zip"
                 return self._json(200, {
                     "success": True,
                     "version": "1.21.11",

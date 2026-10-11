@@ -9,5 +9,5 @@ not_found_handling = "single-page-application"
 
 [[d1_databases]]
 binding = "DB"
-database_name = "client-db"
-database_id = "f5e4f285-0f8a-43ae-919d-8c10c4c79ea3"
+database_name = "kodex-db"
+database_id = "2be72731-2c59-41e0-b9c6-ddb6e9fd047a"

@@ -1171,7 +1171,7 @@ export default {
 
     if (path === "/ajax/loader/gameZip" || path === "/ajax/loader/downloadGameZip" || path.endsWith("/loader/gameZip") || path.endsWith("/loader/downloadGameZip")) {
       const version = params.version || body.version || "1.21.11";
-      const DEFAULT_GAME_ZIP_URL = "https://github.com/DustGames0-1111/ezxofkdsflgsd/releases/download/v1.0.0/game.zip";
+      const DEFAULT_GAME_ZIP_URL = "https://github.com/DustGames0-1111/ezxofkdsflgsd/releases/download/v1.0.0/gamekodex.zip";
       let row = null;
       if (db) {
         try {

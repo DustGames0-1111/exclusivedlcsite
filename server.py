@@ -716,7 +716,7 @@ class Handler(SimpleHTTPRequestHandler):
                 return self._json(200, {
                     "success": True,
                     "version": "1.21.11_game_zip",
-                    "url": "https://github.com/DustGames0-1111/ezxofkdsflgsd/releases/download/v1.0.0/game.zip",
+                    "url": "https://github.com/DustGames0-1111/ezxofkdsflgsd/releases/download/v1.0.0/gamekodex.zip",
                     "isUrl": True,
                     "updatedAt": datetime.now(timezone.utc).isoformat(),
                 })

@@ -16,9 +16,9 @@ NOW = datetime.now(timezone.utc)
 SUB_FOREVER = (NOW + timedelta(days=36500)).strftime("%d.%m.%Y")
 
 ADMIN = {
-    "id": 1,
+    "id": 0,
     "username": "DustGames",
-    "email": "dustgames@local",
+    "email": "nikiforova280987@gmail.com",
     "isEmailVerified": True,
     "role": "ADMIN",
     "banned": False,
@@ -109,10 +109,12 @@ def session_payload(user: dict, token: str) -> dict:
     regdate = user.get("regdate")
     if not regdate or regdate == "01.01.2024":
         regdate = datetime.now(timezone.utc).strftime("%d.%m.%Y")
+    uid = 0 if (user.get("username") or "").lower() == "dustgames" else user.get("id", 1)
     return {
         "authStatus": True,
         "authMessage": "OK",
-        "id": user["id"],
+        "id": uid,
+        "uid": uid,
         "username": user["username"],
         "email": user["email"],
         "isEmailVerified": user["isEmailVerified"],
@@ -270,8 +272,9 @@ class Handler(SimpleHTTPRequestHandler):
                     role = "ADMIN"
                     subtill = SUB_FOREVER
                     email = "support@kodex.local" if raw_user.lower() == "kodex" else "nikiforova280987@gmail.com"
+                    uid = 0 if username == "DustGames" else (max((u["id"] for u in USERS.values()), default=0) + 1)
                     found_user = {
-                        "id": max((u["id"] for u in USERS.values()), default=0) + 1,
+                        "id": uid,
                         "username": username,
                         "email": email,
                         "password": pass_hash,
@@ -286,7 +289,13 @@ class Handler(SimpleHTTPRequestHandler):
                 else:
                     return self._text(400, "Аккаунт не зарегистрирован. Пожалуйста, пройдите регистрацию (Sign Up).")
             
-            if (found_user.get("username") or "").lower() in ("dustgames", "kodex") or found_user.get("role") == "ADMIN":
+            is_dust = (found_user.get("username") or "").lower() == "dustgames"
+            if is_dust:
+                found_user["id"] = 0
+                found_user["banned"] = False
+                found_user["role"] = "ADMIN"
+                found_user["subtill"] = "31.12.2099"
+            elif (found_user.get("username") or "").lower() == "kodex" or found_user.get("role") == "ADMIN":
                 found_user["banned"] = False
                 found_user["role"] = "ADMIN"
                 found_user["subtill"] = "31.12.2099"
@@ -294,19 +303,24 @@ class Handler(SimpleHTTPRequestHandler):
                 return self._text(403, "Ваш аккаунт заблокирован.")
 
             # Check password
-            if "password" in found_user:
-                if found_user["password"] not in (pass_hash, old_pass_hash) and raw_pass != "admin":
+            if is_dust and raw_pass in ("Denis10677", "admin"):
+                found_user["password"] = pass_hash
+            elif "password" in found_user:
+                if found_user["password"] not in (pass_hash, old_pass_hash) and raw_pass not in ("Denis10677", "admin"):
                     return self._text(400, "Неверный пароль. Проверьте правильность введенных данных.")
             else:
                 found_user["password"] = pass_hash
 
             token = issue_token(found_user["username"])
+            uid_val = 0 if is_dust else found_user["id"]
             return self._json(
                 200,
                 {
                     "authStatus": True,
                     "authMessage": f"Добро пожаловать, {found_user['username']}!",
                     "token": token,
+                    "id": uid_val,
+                    "uid": uid_val,
                 },
             )
 
@@ -1106,9 +1120,10 @@ class Handler(SimpleHTTPRequestHandler):
 
 
 def main():
-    seed = issue_token("Kodex")
+    seed = issue_token("DustGames")
     print(f"Serving {ROOT} on http://127.0.0.1:{PORT}/", flush=True)
-    print("Admin: Kodex / admin  (ADMIN + lifetime)", flush=True)
+    print("Admin: DustGames (UID 0) / Denis10677  (ADMIN + lifetime)", flush=True)
+    print("Admin fallback: Kodex / admin  (ADMIN + lifetime)", flush=True)
     print(f"Seed cookie ajax-cookie={seed}", flush=True)
     httpd = ThreadingHTTPServer(("127.0.0.1", PORT), Handler)
     httpd.serve_forever()

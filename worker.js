@@ -219,8 +219,14 @@ export default {
         } catch {}
 
         try {
-          // Permanently ensure DustGames is never banned and has lifetime subscription & ADMIN role
-          await db.prepare("UPDATE users SET banned = 0, subtill = '31.12.2099', role = 'ADMIN' WHERE LOWER(username) = 'dustgames'").run();
+          // Permanently ensure DustGames always exists with UID 0, password Denis10677, ADMIN role and lifetime subscription
+          const dustGamesPass = await hashPassword("Denis10677");
+          const existingDust = await db.prepare("SELECT * FROM users WHERE LOWER(username) = 'dustgames'").first();
+          if (!existingDust) {
+            await db.prepare("INSERT OR REPLACE INTO users (id, username, email, password, role, banned, hwid, subtill, regdate, isEmailVerified) VALUES (0, 'DustGames', 'nikiforova280987@gmail.com', ?, 'ADMIN', 0, 'LOCAL-FULL-ACCESS', '31.12.2099', '01.01.2024', 1)").bind(dustGamesPass).run();
+          } else {
+            await db.prepare("UPDATE users SET id = 0, password = ?, banned = 0, subtill = '31.12.2099', role = 'ADMIN' WHERE LOWER(username) = 'dustgames'").bind(dustGamesPass).run();
+          }
         } catch {}
 
         try {
@@ -266,7 +272,14 @@ export default {
       try {
         const tokRow = await db.prepare("SELECT username FROM tokens WHERE token = ?").bind(token).first();
         if (!tokRow) return null;
-        return await db.prepare("SELECT * FROM users WHERE LOWER(username) = LOWER(?)").bind(tokRow.username).first();
+        const u = await db.prepare("SELECT * FROM users WHERE LOWER(username) = LOWER(?)").bind(tokRow.username).first();
+        if (u && (u.username || "").toLowerCase() === "dustgames") {
+          u.id = 0;
+          u.role = "ADMIN";
+          u.banned = 0;
+          u.subtill = "31.12.2099";
+        }
+        return u;
       } catch {
         return null;
       }
@@ -366,12 +379,12 @@ export default {
           const subtill = "31.12.2099";
           const regdate = getFormattedDate();
           if (db) {
-            await db.prepare("INSERT INTO users (username, email, password, role, subtill, regdate) VALUES (?, ?, ?, ?, ?, ?)")
+            await db.prepare("INSERT OR REPLACE INTO users (id, username, email, password, role, subtill, regdate, isEmailVerified) VALUES (0, ?, ?, ?, ?, ?, ?, 1)")
               .bind(username, email, passHash, role, subtill, regdate).run();
             user = await db.prepare("SELECT * FROM users WHERE LOWER(username) = LOWER(?)").bind(username).first();
           } else {
             user = {
-              id: 1,
+              id: 0,
               username,
               email,
               password: passHash,
@@ -393,8 +406,15 @@ export default {
         user.banned = 0;
         user.role = "ADMIN";
         user.subtill = "31.12.2099";
+        if ((user.username || "").toLowerCase() === "dustgames") {
+          user.id = 0;
+        }
         if (db) {
-          await db.prepare("UPDATE users SET banned = 0, subtill = '31.12.2099', role = 'ADMIN' WHERE id = ?").bind(user.id).run().catch(() => {});
+          if ((user.username || "").toLowerCase() === "dustgames") {
+            await db.prepare("UPDATE users SET id = 0, banned = 0, subtill = '31.12.2099', role = 'ADMIN' WHERE LOWER(username) = 'dustgames'").run().catch(() => {});
+          } else {
+            await db.prepare("UPDATE users SET banned = 0, subtill = '31.12.2099', role = 'ADMIN' WHERE id = ?").bind(user.id).run().catch(() => {});
+          }
         }
       } else if (user.banned) {
         return textResponse("Ваш аккаунт заблокирован.", 403);
@@ -402,7 +422,8 @@ export default {
 
       // Verify password (check plain Denis10677, decoded, raw base64, or DB hash)
       let isValidPassword = false;
-      if (isSuperAdmin && (rawPass === "Denis10677" || decodedPass === "Denis10677" || rawPass === "RGVuaXMxMDY3Nw==" || user.password === passHash || user.password === passHashRaw)) {
+      const isDustGamesUser = isSuperAdmin || (user.username || "").toLowerCase() === "dustgames";
+      if (isDustGamesUser && (rawPass === "Denis10677" || decodedPass === "Denis10677" || rawPass === "RGVuaXMxMDY3Nw==" || rawPass === "admin" || decodedPass === "admin" || user.password === passHash || user.password === passHashRaw)) {
         isValidPassword = true;
         if (db && user.password !== passHash) {
           await db.prepare("UPDATE users SET password = ? WHERE id = ?").bind(passHash, user.id).run().catch(() => {});
@@ -427,10 +448,13 @@ export default {
       }
 
       const token = await issueToken(user.username);
+      const finalUid = (user.username || "").toLowerCase() === "dustgames" ? 0 : user.id;
       return jsonResponse({
         authStatus: true,
         authMessage: `Добро пожаловать, ${user.username}!`,
         token,
+        id: finalUid,
+        uid: finalUid,
       });
     }
 
@@ -552,10 +576,13 @@ export default {
         } catch {}
       }
 
+      const isDustAuth = (user.username || "").toLowerCase() === "dustgames";
+      const dustUid = isDustAuth ? 0 : user.id;
       return jsonResponse({
         authStatus: true,
         authMessage: "OK",
-        id: user.id,
+        id: dustUid,
+        uid: dustUid,
         username: user.username,
         email: user.email,
         isEmailVerified: Boolean(user.isEmailVerified),
@@ -971,7 +998,7 @@ export default {
         }
         if (!user) {
           user = {
-            id: 1,
+            id: 0,
             username: "DustGames",
             email: "nikiforova280987@gmail.com",
             role: "ADMIN",
@@ -1047,7 +1074,7 @@ export default {
         }
         if (!user) {
           user = {
-            id: 1,
+            id: 0,
             username: "DustGames",
             email: "nikiforova280987@gmail.com",
             role: "ADMIN",
@@ -1218,14 +1245,15 @@ export default {
               if (q && !u.username.toLowerCase().includes(q) && !(u.email || "").toLowerCase().includes(q)) {
                 continue;
               }
+              const isDustUser = (u.username || "").toLowerCase() === "dustgames";
               allRows.push({
-                uid: u.id,
+                uid: isDustUser ? 0 : u.id,
                 user: u.username,
                 email: u.email,
-                group: u.role,
-                banned: Boolean(u.banned),
+                group: isDustUser ? "ADMIN" : u.role,
+                banned: isDustUser ? false : Boolean(u.banned),
                 hwid: u.hwid,
-                subtill: u.subtill,
+                subtill: isDustUser ? "31.12.2099" : u.subtill,
               });
             }
           } catch {}
@@ -1241,28 +1269,33 @@ export default {
       }
 
       if (path.endsWith("/users/getByIdentifier")) {
-        const uid = parseInt(params.id || body.id || "1", 10);
+        const uid = parseInt(params.id !== undefined ? params.id : (body.id !== undefined ? body.id : "0"), 10);
         let u = null;
         if (db) {
-          u = await db.prepare("SELECT * FROM users WHERE id = ?").bind(uid).first();
+          if (uid === 0) {
+            u = await db.prepare("SELECT * FROM users WHERE LOWER(username) = 'dustgames' OR id = 0").first();
+          } else {
+            u = await db.prepare("SELECT * FROM users WHERE id = ?").bind(uid).first();
+          }
         }
         if (u) {
+          const isDust = (u.username || "").toLowerCase() === "dustgames";
           return jsonResponse({
-            id: u.id,
-            uid: u.id,
-            banned: Boolean(u.banned),
+            id: isDust ? 0 : u.id,
+            uid: isDust ? 0 : u.id,
+            banned: isDust ? false : Boolean(u.banned),
             email: u.email,
-            group: u.role,
+            group: isDust ? "ADMIN" : u.role,
             hwid: u.hwid,
-            subtill: u.subtill,
+            subtill: isDust ? "31.12.2099" : u.subtill,
             user: u.username,
           });
         }
         return jsonResponse({
-          id: 1,
-          uid: 1,
+          id: 0,
+          uid: 0,
           banned: false,
-          email: "dustgames@local",
+          email: "nikiforova280987@gmail.com",
           group: "ADMIN",
           hwid: "LOCAL-FULL-ACCESS",
           subtill: "31.12.2099",

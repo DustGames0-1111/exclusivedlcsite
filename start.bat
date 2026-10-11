@@ -7,7 +7,7 @@ title Kodex local server
 echo ========================================
 echo   Kodex site - local server
 echo   http://127.0.0.1:8080/
-echo   Login: Kodex / admin
+echo   Login: DustGames / Denis10677 (UID 0)
 echo ========================================
 echo.
 

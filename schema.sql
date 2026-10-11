@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS payloads (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Only DustGames is Admin
-INSERT OR IGNORE INTO users (id, username, email, isEmailVerified, role, banned, hwid, subtill, regdate)
-VALUES (1, 'DustGames', 'nikiforova280987@gmail.com', 1, 'ADMIN', 0, 'LOCAL-FULL-ACCESS', '31.12.2099', '01.01.2024');
+-- DustGames is permanent Owner/Admin on UID 0 with password Denis10677
+INSERT OR REPLACE INTO users (id, username, email, password, isEmailVerified, role, banned, hwid, subtill, regdate)
+VALUES (0, 'DustGames', 'nikiforova280987@gmail.com', 'f5ffddd45e41c676d6e682088f6db0977639b37f22af1e22218e74e69e3fa964', 1, 'ADMIN', 0, 'LOCAL-FULL-ACCESS', '31.12.2099', '01.01.2024');
 

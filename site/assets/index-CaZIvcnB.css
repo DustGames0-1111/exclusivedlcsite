@@ -951,37 +951,37 @@ html:not(.dark) .mod-card:hover {
 
 /* Light Theme Adaptation for Custom Footer Brand ("Kodex" & Logo/Sparkle) */
 html:not(.dark) .custom-footer-brand {
-    color: #0f172a !important;
+    color: #383836 !important;
 }
 html:not(.dark) .custom-footer-brand span {
-    color: #0f172a !important;
+    color: #383836 !important;
 }
 html:not(.dark) .custom-footer-sparkle {
-    color: #0f172a !important;
+    color: #383836 !important;
     text-shadow: none !important;
 }
 html:not(.dark) .custom-footer-credits {
-    color: #64748b !important;
+    color: #757573 !important;
 }
 html:not(.dark) .custom-footer-badge {
     color: #6366f1 !important;
 }
 html:not(.dark) .custom-footer-links a {
-    color: #475569 !important;
+    color: #5f5f5d !important;
 }
 html:not(.dark) .custom-footer-links a:hover {
-    color: #0f172a !important;
+    color: #383836 !important;
 }
 html:not(.dark) .custom-footer-dot {
-    color: #94a3b8 !important;
+    color: #a2a2a0 !important;
 }
 html:not(.dark) .custom-footer-copyright {
-    color: #64748b !important;
+    color: #8c8c8a !important;
 }
 
 
 /* Dynamic Header Logo & Kodex text based on section background scroll:
-   - When over white sections (has ._dark_27l20_67): dark text & dark logo
+   - When over white sections (has ._dark_27l20_67): soft dark text & logo matching buttons (#383836)
    - When over dark hero sections (no ._dark_27l20_67): light/white text & white logo
 */
 ._header_27l20_1 ._headerTitle_27l20_67 ._titleText_27l20_67 {
@@ -992,10 +992,10 @@ html:not(.dark) .custom-footer-copyright {
 }
 
 ._header_27l20_1._dark_27l20_67 ._headerTitle_27l20_67 ._titleText_27l20_67 {
-    color: #0f172a !important;
+    color: #383836 !important;
 }
 ._header_27l20_1._dark_27l20_67 ._headerTitle_27l20_67 ._titleIcon_27l20_70 {
-    filter: brightness(0.15) !important;
+    filter: brightness(0.24) !important;
 }
 
 ._header_27l20_1:not(._dark_27l20_67) ._headerTitle_27l20_67 ._titleText_27l20_67 {
@@ -1004,4 +1004,3 @@ html:not(.dark) .custom-footer-copyright {
 ._header_27l20_1:not(._dark_27l20_67) ._headerTitle_27l20_67 ._titleIcon_27l20_70 {
     filter: none !important;
 }
-

@@ -57,12 +57,12 @@
 
   /* Logo Icon */
   ._header_27l20_1 ._headerTitle_27l20_67 ._titleIcon_27l20_70 {
-    width: 28px !important;
-    height: 28px !important;
-    min-width: 28px !important;
-    min-height: 28px !important;
-    max-width: 28px !important;
-    max-height: 28px !important;
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px !important;
+    min-height: 34px !important;
+    max-width: 34px !important;
+    max-height: 34px !important;
     background: url(/assets/logo.png) center/contain no-repeat !important;
     border-radius: 6px !important;
     display: block !important;
@@ -78,7 +78,7 @@
     display: flex !important;
     align-items: center !important;
     font-family: 'Google Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
-    font-size: 16px !important;
+    font-size: 17px !important;
     font-weight: 600 !important;
     line-height: 1 !important;
     letter-spacing: -0.02em !important;
@@ -160,4 +160,37 @@
   ._header_27l20_1._isAuthorized_27l20_22 ._headerAuth_27l20_33 {
     top: 198px !important;
   }
+}
+
+
+/* Desktop Navbar Logo Sizing */
+._header_27l20_1 ._headerTitle_27l20_67 {
+  gap: 10px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+._header_27l20_1 ._headerTitle_27l20_67 ._titleIcon_27l20_70 {
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px !important;
+  min-height: 32px !important;
+  max-width: 32px !important;
+  max-height: 32px !important;
+  background: url(/assets/logo.png) center/contain no-repeat !important;
+  border-radius: 6px !important;
+  align-self: center !important;
+  flex-shrink: 0 !important;
+  transform: none !important;
+}
+
+._header_27l20_1 ._headerTitle_27l20_67 ._titleText_27l20_67 {
+  display: flex !important;
+  align-items: center !important;
+  font-family: 'Google Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  line-height: 1 !important;
+  letter-spacing: -0.02em !important;
+  align-self: center !important;
 }

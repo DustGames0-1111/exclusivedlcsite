@@ -129,9 +129,9 @@ html:not(.dark) .pricing-faq-q {
     line-height: 1.6;
 }
 
-/* Swap Cabinet Columns: Information (Screen 2) on the Left, Profile/Tabs (Screen 1) on the Right */
+/* Cabinet Columns: Profile/Tabs (Screen 1) on the Left, Information (Screen 2) on the Right */
 ._cabinet_823vs_1 ._contentBody_823vs_62 {
-    flex-direction: row-reverse !important;
+    flex-direction: row !important;
 }
 @media only screen and (max-width: 768px) {
     ._cabinet_823vs_1 ._contentBody_823vs_62 {

@@ -980,11 +980,28 @@ html:not(.dark) .custom-footer-copyright {
 }
 
 
-/* Light Theme Adaptation for Header Logo & Kodex text */
-html:not(.dark) ._header_27l20_1 ._headerTitle_27l20_67 ._titleText_27l20_67 {
+/* Dynamic Header Logo & Kodex text based on section background scroll:
+   - When over white sections (has ._dark_27l20_67): dark text & dark logo
+   - When over dark hero sections (no ._dark_27l20_67): light/white text & white logo
+*/
+._header_27l20_1 ._headerTitle_27l20_67 ._titleText_27l20_67 {
+    transition: color 0.25s ease !important;
+}
+._header_27l20_1 ._headerTitle_27l20_67 ._titleIcon_27l20_70 {
+    transition: filter 0.25s ease !important;
+}
+
+._header_27l20_1._dark_27l20_67 ._headerTitle_27l20_67 ._titleText_27l20_67 {
     color: #0f172a !important;
 }
-html:not(.dark) ._header_27l20_1 ._headerTitle_27l20_67 ._titleIcon_27l20_70 {
+._header_27l20_1._dark_27l20_67 ._headerTitle_27l20_67 ._titleIcon_27l20_70 {
     filter: brightness(0.15) !important;
+}
+
+._header_27l20_1:not(._dark_27l20_67) ._headerTitle_27l20_67 ._titleText_27l20_67 {
+    color: #ffffff !important;
+}
+._header_27l20_1:not(._dark_27l20_67) ._headerTitle_27l20_67 ._titleIcon_27l20_70 {
+    filter: none !important;
 }
 

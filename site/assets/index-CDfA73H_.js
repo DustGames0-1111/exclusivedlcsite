@@ -719,16 +719,21 @@ var Q_ = () => {
                 ],
               }),
               a
-                ? (0, I.jsxs)("div", {
-                    className: D_.authAvatar,
-                    children: [
-                      (0, I.jsx)(X_, {
-                        className: D_.avatar,
-                        src: Z_,
-                        alt: "avatar_alt",
-                      }),
-                      (0, I.jsx)("div", { className: D_.avatarOnline }),
-                    ],
+                ? (0, I.jsx)(H_, {
+                    to: "/cabinet",
+                    style: { textDecoration: "none", display: "inline-flex" },
+                    children: (0, I.jsxs)("div", {
+                      className: D_.authAvatar,
+                      style: { cursor: "pointer" },
+                      children: [
+                        (0, I.jsx)(X_, {
+                          className: D_.avatar,
+                          src: Z_,
+                          alt: "avatar_alt",
+                        }),
+                        (0, I.jsx)("div", { className: D_.avatarOnline }),
+                      ],
+                    }),
                   })
                 : (0, I.jsx)("div", {
                     className: D_.authButton,

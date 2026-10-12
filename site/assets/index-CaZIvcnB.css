@@ -947,3 +947,44 @@ html:not(.dark) .mod-card:hover {
   letter-spacing: -0.02em !important;
   align-self: center !important;
 }
+
+
+/* Light Theme Adaptation for Custom Footer Brand ("Kodex" & Logo/Sparkle) */
+html:not(.dark) .custom-footer-brand {
+    color: #0f172a !important;
+}
+html:not(.dark) .custom-footer-brand span {
+    color: #0f172a !important;
+}
+html:not(.dark) .custom-footer-sparkle {
+    color: #0f172a !important;
+    text-shadow: none !important;
+}
+html:not(.dark) .custom-footer-credits {
+    color: #64748b !important;
+}
+html:not(.dark) .custom-footer-badge {
+    color: #6366f1 !important;
+}
+html:not(.dark) .custom-footer-links a {
+    color: #475569 !important;
+}
+html:not(.dark) .custom-footer-links a:hover {
+    color: #0f172a !important;
+}
+html:not(.dark) .custom-footer-dot {
+    color: #94a3b8 !important;
+}
+html:not(.dark) .custom-footer-copyright {
+    color: #64748b !important;
+}
+
+
+/* Light Theme Adaptation for Header Logo & Kodex text */
+html:not(.dark) ._header_27l20_1 ._headerTitle_27l20_67 ._titleText_27l20_67 {
+    color: #0f172a !important;
+}
+html:not(.dark) ._header_27l20_1 ._headerTitle_27l20_67 ._titleIcon_27l20_70 {
+    filter: brightness(0.15) !important;
+}
+

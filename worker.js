@@ -449,12 +449,22 @@ export default {
 
       const token = await issueToken(user.username);
       const finalUid = (user.username || "").toLowerCase() === "dustgames" ? 0 : user.id;
+      const displayRegdate = (!user.regdate || user.regdate === "01.01.2024") ? getFormattedDate() : user.regdate;
       return jsonResponse({
         authStatus: true,
         authMessage: `Добро пожаловать, ${user.username}!`,
         token,
         id: finalUid,
         uid: finalUid,
+        username: user.username,
+        email: user.email,
+        isEmailVerified: Boolean(user.isEmailVerified),
+        role: user.role,
+        banned: Boolean(user.banned),
+        hwid: user.hwid,
+        subtill: user.subtill,
+        regdate: displayRegdate,
+        loader_download_enabled: true,
       });
     }
 

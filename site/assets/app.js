@@ -500,22 +500,22 @@
           <span class="section-tag">ЦЕНЫ</span>
           <h2 class="section-big-title">Покупка, о которой<br /><em>ты не пожалеешь.</em></h2>
           <p class="section-desc">
-            Начни с бесплатного тарифа и оставайся на нём сколько угодно. Переходи на платный, только если нужна вся косметика и облачная синхронизация.
+            Выбери подходящий тариф. Никаких скрытых списаний — моментальная активация сразу после оплаты.
           </p>
         </div>
 
         <div class="pricing-cards-grid">
-          <!-- Free Card -->
+          <!-- 30 Days Card (199 RUB) -->
           <div class="pricing-card reveal">
-            <div class="pricing-card-badge">НАВСЕГДА</div>
-            <h3 class="pricing-plan-title">Бесплатно</h3>
-            <p class="pricing-plan-subtitle">Для всех, кому просто нужна игра покрасивее</p>
+            <div class="pricing-card-badge">30 ДНЕЙ</div>
+            <h3 class="pricing-plan-title">30 дней</h3>
+            <p class="pricing-plan-subtitle">Полный доступ к клиенту на 30 дней</p>
             <div class="pricing-price-box">
-              <span class="pricing-price-main">$0</span>
+              <span class="pricing-price-main">199 ₽</span>
             </div>
-            <p class="pricing-price-note">карта не нужна</p>
+            <p class="pricing-price-note">за 30 дней</p>
 
-            <span class="pricing-features-tag">ВХОДИТ</span>
+            <span class="pricing-features-tag">В ТАРИФ ВХОДИТ</span>
             <ul class="pricing-features-list">
               <li class="pricing-feature-item">
                 <span class="pricing-feature-check">✓</span>
@@ -527,29 +527,33 @@
               </li>
               <li class="pricing-feature-item">
                 <span class="pricing-feature-check">✓</span>
-                <span>Стартовая косметика</span>
+                <span>Стартовая и базовая косметика</span>
               </li>
               <li class="pricing-feature-item">
                 <span class="pricing-feature-check">✓</span>
                 <span>Поддержка сообщества</span>
               </li>
+              <li class="pricing-feature-item">
+                <span class="pricing-feature-check">✓</span>
+                <span>Облачные конфиги</span>
+              </li>
             </ul>
 
-            <button class="btn-card-primary" id="pricingStartFree">Начать</button>
+            <a href="http://kodexclient.fun/pricing" class="btn-card-secondary">Купить</a>
           </div>
 
-          <!-- 30 Days Card -->
+          <!-- 90 Days Card (399 RUB) -->
           <div class="pricing-card featured reveal">
             <div class="pricing-card-badge">ПОПУЛЯРНОЕ</div>
-            <h3 class="pricing-plan-title">30 дней</h3>
-            <p class="pricing-plan-subtitle">Вся библиотека — на месяц</p>
+            <h3 class="pricing-plan-title">90 дней</h3>
+            <p class="pricing-plan-subtitle">Вся библиотека — на три месяца</p>
             <div class="pricing-price-box">
-              <span class="pricing-price-main">$5.00</span>
-              <span class="pricing-price-old">$6.90</span>
+              <span class="pricing-price-main">399 ₽</span>
+              <span class="pricing-price-old">599 ₽</span>
             </div>
-            <p class="pricing-price-note">за 30 дней</p>
+            <p class="pricing-price-note">за 90 дней (дешевле за месяц)</p>
 
-            <span class="pricing-features-tag">ВСЁ ИЗ БЕСПЛАТНОГО, ПЛЮС</span>
+            <span class="pricing-features-tag">ВСЁ ИЗ 30 ДНЕЙ, ПЛЮС</span>
             <ul class="pricing-features-list">
               <li class="pricing-feature-item">
                 <span class="pricing-feature-check">✓</span>
@@ -577,25 +581,29 @@
               </li>
             </ul>
 
-            <a href="http://kodexclient.fun/pricing" class="btn-card-secondary">Купить</a>
+            <a href="http://kodexclient.fun/pricing" class="btn-card-primary">Купить</a>
           </div>
 
-          <!-- 3 Months Card -->
+          <!-- Lifetime Card (499 RUB) -->
           <div class="pricing-card reveal">
             <div class="pricing-card-badge">ВЫГОДНЕЕ ВСЕГО</div>
-            <h3 class="pricing-plan-title">3 месяца</h3>
-            <p class="pricing-plan-subtitle">Вся библиотека на три месяца — дешевле за день</p>
+            <h3 class="pricing-plan-title">Навсегда</h3>
+            <p class="pricing-plan-subtitle">Пожизненный безлимитный доступ ко всем возможностям</p>
             <div class="pricing-price-box">
-              <span class="pricing-price-main">$10.00</span>
-              <span class="pricing-price-old">$15.00</span>
+              <span class="pricing-price-main">499 ₽</span>
+              <span class="pricing-price-old">999 ₽</span>
             </div>
-            <p class="pricing-price-note">за 3 месяца</p>
+            <p class="pricing-price-note">один раз и навсегда</p>
 
-            <span class="pricing-features-tag">ВСЁ ИЗ 30 ДНЕЙ, ПЛЮС</span>
+            <span class="pricing-features-tag">ВСЁ ИЗ 90 ДНЕЙ, ПЛЮС</span>
             <ul class="pricing-features-list">
               <li class="pricing-feature-item">
                 <span class="pricing-feature-check">✓</span>
-                <span>Все будущие обновления</span>
+                <span>Пожизненная подписка без продлений</span>
+              </li>
+              <li class="pricing-feature-item">
+                <span class="pricing-feature-check">✓</span>
+                <span>Все будущие обновления и новые модули</span>
               </li>
               <li class="pricing-feature-item">
                 <span class="pricing-feature-check">✓</span>
@@ -607,7 +615,11 @@
               </li>
               <li class="pricing-feature-item">
                 <span class="pricing-feature-check">✓</span>
-                <span>Приоритетная поддержка</span>
+                <span>Приоритетная VIP поддержка</span>
+              </li>
+              <li class="pricing-feature-item">
+                <span class="pricing-feature-check">✓</span>
+                <span>Эксклюзивные плащи и скины</span>
               </li>
             </ul>
 
@@ -616,7 +628,7 @@
         </div>
 
         <p class="pricing-footnote reveal">
-          Один платёж за выбранный период — без автопродления и повторных списаний без твоего действия. Цены указаны в долларах США, итоговая сумма видна до подтверждения. Подробности — в <a href="http://kodexclient.fun/pricing">разделе об оплате и возвратах</a> или у <a href="https://t.me/blydota4ka" target="_blank">поддержки</a>.
+          Один платёж за выбранный период — без автопродления и повторных списаний без твоего действия. Цены указаны в рублях (₽), итоговая сумма видна до подтверждения. Подробности — в <a href="http://kodexclient.fun/pricing">магазине</a> или у <a href="https://t.me/blydota4ka" target="_blank">поддержки</a>.
         </p>
       </section>
 

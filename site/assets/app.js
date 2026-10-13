@@ -1,6 +1,6 @@
 /**
- * Kodex Client - Complete High Performance Frontend Engine
- * Exact match to reference screenshots with smooth animations and authentic Kodex branding
+ * Exclusive Client - Complete High Performance Frontend Engine
+ * Exact match to reference screenshots with smooth animations and authentic Exclusive branding
  */
 
 (function () {
@@ -9,7 +9,7 @@
   // State Management
   const state = {
     user: null,
-    token: localStorage.getItem('kodex_token') || '',
+    token: localStorage.getItem('exclusive_token') || localStorage.getItem('kodex_token') || '',
     currentRoute: 'home',
     lang: 'ru',
     authMode: 'signin', // 'signin' or 'signup'
@@ -24,7 +24,7 @@
       promocodes: {},
       settings: {
         loader_download_enabled: true,
-        loader_download_url: '/downloads/kodexlauncher.exe'
+        loader_download_url: '/downloads/exclusivelauncher.exe'
       },
       stats: {
         totalUsers: 0,
@@ -48,7 +48,7 @@
       tryFree: 'Купить подписку ↗',
       seeInAction: 'Посмотреть в деле',
       createAccount: 'Создать аккаунт ↗',
-      downloadKodex: 'Скачать Kodex ↗',
+      downloadExclusive: 'Скачать Exclusive ↗', downloadKodex: 'Скачать Exclusive ↗',
       welcomeBack: 'Welcome back',
       createAccountTitle: 'Create your account',
       signIn: 'Sign in',
@@ -70,7 +70,7 @@
       tryFree: 'Try for free ↗',
       seeInAction: 'See in action',
       createAccount: 'Create account ↗',
-      downloadKodex: 'Download Kodex ↗',
+      downloadExclusive: 'Download Exclusive ↗', downloadKodex: 'Download Exclusive ↗',
       welcomeBack: 'Welcome back',
       createAccountTitle: 'Create your account',
       signIn: 'Sign in',
@@ -107,7 +107,7 @@
       if (data && data.authStatus) {
         state.user = data;
       } else {
-        localStorage.removeItem('kodex_token');
+        localStorage.removeItem('exclusive_token'); localStorage.removeItem('kodex_token');
         state.token = '';
         state.user = null;
       }
@@ -208,8 +208,8 @@
         <div class="header-container">
           <div class="header-left">
             <a href="/" class="header-logo-link" onclick="event.preventDefault(); window.scrollTo({top: 0, behavior: 'smooth'});">
-              <img src="/assets/logo.png" alt="Kodex" class="header-logo-img" />
-              <span class="header-logo-text">Kodex</span>
+              <img src="/assets/logo.png" alt="Exclusive" class="header-logo-img" />
+              <span class="header-logo-text">Exclusive</span>
             </a>
           </div>
 
@@ -338,7 +338,7 @@
             <span class="section-tag">боевое преимущество</span>
             <h2 class="section-big-title">играй<br /><em>с преимуществом</em></h2>
             <p class="section-desc">
-              Продвинутая KillAura, идеальный Velocity, TargetESP и надёжные модули помощи в бою. Kodex даёт тебе абсолютный контроль над схваткой и отдаёт все настройки.
+              Продвинутая KillAura, идеальный Velocity, TargetESP и надёжные модули помощи в бою. Exclusive даёт тебе абсолютный контроль над схваткой и отдаёт все настройки.
             </p>
             <div class="separator-line"></div>
             <div class="stats-grid">
@@ -375,7 +375,7 @@
         </div>
 
         <div class="client-mockup-window reveal">
-          <img src="/assets/primer.jpg" class="client-photo-img" alt="Kodex Client in Action" />
+          <img src="/assets/primer.jpg" class="client-photo-img" alt="Exclusive Client in Action" />
         </div>
 
         <div class="mockup-pills-row reveal">
@@ -751,7 +751,7 @@
             Выбери подходящий тариф от 199 ₽ — моментальная активация, доступ ко всей библиотеке косметики и без лишней возни.
           </p>
           <a href="#pricing" class="btn-black-pill" id="ctaPricingBtn">
-            <span>Купить Kodex</span>
+            <span>Купить Exclusive</span>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
           </a>
         </div>
@@ -762,7 +762,7 @@
         <div class="footer-inner">
           <div class="footer-top-grid">
             <div class="footer-brand">
-              <img src="/assets/logo.png" alt="Kodex" class="footer-brand-logo" />
+              <img src="/assets/logo.png" alt="Exclusive" class="footer-brand-logo" />
               <p class="footer-brand-tagline">Играй с самым красивым клиентом.</p>
             </div>
 
@@ -770,7 +770,7 @@
               <h5 class="footer-col-title">ПРОДУКТ</h5>
               <ul class="footer-links-list">
                 <li><a href="#pricing" class="footer-link">Цены</a></li>
-                <li><a href="/downloads/kodexlauncher.exe" class="footer-link">Скачать</a></li>
+                <li><a href="/downloads/exclusivelauncher.exe" class="footer-link">Скачать</a></li>
                 <li><a href="#showcase" class="footer-link">Косметика</a></li>
               </ul>
             </div>
@@ -796,7 +796,7 @@
           </div>
 
           <div class="footer-bottom-row">
-            <span>© 2026 Kodex</span>
+            <span>© 2026 Exclusive</span>
             <span>Не связано с Mojang и Microsoft</span>
           </div>
         </div>
@@ -893,7 +893,7 @@
         </button>
 
         <div class="auth-card">
-          <img src="/assets/logo.png" alt="Kodex" class="auth-card-logo" />
+          <img src="/assets/logo.png" alt="Exclusive" class="auth-card-logo" />
           <span class="auth-card-tag">АККАУНТ</span>
           <h2 class="auth-card-title">${isSignup ? 'Создать аккаунт' : 'С возвращением'}</h2>
           <p class="auth-card-desc">
@@ -968,8 +968,8 @@
         <!-- Sidebar -->
         <aside class="cabinet-sidebar">
           <div class="cabinet-brand-row">
-            <img src="/assets/logo.png" alt="Kodex" class="cabinet-brand-logo" />
-            <span class="cabinet-brand-name">Kodex</span>
+            <img src="/assets/logo.png" alt="Exclusive" class="cabinet-brand-logo" />
+            <span class="cabinet-brand-name">Exclusive</span>
           </div>
 
           <ul class="cabinet-menu-list">
@@ -1028,7 +1028,7 @@
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                     </div>
                     <div class="launcher-info">
-                      <h4 class="launcher-info-title">Kodex Launcher</h4>
+                      <h4 class="launcher-info-title">Exclusive Launcher</h4>
                       <p class="launcher-info-sub">Windows 10 / 11 · 64-bit</p>
                       <div class="launcher-badges-row">
                         <span class="launcher-badge">v1.1.41.0</span>
@@ -1338,7 +1338,7 @@
               <h4 class="admin-subcard-title">Создать промокод</h4>
               <div class="admin-form-group">
                 <label class="admin-field-label">Название промокода</label>
-                <input type="text" id="adminPromoNameInput" class="admin-input" placeholder="Например: KODEX2026" />
+                <input type="text" id="adminPromoNameInput" class="admin-input" placeholder="Например: EXCLUSIVE2026" />
               </div>
               <div class="admin-form-group">
                 <label class="admin-field-label">Скидка %</label>
@@ -1386,7 +1386,7 @@
 
             <div class="admin-form-group" style="margin-top:16px;">
               <label class="admin-field-label">Путь или URL-ссылка на файл лаунчера</label>
-              <input type="text" id="adminDownloadUrlInput" class="admin-input" value="${state.adminData.settings.loader_download_url || '/downloads/kodexlauncher.exe'}" />
+              <input type="text" id="adminDownloadUrlInput" class="admin-input" value="${state.adminData.settings.loader_download_url || '/downloads/exclusivelauncher.exe'}" />
             </div>
 
             <button class="btn-launcher-download" id="adminSaveSettingsBtn" style="margin-top:14px; width:fit-content; display:inline-flex; align-items:center; gap:8px;">
@@ -1712,7 +1712,7 @@
 
           if (res.ok && (data.authStatus || data.token)) {
             state.token = data.token;
-            localStorage.setItem('kodex_token', data.token);
+            localStorage.setItem('exclusive_token', data.token);
             await checkSession();
             navigate('cabinet');
           } else {
@@ -1758,7 +1758,7 @@
             body: JSON.stringify({ token: state.token }),
           });
         } catch {}
-        localStorage.removeItem('kodex_token');
+        localStorage.removeItem('exclusive_token'); localStorage.removeItem('kodex_token');
         state.token = '';
         state.user = null;
         navigate('home');
@@ -1768,7 +1768,7 @@
     const downloadLauncherBtn = document.getElementById('downloadLauncherBtn');
     if (downloadLauncherBtn) {
       downloadLauncherBtn.onclick = () => {
-        window.location.href = '/downloads/kodexlauncher.exe';
+        window.location.href = '/downloads/exclusivelauncher.exe';
       };
     }
 
@@ -1951,7 +1951,7 @@
         const urlInput = document.getElementById('adminDownloadUrlInput');
         const statusBox = document.getElementById('adminSettingsStatus');
         const enabled = toggle?.checked || false;
-        const url = urlInput?.value || '/downloads/kodexlauncher.exe';
+        const url = urlInput?.value || '/downloads/exclusivelauncher.exe';
 
         saveSettingsBtn.disabled = true;
         try {

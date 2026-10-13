@@ -826,7 +826,7 @@ html:not(.dark) .mod-card:hover {
     transform: none !important;
   }
 
-  /* Brand Text ("Kodex") */
+  /* Brand Text ("Exclusive") */
   ._header_27l20_1 ._headerTitle_27l20_67 ._titleText_27l20_67 {
     display: flex !important;
     align-items: center !important;
@@ -949,7 +949,7 @@ html:not(.dark) .mod-card:hover {
 }
 
 
-/* Light Theme Adaptation for Custom Footer Brand ("Kodex" & Logo/Sparkle) */
+/* Light Theme Adaptation for Custom Footer Brand ("Exclusive" & Logo/Sparkle) */
 html:not(.dark) .custom-footer-brand {
     color: #383836 !important;
 }
@@ -980,7 +980,7 @@ html:not(.dark) .custom-footer-copyright {
 }
 
 
-/* Dynamic Header Logo & Kodex text based on section background scroll:
+/* Dynamic Header Logo & Exclusive text based on section background scroll:
    - When over white sections (has ._dark_27l20_67): soft dark text & logo matching buttons (#383836)
    - When over dark hero sections (no ._dark_27l20_67): light/white text & white logo
 */

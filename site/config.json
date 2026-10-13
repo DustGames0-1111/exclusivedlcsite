@@ -1,8 +1,8 @@
 {
-  "shortClientName": "Kodex",
-  "clientName": "KODEX",
+  "shortClientName": "Exclusive",
+  "clientName": "EXCLUSIVE",
   "version": "1.16.5",
-  "supportEmail": "support@kodex.local",
+  "supportEmail": "support@exclusive.local",
   "url": "localhost",
   "ajaxUrl": "/ajax/",
   "funpayLink": "https://funpay.com/lots/offer?id=79081245",

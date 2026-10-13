@@ -210,12 +210,12 @@
 
         <div class="hero-content reveal active">
           <h1 class="hero-title">
-            Визуальный<br />
+            Вспомогательный<br />
             клиент Minecraft<br />
             нового поколения
           </h1>
           <p class="hero-subtitle">
-            Плащи, крылья, шляпы и 3D-скины. HUD, который можно собрать заново. Шейдеры на руке, блоках и нике. Один клиент, одно меню — и ничего лишнего.
+            Умная KillAura, Velocity, TargetESP и модули помощи в PvP. Кастомизация HUD, плащи, крылья и 3D-скины. Один клиент, максимальное преимущество — и ничего лишнего.
           </p>
           <div class="hero-actions">
             <a href="#pricing" class="btn-black-pill" id="heroCtaPricing">
@@ -299,10 +299,10 @@
           </div>
 
           <div class="visuals-right-panel reveal">
-            <span class="section-tag">только визуал</span>
-            <h2 class="section-big-title">играй<br /><em>красивее</em></h2>
+            <span class="section-tag">боевое преимущество</span>
+            <h2 class="section-big-title">играй<br /><em>с преимуществом</em></h2>
             <p class="section-desc">
-              Kodex не трогает твой аим, дистанцию удара и движение. Он меняет то, как игра выглядит, — и отдаёт тебе все настройки.
+              Продвинутая KillAura, идеальный Velocity, TargetESP и надёжные модули помощи в бою. Kodex даёт тебе абсолютный контроль над схваткой и отдаёт все настройки.
             </p>
             <div class="separator-line"></div>
             <div class="stats-grid">
@@ -311,8 +311,8 @@
                 <span class="stat-value">535</span>
               </div>
               <div class="stat-item">
-                <span class="stat-label">ВИЗУАЛЬНЫХ МОДУЛЕЙ</span>
-                <span class="stat-value">32</span>
+                <span class="stat-label">МОДУЛЕЙ И ФУНКЦИЙ</span>
+                <span class="stat-value">32+</span>
               </div>
               <div class="stat-item">
                 <span class="stat-label">ВЫПУЩЕНО СБОРОК</span>
@@ -415,7 +415,7 @@
             <ul class="pricing-features-list">
               <li class="pricing-feature-item">
                 <span class="pricing-feature-check">✓</span>
-                <span>Все 32 визуальных модуля</span>
+                <span>Все боевые и вспомогательные модули</span>
               </li>
               <li class="pricing-feature-item">
                 <span class="pricing-feature-check">✓</span>

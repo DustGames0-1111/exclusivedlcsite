@@ -153,6 +153,7 @@
     } else {
       mainContainer.innerHTML = renderHomeScreen();
       attachHomeEvents();
+      initSmoothScroll();
       initScrollSpy();
       initRevealElements();
     }
@@ -186,9 +187,6 @@
           </nav>
 
           <div class="header-right">
-            <button class="lang-btn" id="langToggle">
-              🌐 <span>${state.lang === 'ru' ? 'Русский' : 'English'}</span>
-            </button>
             ${
               isLogged
                 ? `<button class="user-nav-pill" id="toCabinetBtn">
@@ -1195,14 +1193,6 @@
         window.location.href = '/downloads/kodexlauncher.exe';
       };
     }
-
-    const langToggle = document.getElementById('langToggle');
-    if (langToggle) {
-      langToggle.onclick = () => {
-        state.lang = state.lang === 'ru' ? 'en' : 'ru';
-        renderApp();
-      };
-    }
   }
 
   function attachAuthEvents() {
@@ -1523,25 +1513,77 @@
     reveals.forEach(el => observer.observe(el));
   }
 
-  function initScrollSpy() {
-    const sections = document.querySelectorAll('section[id]');
-    const navItems = document.querySelectorAll('.header-nav-pill .nav-item');
-
-    window.addEventListener('scroll', () => {
-      let current = '';
-      sections.forEach(section => {
-        const top = section.offsetTop - 200;
-        if (window.scrollY >= top) {
-          current = section.getAttribute('id');
-        }
-      });
-
-      navItems.forEach(item => {
-        item.classList.remove('active');
-        if (item.getAttribute('data-target') === current) {
+  function initSmoothScroll() {
+    const navItems = document.querySelectorAll('.header-nav-pill .nav-item[data-target]');
+    navItems.forEach(item => {
+      item.addEventListener('click', (e) => {
+        const targetId = item.getAttribute('data-target');
+        if (!targetId) return;
+        e.preventDefault();
+        const el = document.getElementById(targetId);
+        if (el) {
+          const offsetTop = targetId === 'hero' ? 0 : el.offsetTop - 85;
+          window.scrollTo({
+            top: offsetTop,
+            behavior: 'smooth'
+          });
+          navItems.forEach(i => i.classList.remove('active'));
           item.classList.add('active');
         }
       });
+    });
+
+    const generalAnchors = document.querySelectorAll('a[href^="#"]:not(.nav-item)');
+    generalAnchors.forEach(anchor => {
+      anchor.addEventListener('click', (e) => {
+        const targetId = anchor.getAttribute('href').replace('#', '');
+        const el = document.getElementById(targetId);
+        if (el) {
+          e.preventDefault();
+          const offsetTop = targetId === 'hero' ? 0 : el.offsetTop - 85;
+          window.scrollTo({
+            top: offsetTop,
+            behavior: 'smooth'
+          });
+        }
+      });
+    });
+  }
+
+  function initScrollSpy() {
+    const sections = document.querySelectorAll('section[id]');
+    const navItems = document.querySelectorAll('.header-nav-pill .nav-item[data-target]');
+
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          let current = 'hero';
+          const scrollPosition = window.scrollY + 120;
+
+          sections.forEach(section => {
+            const top = section.offsetTop;
+            const height = section.offsetHeight;
+            if (scrollPosition >= top && scrollPosition < top + height) {
+              current = section.getAttribute('id');
+            }
+          });
+
+          if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 50) {
+            current = 'pricing';
+          }
+
+          navItems.forEach(item => {
+            if (item.getAttribute('data-target') === current) {
+              item.classList.add('active');
+            } else {
+              item.classList.remove('active');
+            }
+          });
+          ticking = false;
+        });
+        ticking = true;
+      }
     }, { passive: true });
   }
 

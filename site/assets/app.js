@@ -340,104 +340,7 @@
         </div>
 
         <div class="client-mockup-window reveal">
-          <img src="/assets/night-1z0pI4rK.png" class="mockup-game-bg" alt="Game Background" />
-
-          <div class="mockup-inner">
-            <!-- Top HUD Bar -->
-            <div class="hud-top-bar">
-              <div class="hud-perf-pill">
-                <span>CPU <strong>6%</strong></span>
-                <span>RAM <strong>19%</strong></span>
-                <span>FPS <strong>101</strong></span>
-              </div>
-              <div class="hud-watermark-pill">
-                <img src="/assets/logo.png" alt="Kodex" />
-                <span>Kodex</span>
-                <span style="color:#71717a">|</span>
-                <span>darkich</span>
-                <span style="color:#71717a">|</span>
-                <span style="color:#22c55e">102 FPS</span>
-                <span style="color:#71717a">|</span>
-                <span style="color:#38bdf8">0 PING</span>
-              </div>
-              <div class="hud-keybinds-pill">
-                Keybinds · Crosshair <strong>EQUAL</strong>
-              </div>
-            </div>
-
-            <!-- Client GUI Container -->
-            <div class="client-gui-container">
-              <div class="gui-sidebar">
-                <div class="gui-logo-title">
-                  <img src="/assets/logo.png" alt="Kodex" />
-                  <span>Kodex</span>
-                </div>
-                <ul class="gui-nav-list">
-                  <li><button class="gui-nav-btn"><span>⚔ Combat</span> <span class="gui-badge">2</span></button></li>
-                  <li><button class="gui-nav-btn"><span>🏃 Movement</span> <span class="gui-badge">2</span></button></li>
-                  <li><button class="gui-nav-btn active"><span>👁 Render</span> <span class="gui-badge">8</span></button></li>
-                  <li><button class="gui-nav-btn"><span>⚙ Misc</span> <span class="gui-badge">4</span></button></li>
-                  <li><button class="gui-nav-btn"><span>🎯 Crosshair</span> <span class="gui-badge">1</span></button></li>
-                  <li><button class="gui-nav-btn"><span>👕 Cosmetics</span> <span class="gui-badge">2</span></button></li>
-                </ul>
-                <div class="gui-user-pill">
-                  <div class="gui-user-avatar"></div>
-                  <div>
-                    <div style="font-size:12px; font-weight:700; color:#fff">darkich</div>
-                    <div style="font-size:10px; color:#8b5cf6">Developer</div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="gui-content">
-                <div class="gui-top-search">
-                  <span class="gui-breadcrumb">Render &gt; Modules (8 active)</span>
-                  <div style="font-size:12px; color:#a1a1aa">Search modules...</div>
-                </div>
-                <div class="gui-panels-grid">
-                  <!-- Panel 1: Chams -->
-                  <div class="gui-panel-box">
-                    <div class="gui-panel-title">
-                      <span>❄ Chams</span>
-                      <span style="color:#22c55e; font-size:11px">ENABLED</span>
-                    </div>
-                    <div class="gui-slider-row">
-                      <div class="gui-slider-label"><span>Glow Opacity</span><span>0.9</span></div>
-                      <div class="gui-slider-track"><div class="gui-slider-fill" style="width: 90%;"></div></div>
-                    </div>
-                    <div class="gui-slider-row">
-                      <div class="gui-slider-label"><span>Glow Radius</span><span>14</span></div>
-                      <div class="gui-slider-track"><div class="gui-slider-fill" style="width: 70%;"></div></div>
-                    </div>
-                    <div class="gui-slider-row">
-                      <div class="gui-slider-label"><span>Line Opacity</span><span>0.9</span></div>
-                      <div class="gui-slider-track"><div class="gui-slider-fill" style="width: 90%;"></div></div>
-                    </div>
-                  </div>
-
-                  <!-- Panel 2: BlockOverlay -->
-                  <div class="gui-panel-box">
-                    <div class="gui-panel-title">
-                      <span>💠 BlockOverlay</span>
-                      <span style="color:#22c55e; font-size:11px">ENABLED</span>
-                    </div>
-                    <div class="gui-slider-row">
-                      <div class="gui-slider-label"><span>Shader Speed</span><span>1.0</span></div>
-                      <div class="gui-slider-track"><div class="gui-slider-fill" style="width: 60%;"></div></div>
-                    </div>
-                    <div class="gui-slider-row">
-                      <div class="gui-slider-label"><span>Shader Opacity</span><span>1.0</span></div>
-                      <div class="gui-slider-track"><div class="gui-slider-fill" style="width: 100%;"></div></div>
-                    </div>
-                    <div class="gui-slider-row">
-                      <div class="gui-slider-label"><span>Client Color Sync</span><span>Active</span></div>
-                      <div class="gui-slider-track"><div class="gui-slider-fill" style="width: 80%; background:#22c55e"></div></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <img src="/assets/primer.jpg" class="client-photo-img" alt="Kodex Client in Action" />
         </div>
 
         <div class="mockup-pills-row reveal">
@@ -483,10 +386,6 @@
             <div class="cloud-check-row">
               <span>Темы и пресеты</span>
               <span class="cloud-status-badge">синхронизировано</span>
-            </div>
-            <div class="cloud-check-row">
-              <span>Новое устройство</span>
-              <span class="cloud-status-badge">вошёл и играешь</span>
             </div>
           </div>
         </div>

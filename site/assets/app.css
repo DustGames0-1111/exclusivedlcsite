@@ -1,6 +1,6 @@
 /* ==========================================================================
    Kodex Client - Ultra Modern Responsive Stylesheet
-   Matching Reference Screenshots Exactly
+   Matching Reference Screenshots Exactly (Borderless, Pure White Icons)
    ========================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
@@ -9,7 +9,6 @@
   --bg-dark: #09090b;
   --bg-card: #121216;
   --bg-card-hover: #17171d;
-  --bg-card-border: rgba(255, 255, 255, 0.07);
   --bg-cream: #ece8e1;
   --text-cream-dark: #121214;
   --text-main: #f4f4f6;
@@ -29,6 +28,7 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  border: none;
 }
 
 html {
@@ -74,7 +74,7 @@ button {
 }
 
 /* ==========================================================================
-   Floating Navbar (Exact Match to Screenshot 1 & 2)
+   Floating Navbar (Exact Match to Screenshot 1 & 2 - Borderless)
    ========================================================================== */
 .site-header {
   position: fixed;
@@ -133,23 +133,22 @@ body.scrolled .header-logo-text {
   color: #ffffff !important;
 }
 
-/* Center Pill Nav */
+/* Center Pill Nav - Completely Borderless */
 .header-nav-pill {
   display: flex;
   align-items: center;
   gap: 4px;
   padding: 5px 6px;
-  background: rgba(30, 29, 27, 0.45);
+  background: rgba(30, 29, 27, 0.55);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: none;
   border-radius: var(--radius-pill);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
-  transition: background 0.3s ease, border-color 0.3s ease;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  transition: background 0.3s ease;
 }
 body.scrolled .header-nav-pill {
-  background: rgba(18, 18, 22, 0.75);
-  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(18, 18, 22, 0.85);
 }
 
 .nav-item {
@@ -158,9 +157,10 @@ body.scrolled .header-nav-pill {
   font-weight: 600;
   color: rgba(255, 255, 255, 0.72);
   border-radius: var(--radius-pill);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
   white-space: nowrap;
   cursor: pointer;
+  border: none;
 }
 .nav-item:hover {
   color: #ffffff;
@@ -195,6 +195,7 @@ body.scrolled .nav-item.active {
   transition: all 0.25s ease;
   padding: 6px 14px;
   border-radius: var(--radius-pill);
+  border: none;
 }
 .login-nav-btn:hover {
   opacity: 0.85;
@@ -207,9 +208,9 @@ body.scrolled .login-nav-btn {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.12);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: none;
   padding: 4px 14px 4px 5px;
   border-radius: var(--radius-pill);
   color: #ffffff;
@@ -218,7 +219,7 @@ body.scrolled .login-nav-btn {
   transition: all 0.2s ease;
 }
 .user-nav-pill:hover {
-  background: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.2);
 }
 .user-nav-avatar {
   width: 26px;
@@ -298,9 +299,6 @@ body.scrolled .login-nav-btn {
   color: #121214;
   margin-bottom: 24px;
 }
-.hero-title span.title-dark {
-  color: #0b0b0d;
-}
 
 .hero-subtitle {
   font-size: clamp(15px, 1.8vw, 17.5px);
@@ -331,6 +329,7 @@ body.scrolled .login-nav-btn {
   font-weight: 600;
   transition: var(--transition-smooth);
   box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
+  border: none;
 }
 .btn-black-pill:hover {
   background: #252528;
@@ -342,9 +341,9 @@ body.scrolled .login-nav-btn {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: rgba(130, 120, 105, 0.28);
+  background: rgba(130, 120, 105, 0.3);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(80, 70, 60, 0.2);
+  border: none;
   color: #242220;
   padding: 14px 28px;
   border-radius: var(--radius-pill);
@@ -353,12 +352,12 @@ body.scrolled .login-nav-btn {
   transition: var(--transition-smooth);
 }
 .btn-glass-pill:hover {
-  background: rgba(130, 120, 105, 0.4);
+  background: rgba(130, 120, 105, 0.45);
   transform: translateY(-2px);
 }
 
 /* ==========================================================================
-   Section 2: Visuals ("только визуал" / Screenshot 2)
+   Section 2: Visuals ("только визуал" / Screenshot 2 - Borderless)
    ========================================================================== */
 .section-visuals {
   position: relative;
@@ -375,7 +374,7 @@ body.scrolled .login-nav-btn {
   align-items: center;
 }
 
-/* 2x2 Feature Cards */
+/* 2x2 Feature Cards - Borderless */
 .feature-cards-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -391,13 +390,12 @@ body.scrolled .login-nav-btn {
   flex-direction: column;
   justify-content: flex-end;
   padding: 24px;
-  border: 1px solid var(--bg-card-border);
+  border: none;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-  transition: transform 0.35s ease, border-color 0.35s ease;
+  transition: transform 0.35s ease;
 }
 .feature-card:hover {
   transform: translateY(-4px);
-  border-color: rgba(255, 255, 255, 0.2);
 }
 
 .feature-card-bg {
@@ -446,9 +444,9 @@ body.scrolled .login-nav-btn {
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.12);
   backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: none;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -564,6 +562,7 @@ body.scrolled .login-nav-btn {
   transition: var(--transition-smooth);
   width: fit-content;
   box-shadow: 0 4px 20px rgba(255, 255, 255, 0.15);
+  border: none;
 }
 .btn-white-pill:hover {
   background: #f0f0f2;
@@ -572,7 +571,7 @@ body.scrolled .login-nav-btn {
 }
 
 /* ==========================================================================
-   Section 3: Client in action / Cosmetics ("Это не макет" / Screenshot 3)
+   Section 3: Client in action / Cosmetics ("Это не макет" / Screenshot 3 - Borderless)
    ========================================================================== */
 .section-showcase {
   position: relative;
@@ -592,7 +591,7 @@ body.scrolled .login-nav-btn {
   border-radius: 28px;
   overflow: hidden;
   background: #0d0d12;
-  border: 1px solid rgba(139, 92, 246, 0.25);
+  border: none;
   box-shadow: 0 20px 80px rgba(0, 0, 0, 0.8), 0 0 50px rgba(139, 92, 246, 0.12);
 }
 
@@ -618,7 +617,7 @@ body.scrolled .login-nav-btn {
   flex-direction: column;
 }
 
-/* In-Game HUD Elements */
+/* In-Game HUD Elements - Borderless */
 .hud-top-bar {
   display: flex;
   justify-content: space-between;
@@ -630,9 +629,9 @@ body.scrolled .login-nav-btn {
   display: flex;
   align-items: center;
   gap: 12px;
-  background: rgba(14, 14, 18, 0.85);
+  background: rgba(14, 14, 18, 0.88);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: none;
   padding: 6px 14px;
   border-radius: 10px;
   font-size: 11px;
@@ -649,9 +648,9 @@ body.scrolled .login-nav-btn {
   display: flex;
   align-items: center;
   gap: 12px;
-  background: rgba(14, 14, 18, 0.85);
+  background: rgba(14, 14, 18, 0.88);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: none;
   padding: 6px 16px;
   border-radius: 12px;
   font-size: 12px;
@@ -663,22 +662,22 @@ body.scrolled .login-nav-btn {
 }
 
 .hud-keybinds-pill {
-  background: rgba(14, 14, 18, 0.85);
+  background: rgba(14, 14, 18, 0.88);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: none;
   padding: 6px 14px;
   border-radius: 10px;
   font-size: 11px;
   color: #a1a1aa;
 }
 
-/* In-game Client GUI Container */
+/* In-game Client GUI Container - Borderless */
 .client-gui-container {
   display: grid;
   grid-template-columns: 240px 1fr;
-  background: rgba(18, 16, 26, 0.94);
+  background: rgba(18, 16, 26, 0.96);
   backdrop-filter: blur(24px);
-  border: 1px solid rgba(139, 92, 246, 0.35);
+  border: none;
   border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 16px 50px rgba(0, 0, 0, 0.7);
@@ -689,7 +688,7 @@ body.scrolled .login-nav-btn {
 
 .gui-sidebar {
   background: rgba(14, 12, 20, 0.95);
-  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  border: none;
   padding: 18px 14px;
   display: flex;
   flex-direction: column;
@@ -704,7 +703,7 @@ body.scrolled .login-nav-btn {
   font-weight: 700;
   color: #fff;
   padding: 0 8px 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border: none;
 }
 .gui-logo-title img {
   width: 20px;
@@ -730,16 +729,17 @@ body.scrolled .login-nav-btn {
   transition: all 0.2s ease;
   width: 100%;
   text-align: left;
+  border: none;
 }
 .gui-nav-btn:hover {
   background: rgba(255, 255, 255, 0.05);
   color: #fff;
 }
 .gui-nav-btn.active {
-  background: rgba(139, 92, 246, 0.18);
+  background: rgba(139, 92, 246, 0.2);
   color: #c4b5fd;
   font-weight: 600;
-  border-left: 2px solid #8b5cf6;
+  border: none;
 }
 
 .gui-badge {
@@ -756,9 +756,9 @@ body.scrolled .login-nav-btn {
   align-items: center;
   gap: 10px;
   padding: 8px;
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(255, 255, 255, 0.04);
   border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: none;
 }
 .gui-user-avatar {
   width: 28px;
@@ -767,7 +767,7 @@ body.scrolled .login-nav-btn {
   background: #6366f1;
 }
 
-/* GUI Content Panels */
+/* GUI Content Panels - Borderless */
 .gui-content {
   padding: 20px 24px;
   display: flex;
@@ -782,7 +782,7 @@ body.scrolled .login-nav-btn {
   justify-content: space-between;
   align-items: center;
   padding-bottom: 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border: none;
 }
 
 .gui-breadcrumb {
@@ -799,7 +799,7 @@ body.scrolled .login-nav-btn {
 
 .gui-panel-box {
   background: rgba(24, 21, 36, 0.75);
-  border: 1px solid rgba(139, 92, 246, 0.2);
+  border: none;
   border-radius: 14px;
   padding: 16px;
   display: flex;
@@ -845,7 +845,7 @@ body.scrolled .login-nav-btn {
   border-radius: 3px;
 }
 
-/* Pills under mockup */
+/* Pills under mockup - Borderless */
 .mockup-pills-row {
   display: flex;
   gap: 12px;
@@ -856,8 +856,8 @@ body.scrolled .login-nav-btn {
 
 .mockup-pill-item {
   padding: 8px 18px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.06);
+  border: none;
   border-radius: var(--radius-pill);
   font-size: 13px;
   font-weight: 500;
@@ -865,12 +865,12 @@ body.scrolled .login-nav-btn {
   transition: all 0.2s ease;
 }
 .mockup-pill-item:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.12);
   color: #fff;
 }
 
 /* ==========================================================================
-   Section 4: Cloud Settings ("Твои настройки всегда с тобой" / Screenshot 4)
+   Section 4: Cloud Settings (Screenshot 4 - Borderless)
    ========================================================================== */
 .section-cloud {
   position: relative;
@@ -889,7 +889,7 @@ body.scrolled .login-nav-btn {
 
 .cloud-checklist-card {
   background: #121216;
-  border: 1px solid var(--bg-card-border);
+  border: none;
   border-radius: var(--radius-card);
   padding: 24px 32px;
   box-shadow: 0 16px 50px rgba(0, 0, 0, 0.5);
@@ -900,12 +900,9 @@ body.scrolled .login-nav-btn {
   justify-content: space-between;
   align-items: center;
   padding: 18px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border: none;
   font-size: 14.5px;
   font-weight: 500;
-}
-.cloud-check-row:last-child {
-  border-bottom: none;
 }
 
 .cloud-status-badge {
@@ -927,7 +924,7 @@ body.scrolled .login-nav-btn {
 }
 
 /* ==========================================================================
-   Section 5: Pricing ("Покупка, о которой ты не пожалеешь" / Screenshot 5 & 6)
+   Section 5: Pricing (Screenshot 5 & 6 - Borderless)
    ========================================================================== */
 .section-pricing {
   position: relative;
@@ -947,21 +944,20 @@ body.scrolled .login-nav-btn {
 .pricing-card {
   position: relative;
   background: #111115;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: none;
   border-radius: var(--radius-card);
   padding: 36px 32px;
   display: flex;
   flex-direction: column;
-  transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
 }
 .pricing-card:hover {
   transform: translateY(-6px);
-  border-color: rgba(255, 255, 255, 0.2);
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
 }
 
 .pricing-card.featured {
-  border-color: rgba(255, 255, 255, 0.16);
   background: #141419;
 }
 
@@ -977,6 +973,7 @@ body.scrolled .login-nav-btn {
   border-radius: var(--radius-pill);
   background: rgba(255, 255, 255, 0.08);
   color: #e4e4e7;
+  border: none;
 }
 
 .pricing-plan-title {
@@ -1059,6 +1056,7 @@ body.scrolled .login-nav-btn {
   color: #fff;
   flex-shrink: 0;
   margin-top: 1px;
+  border: none;
 }
 
 .btn-card-primary {
@@ -1071,6 +1069,7 @@ body.scrolled .login-nav-btn {
   font-weight: 700;
   text-align: center;
   transition: var(--transition-smooth);
+  border: none;
 }
 .btn-card-primary:hover {
   background: #e4e4e7;
@@ -1081,8 +1080,8 @@ body.scrolled .login-nav-btn {
   width: 100%;
   padding: 14px;
   border-radius: var(--radius-pill);
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
   color: #ffffff;
   font-size: 14.5px;
   font-weight: 600;
@@ -1090,8 +1089,7 @@ body.scrolled .login-nav-btn {
   transition: var(--transition-smooth);
 }
 .btn-card-secondary:hover {
-  border-color: rgba(255, 255, 255, 0.4);
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.15);
   transform: translateY(-2px);
 }
 
@@ -1109,7 +1107,7 @@ body.scrolled .login-nav-btn {
 }
 
 /* ==========================================================================
-   Section 6: Swords and Totems ("Скины мечей и тотемов" / Screenshot 6)
+   Section 6: Swords and Totems (Screenshot 6 - Borderless)
    ========================================================================== */
 .section-swords {
   position: relative;
@@ -1121,13 +1119,14 @@ body.scrolled .login-nav-btn {
 
 .swords-card {
   background: #111115;
-  border: 1px solid var(--bg-card-border);
+  border: none;
   border-radius: var(--radius-card);
   padding: 44px;
   display: grid;
   grid-template-columns: 1.1fr 0.9fr;
   gap: 40px;
   align-items: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
 }
 
 .swords-left {
@@ -1157,14 +1156,14 @@ body.scrolled .login-nav-btn {
 
 .swords-tag-pill {
   padding: 6px 14px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.06);
+  border: none;
   border-radius: var(--radius-pill);
   font-size: 12.5px;
   color: #d4d4d8;
 }
 
-/* Pixel Art Items Showcase Grid */
+/* Pixel Art Items Showcase Grid - Borderless */
 .swords-items-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -1173,8 +1172,8 @@ body.scrolled .login-nav-btn {
 
 .pixel-item-box {
   aspect-ratio: 1;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.04);
+  border: none;
   border-radius: 12px;
   display: flex;
   align-items: center;
@@ -1184,8 +1183,7 @@ body.scrolled .login-nav-btn {
 }
 .pixel-item-box:hover {
   transform: scale(1.15) rotate(3deg);
-  border-color: rgba(255, 255, 255, 0.25);
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.1);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
   z-index: 5;
 }
@@ -1197,7 +1195,7 @@ body.scrolled .login-nav-btn {
 }
 
 /* ==========================================================================
-   Section 7: Basic features card ("Базовые вещи никогда не прячутся")
+   Section 7: Basic features card (Borderless)
    ========================================================================== */
 .section-basic {
   position: relative;
@@ -1209,13 +1207,14 @@ body.scrolled .login-nav-btn {
 
 .basic-card {
   background: #111115;
-  border: 1px solid var(--bg-card-border);
+  border: none;
   border-radius: var(--radius-card);
   padding: 38px 44px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 32px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
 }
 
 .basic-left {
@@ -1239,8 +1238,8 @@ body.scrolled .login-nav-btn {
 
 .basic-pill {
   padding: 8px 18px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.06);
+  border: none;
   border-radius: var(--radius-pill);
   font-size: 13px;
   font-weight: 500;
@@ -1249,7 +1248,7 @@ body.scrolled .login-nav-btn {
 }
 
 /* ==========================================================================
-   Section 8: 9-Feature Grid ("Работает сразу после запуска" / Screenshot 8 & 9)
+   Section 8: 9-Feature Grid (Screenshot 8 & 9 - Borderless, Pure White Icons)
    ========================================================================== */
 .section-features-grid {
   position: relative;
@@ -1262,46 +1261,45 @@ body.scrolled .login-nav-btn {
 .features-table-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: var(--radius-card);
-  overflow: hidden;
+  gap: 16px;
+  border: none;
+  background: transparent;
   margin-top: 50px;
 }
 
 .feature-table-cell {
-  padding: 40px 36px;
-  border-right: 1px solid rgba(255, 255, 255, 0.08);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 36px 32px;
+  border: none;
+  border-radius: 20px;
   display: flex;
   flex-direction: column;
   gap: 16px;
-  background: #0d0d10;
-  transition: background 0.3s ease;
+  background: #111115;
+  transition: background 0.3s ease, transform 0.3s ease;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 .feature-table-cell:hover {
-  background: #121217;
-}
-
-.feature-table-cell:nth-child(3n) {
-  border-right: none;
-}
-.feature-table-cell:nth-child(7),
-.feature-table-cell:nth-child(8),
-.feature-table-cell:nth-child(9) {
-  border-bottom: none;
+  background: #16161c;
+  transform: translateY(-2px);
 }
 
 .cell-icon-box {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
-  font-size: 16px;
+  color: #ffffff !important;
+}
+
+.cell-icon-box svg {
+  width: 20px;
+  height: 20px;
+  stroke: #ffffff !important;
+  color: #ffffff !important;
 }
 
 .cell-title {
@@ -1317,7 +1315,7 @@ body.scrolled .login-nav-btn {
 }
 
 /* ==========================================================================
-   Section 9: Cream CTA Banner Card ("Готов выглядеть лучше?" / Screenshot 9)
+   Section 9: Cream CTA Banner Card (Screenshot 9)
    ========================================================================== */
 .section-cta {
   position: relative;
@@ -1336,6 +1334,7 @@ body.scrolled .login-nav-btn {
   flex-direction: column;
   align-items: center;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+  border: none;
 }
 
 .cta-banner-title {
@@ -1356,13 +1355,13 @@ body.scrolled .login-nav-btn {
 }
 
 /* ==========================================================================
-   Section 10: Modern Dark Footer (Screenshot 10)
+   Section 10: Modern Dark Footer (Screenshot 10 - Borderless)
    ========================================================================== */
 .site-footer {
   position: relative;
   z-index: 10;
   background: #09090b;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border: none;
   padding: 80px 24px 40px;
   margin-top: 60px;
 }
@@ -1428,13 +1427,13 @@ body.scrolled .login-nav-btn {
   justify-content: space-between;
   align-items: center;
   padding-top: 32px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border: none;
   font-size: 13px;
   color: #71717a;
 }
 
 /* ==========================================================================
-   Auth Screen / Modal (Exact Match to Screenshots 11 & 12)
+   Auth Screen / Modal (Screenshots 11 & 12 - Borderless)
    ========================================================================== */
 .auth-page-view {
   position: fixed;
@@ -1481,13 +1480,13 @@ body.scrolled .login-nav-btn {
   color: #ffffff;
   padding: 8px 16px;
   border-radius: var(--radius-pill);
-  background: rgba(0, 0, 0, 0.35);
+  background: rgba(0, 0, 0, 0.45);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: none;
   transition: all 0.2s ease;
 }
 .auth-back-btn:hover {
-  background: rgba(0, 0, 0, 0.55);
+  background: rgba(0, 0, 0, 0.65);
   transform: translateX(-2px);
 }
 
@@ -1496,10 +1495,10 @@ body.scrolled .login-nav-btn {
   z-index: 10;
   width: 100%;
   max-width: 440px;
-  background: rgba(28, 27, 24, 0.72);
+  background: rgba(28, 27, 24, 0.82);
   backdrop-filter: blur(30px);
   -webkit-backdrop-filter: blur(30px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: none;
   border-radius: 28px;
   padding: 40px 36px;
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
@@ -1542,9 +1541,10 @@ body.scrolled .login-nav-btn {
   display: grid;
   grid-template-columns: 1fr 1fr;
   padding: 4px;
-  background: rgba(0, 0, 0, 0.25);
+  background: rgba(0, 0, 0, 0.35);
   border-radius: var(--radius-pill);
   margin-bottom: 24px;
+  border: none;
 }
 
 .auth-toggle-btn {
@@ -1555,6 +1555,7 @@ body.scrolled .login-nav-btn {
   color: #a1a1aa;
   text-align: center;
   transition: all 0.25s ease;
+  border: none;
 }
 .auth-toggle-btn.active {
   background: #ffffff;
@@ -1585,8 +1586,8 @@ body.scrolled .login-nav-btn {
 .auth-input {
   width: 100%;
   padding: 14px 16px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
   border-radius: 12px;
   font-size: 14px;
   color: #ffffff;
@@ -1594,11 +1595,10 @@ body.scrolled .login-nav-btn {
   transition: all 0.2s ease;
 }
 .auth-input:focus {
-  border-color: rgba(255, 255, 255, 0.35);
-  background: rgba(255, 255, 255, 0.09);
+  background: rgba(255, 255, 255, 0.12);
 }
 .auth-input::placeholder {
-  color: rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.35);
 }
 
 .auth-submit-btn {
@@ -1613,6 +1613,7 @@ body.scrolled .login-nav-btn {
   transition: var(--transition-smooth);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
   margin-top: 8px;
+  border: none;
 }
 .auth-submit-btn:hover {
   background: #e4e4e7;
@@ -1626,8 +1627,8 @@ body.scrolled .login-nav-btn {
 .auth-error-msg {
   padding: 10px 14px;
   border-radius: 10px;
-  background: rgba(239, 68, 68, 0.15);
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  background: rgba(239, 68, 68, 0.2);
+  border: none;
   color: #f87171;
   font-size: 13px;
   display: none;
@@ -1635,14 +1636,14 @@ body.scrolled .login-nav-btn {
 
 .auth-card-footer-note {
   padding-top: 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border: none;
   font-size: 12px;
   line-height: 1.5;
   color: #71717a;
 }
 
 /* ==========================================================================
-   Cabinet Page View (Exact Match to Screenshots 13 & 14)
+   Cabinet Page View (Exact Match to Screenshots 13 & 14 - Borderless)
    ========================================================================== */
 .cabinet-page-view {
   min-height: 100vh;
@@ -1653,7 +1654,7 @@ body.scrolled .login-nav-btn {
 .cabinet-sidebar {
   width: 260px;
   background: #0e0e12;
-  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  border: none;
   padding: 28px 18px;
   display: flex;
   flex-direction: column;
@@ -1668,6 +1669,7 @@ body.scrolled .login-nav-btn {
   align-items: center;
   gap: 12px;
   padding: 0 10px 24px;
+  border: none;
 }
 .cabinet-brand-logo {
   width: 26px;
@@ -1699,6 +1701,7 @@ body.scrolled .login-nav-btn {
   color: #8e8e99;
   transition: all 0.2s ease;
   cursor: pointer;
+  border: none;
 }
 .cabinet-menu-item:hover {
   background: rgba(255, 255, 255, 0.05);
@@ -1725,6 +1728,7 @@ body.scrolled .login-nav-btn {
   border-radius: var(--radius-pill);
   background: rgba(255, 255, 255, 0.12);
   color: #d4d4d8;
+  border: none;
 }
 
 .cabinet-badge-live {
@@ -1733,8 +1737,9 @@ body.scrolled .login-nav-btn {
   text-transform: uppercase;
   padding: 3px 8px;
   border-radius: var(--radius-pill);
-  background: rgba(34, 197, 94, 0.15);
+  background: rgba(34, 197, 94, 0.18);
   color: #4ade80;
+  border: none;
 }
 
 .cabinet-sidebar-bottom {
@@ -1742,7 +1747,7 @@ body.scrolled .login-nav-btn {
   flex-direction: column;
   gap: 12px;
   padding-top: 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border: none;
 }
 
 .cabinet-user-badge {
@@ -1779,13 +1784,14 @@ body.scrolled .login-nav-btn {
   font-size: 13.5px;
   color: #71717a;
   transition: all 0.2s ease;
+  border: none;
 }
 .cabinet-logout-btn:hover {
   color: #ef4444;
   background: rgba(239, 68, 68, 0.08);
 }
 
-/* Cabinet Main Content Grid */
+/* Cabinet Main Content Grid - Borderless */
 .cabinet-main-body {
   flex-grow: 1;
   padding: 48px 48px 60px;
@@ -1832,7 +1838,7 @@ body.scrolled .login-nav-btn {
   justify-content: center;
   font-size: 22px;
   font-weight: 700;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: none;
 }
 
 .cabinet-user-details {
@@ -1852,7 +1858,7 @@ body.scrolled .login-nav-btn {
   color: #71717a;
 }
 
-/* Launcher Download Card */
+/* Launcher Download Card - Borderless */
 .cabinet-section-label {
   font-size: 11px;
   font-weight: 700;
@@ -1867,13 +1873,14 @@ body.scrolled .login-nav-btn {
 
 .launcher-card {
   background: #131317;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: none;
   border-radius: 18px;
   padding: 22px 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .launcher-card-left {
@@ -1886,8 +1893,8 @@ body.scrolled .login-nav-btn {
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1923,8 +1930,9 @@ body.scrolled .login-nav-btn {
   font-family: monospace;
   padding: 2px 8px;
   border-radius: 6px;
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.08);
   color: #a1a1aa;
+  border: none;
 }
 
 .btn-launcher-download {
@@ -1935,6 +1943,7 @@ body.scrolled .login-nav-btn {
   font-size: 14px;
   font-weight: 700;
   transition: var(--transition-smooth);
+  border: none;
 }
 .btn-launcher-download:hover {
   background: #e4e4e7;
@@ -1947,12 +1956,13 @@ body.scrolled .login-nav-btn {
   margin-top: 10px;
 }
 
-/* Account Data Table */
+/* Account Data Table - Borderless */
 .account-data-list {
   background: #131317;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: none;
   border-radius: 18px;
   overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .account-data-row {
@@ -1960,11 +1970,8 @@ body.scrolled .login-nav-btn {
   justify-content: space-between;
   align-items: center;
   padding: 16px 24px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border: none;
   font-size: 13.5px;
-}
-.account-data-row:last-child {
-  border-bottom: none;
 }
 
 .account-data-label {
@@ -1986,15 +1993,15 @@ body.scrolled .login-nav-btn {
 .btn-plan-upgrade {
   padding: 4px 10px;
   border-radius: var(--radius-pill);
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
   color: #ffffff;
   font-size: 11px;
   font-weight: 600;
   transition: all 0.2s ease;
 }
 .btn-plan-upgrade:hover {
-  background: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.2);
 }
 
 .cabinet-actions-row {
@@ -2010,28 +2017,28 @@ body.scrolled .login-nav-btn {
   gap: 8px;
   padding: 10px 18px;
   border-radius: var(--radius-pill);
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.06);
+  border: none;
   color: #d4d4d8;
   font-size: 13px;
   font-weight: 600;
   transition: all 0.2s ease;
 }
 .btn-cabinet-pill:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.14);
   color: #ffffff;
-  border-color: rgba(255, 255, 255, 0.16);
 }
 
-/* Right Character Viewport Card */
+/* Right Character Viewport Card - Borderless */
 .character-viewport-card {
   background: #131317;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: none;
   border-radius: 24px;
   padding: 24px;
   display: flex;
   flex-direction: column;
   height: fit-content;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .character-card-label {
@@ -2056,7 +2063,7 @@ body.scrolled .login-nav-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: none;
   cursor: grab;
 }
 .character-3d-stage:active {
@@ -2097,9 +2104,6 @@ body.scrolled .login-nav-btn {
   }
   .features-table-grid {
     grid-template-columns: 1fr;
-  }
-  .feature-table-cell {
-    border-right: none;
   }
   .cabinet-main-body {
     grid-template-columns: 1fr;

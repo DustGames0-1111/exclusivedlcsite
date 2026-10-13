@@ -684,63 +684,119 @@
         <div class="features-table-grid reveal">
           <!-- 1. Косметика -->
           <div class="feature-table-cell">
-            <div class="cell-icon-box">👕</div>
+            <div class="cell-icon-box">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/>
+              </svg>
+            </div>
             <h4 class="cell-title">Косметика</h4>
             <p class="cell-desc">Плащи, крылья, шляпы, рюкзаки, 3D-скины, стили ника, скины оружия, а с подпиской — скины мечей и тотемов. Всё с предпросмотром до того, как наденешь.</p>
           </div>
 
           <!-- 2. Миникарта -->
           <div class="feature-table-cell">
-            <div class="cell-icon-box">🗺</div>
+            <div class="cell-icon-box">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/>
+                <line x1="8" y1="2" x2="8" y2="18"/>
+                <line x1="16" y1="6" x2="16" y2="22"/>
+              </svg>
+            </div>
             <h4 class="cell-title">Миникарта</h4>
             <p class="cell-desc">Вращающаяся миникарта с игроками, мобами, предметами, вейпоинтами, биомом и координатами. Вместо точек — лица игроков, если захочешь.</p>
           </div>
 
           <!-- 3. Анимации рук -->
           <div class="feature-table-cell">
-            <div class="cell-icon-box">✋</div>
+            <div class="cell-icon-box">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0"/>
+                <path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2"/>
+                <path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8"/>
+                <path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.83L7 15"/>
+              </svg>
+            </div>
             <h4 class="cell-title">Анимации рук</h4>
             <p class="cell-desc">Анимации удара и удержания переписаны с нуля: своя поза для каждого предмета и камера от первого лица, которая следует за движением.</p>
           </div>
 
           <!-- 4. Свой прицел -->
           <div class="feature-table-cell">
-            <div class="cell-icon-box">🎯</div>
+            <div class="cell-icon-box">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="22" y1="12" x2="18" y2="12"/>
+                <line x1="6" y1="12" x2="2" y2="12"/>
+                <line x1="12" y1="6" x2="12" y2="2"/>
+                <line x1="12" y1="22" x2="12" y2="18"/>
+              </svg>
+            </div>
             <h4 class="cell-title">Свой прицел</h4>
             <p class="cell-desc">Собери прицел из форм, отступов, обводок и цветов — с живым превью, которое меняется прямо под ползунком.</p>
           </div>
 
           <!-- 5. Медиаплеер -->
           <div class="feature-table-cell">
-            <div class="cell-icon-box">🎵</div>
+            <div class="cell-icon-box">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 18V5l12-2v13"/>
+                <circle cx="6" cy="18" r="3"/>
+                <circle cx="18" cy="16" r="3"/>
+              </svg>
+            </div>
             <h4 class="cell-title">Медиаплеер</h4>
             <p class="cell-desc">Управляй тем, что уже играет на компьютере: обложка, название трека и медиа-клавиши прямо в HUD.</p>
           </div>
 
           <!-- 6. Трекер хранилищ -->
           <div class="feature-table-cell">
-            <div class="cell-icon-box">📦</div>
+            <div class="cell-icon-box">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+              </svg>
+            </div>
             <h4 class="cell-title">Трекер хранилищ</h4>
             <p class="cell-desc">Каждый открытый сундук запоминается по измерениям, ищется по предмету и подсвечивается в мире, когда он тебе нужен.</p>
           </div>
 
           <!-- 7. Темы -->
           <div class="feature-table-cell">
-            <div class="cell-icon-box">🌓</div>
+            <div class="cell-icon-box">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M12 2a10 10 0 0 1 0 20z" fill="#ffffff"/>
+              </svg>
+            </div>
             <h4 class="cell-title">Темы</h4>
             <p class="cell-desc">Тёмная, светлая и неоновая из коробки, плюс токены плотности, скругления и анимации — весь интерфейс меняется разом.</p>
           </div>
 
           <!-- 8. HUD производительности -->
           <div class="feature-table-cell">
-            <div class="cell-icon-box">📈</div>
+            <div class="cell-icon-box">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+              </svg>
+            </div>
             <h4 class="cell-title">HUD производительности</h4>
             <p class="cell-desc">FPS, процессор и память прямо из работающего клиента, с цветовой шкалой — просадку видно сразу.</p>
           </div>
 
           <!-- 9. Баг-репорты -->
           <div class="feature-table-cell">
-            <div class="cell-icon-box">🐞</div>
+            <div class="cell-icon-box">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="8" y="9" width="8" height="10" rx="4"/>
+                <line x1="6" y1="4" x2="8" y2="6"/>
+                <line x1="18" y1="4" x2="16" y2="6"/>
+                <line x1="12" y1="9" x2="12" y2="19"/>
+                <line x1="2" y1="11" x2="8" y2="11"/>
+                <line x1="16" y1="11" x2="22" y2="11"/>
+                <line x1="2" y1="16" x2="8" y2="16"/>
+                <line x1="16" y1="16" x2="22" y2="16"/>
+              </svg>
+            </div>
             <h4 class="cell-title">Баг-репорты</h4>
             <p class="cell-desc">Одна команда — и клиент отправляет нам лог, диагностику и состояние клиента. Никаких скриншотов краш-лога.</p>
           </div>
@@ -1513,6 +1569,9 @@
     reveals.forEach(el => observer.observe(el));
   }
 
+  let manualScrollLock = false;
+  let manualScrollTimer = null;
+
   function initSmoothScroll() {
     const navItems = document.querySelectorAll('.header-nav-pill .nav-item[data-target]');
     navItems.forEach(item => {
@@ -1522,13 +1581,23 @@
         e.preventDefault();
         const el = document.getElementById(targetId);
         if (el) {
+          manualScrollLock = true;
+          clearTimeout(manualScrollTimer);
+
+          // Lock the active pill to the clicked tab instantly
+          navItems.forEach(i => i.classList.remove('active'));
+          item.classList.add('active');
+
           const offsetTop = targetId === 'hero' ? 0 : el.offsetTop - 85;
           window.scrollTo({
             top: offsetTop,
             behavior: 'smooth'
           });
-          navItems.forEach(i => i.classList.remove('active'));
-          item.classList.add('active');
+
+          // Keep lock active until smooth scroll completes (900ms)
+          manualScrollTimer = setTimeout(() => {
+            manualScrollLock = false;
+          }, 900);
         }
       });
     });
@@ -1556,8 +1625,15 @@
 
     let ticking = false;
     window.addEventListener('scroll', () => {
+      if (manualScrollLock) return; // Do not overwrite active pill while user is smoothly scrolling!
+
       if (!ticking) {
         window.requestAnimationFrame(() => {
+          if (manualScrollLock) {
+            ticking = false;
+            return;
+          }
+
           let current = 'hero';
           const scrollPosition = window.scrollY + 120;
 

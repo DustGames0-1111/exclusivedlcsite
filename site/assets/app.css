@@ -1164,10 +1164,46 @@ body.scrolled .login-nav-btn {
 }
 
 /* Pixel Art Items Showcase Grid - Borderless */
+.swords-right-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.swords-filter-tabs {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.swords-filter-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: none;
+  border-radius: var(--radius-pill);
+  padding: 5px 12px;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: #a1a1aa;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.swords-filter-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+.swords-filter-btn.active {
+  background: #ffffff;
+  color: #09090b;
+  font-weight: 600;
+}
+
 .swords-items-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 10px;
+  transition: opacity 0.2s ease;
 }
 
 .pixel-item-box {
@@ -1178,20 +1214,59 @@ body.scrolled .login-nav-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.25s ease;
-  padding: 6px;
-}
-.pixel-item-box:hover {
-  transform: scale(1.15) rotate(3deg);
-  background: rgba(255, 255, 255, 0.1);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
-  z-index: 5;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 8px;
+  position: relative;
+  cursor: pointer;
 }
 
-.pixel-svg-icon {
+.pixel-item-box:hover {
+  transform: translateY(-4px) scale(1.12);
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  z-index: 10;
+}
+
+.pixel-item-img {
   width: 100%;
   height: 100%;
+  object-fit: contain;
   image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.45));
+  transition: transform 0.25s ease;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.pixel-item-box:hover .pixel-item-img {
+  transform: rotate(6deg) scale(1.08);
+}
+
+.pixel-item-box::after {
+  content: attr(data-name);
+  position: absolute;
+  bottom: -28px;
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  background: #18181b;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: all 0.18s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  z-index: 20;
+}
+
+.pixel-item-box:hover::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
 }
 
 /* ==========================================================================

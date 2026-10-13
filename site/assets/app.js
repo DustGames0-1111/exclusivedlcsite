@@ -630,26 +630,32 @@
         </p>
       </section>
 
-      <!-- Section 6: Swords and Totems (Screenshot 6) -->
+      <!-- Section 6: Swords and Totems / Mace (Screenshot 6) -->
       <section class="section-swords">
         <div class="swords-card reveal">
           <div class="swords-left">
             <span class="section-tag">ТОЛЬКО С ПОДПИСКОЙ</span>
-            <h3 class="swords-title">Скины мечей и тотемов.</h3>
+            <h3 class="swords-title">Скины мечей и булав (Mace).</h3>
             <p class="swords-desc">
-              128 пиксельных скинов мечей из лучших SkyBlock-паков и 29 тотемов — классические, анимированные и 3D. Видны в руке, в хотбаре и в анимации срабатывания тотема. Обе вкладки появляются в клиенте сразу, как только активна подписка.
+              128 пиксельных скинов мечей из лучших SkyBlock-паков и 29 булав и тотемов — классические, анимированные и 3D. Видны в руке, в хотбаре и в анимации удара. Обе вкладки появляются в клиенте сразу, как только активна подписка.
             </p>
             <div class="swords-tags-row">
               <span class="swords-tag-pill">128 мечей</span>
-              <span class="swords-tag-pill">29 тотемов</span>
+              <span class="swords-tag-pill">Булавы и тотемы</span>
               <span class="swords-tag-pill">Анимированные текстуры</span>
-              <span class="swords-tag-pill">Свой тотем при срабатывании</span>
+              <span class="swords-tag-pill">Свой скин в руке</span>
             </div>
           </div>
 
-          <div class="swords-items-grid">
-            <!-- 14 Pixel Art Item Boxes -->
-            ${renderPixelItemsGrid()}
+          <div class="swords-right-wrap">
+            <div class="swords-filter-tabs">
+              <button class="swords-filter-btn active" data-filter="all">Микс (14)</button>
+              <button class="swords-filter-btn" data-filter="swords">Мечи (20)</button>
+              <button class="swords-filter-btn" data-filter="maces">Булавы (14)</button>
+            </div>
+            <div class="swords-items-grid" id="swordsItemsGrid">
+              ${renderPixelItemsGrid('all')}
+            </div>
           </div>
         </div>
       </section>
@@ -865,41 +871,73 @@
     `;
   }
 
-  // Pixel items grid generator (Swords & Totems)
-  function renderPixelItemsGrid() {
-    const items = [
-      { color: '#38bdf8', shape: 'sword', name: 'Diamond Blade' },
-      { color: '#f97316', shape: 'totem', name: 'Fox Totem' },
-      { color: '#10b981', shape: 'sword', name: 'Emerald Katana' },
-      { color: '#ec4899', shape: 'totem', name: 'Axolotl Totem' },
-      { color: '#94a3b8', shape: 'sword', name: 'Iron Dagger' },
-      { color: '#eab308', shape: 'totem', name: 'Duck Totem' },
-      { color: '#f59e0b', shape: 'sword', name: 'Firebrand' },
-      { color: '#60a5fa', shape: 'totem', name: 'Ice Minion' },
-      { color: '#d97706', shape: 'sword', name: 'Golden Saber' },
-      { color: '#06b6d4', shape: 'totem', name: 'Wither Crest' },
-      { color: '#ef4444', shape: 'sword', name: 'Crimson Edge' },
-      { color: '#f8fafc', shape: 'totem', name: 'Tux Penguin' },
-      { color: '#fbbf24', shape: 'sword', name: 'Sun Rapier' },
-      { color: '#a855f7', shape: 'sword', name: 'Void Scythe' }
-    ];
+  // Real pixel-art items from /assets/sword/ and /assets/mace/
+  const swordsData = [
+    { file: '/assets/sword/katana.png', name: 'Катана' },
+    { file: '/assets/sword/ruby.png', name: 'Рубиновый клинок' },
+    { file: '/assets/sword/frost.png', name: 'Ледяной меч' },
+    { file: '/assets/sword/flame.png', name: 'Пламенный меч' },
+    { file: '/assets/sword/shadow.png', name: 'Теневой клинок' },
+    { file: '/assets/sword/emerald.png', name: 'Изумрудный меч' },
+    { file: '/assets/sword/goldbroad.png', name: 'Золотой палаш' },
+    { file: '/assets/sword/cleaver.png', name: 'Мясницкий тесак' },
+    { file: '/assets/sword/rapier.png', name: 'Рапира' },
+    { file: '/assets/sword/sabre.png', name: 'Сабля' },
+    { file: '/assets/sword/bone.png', name: 'Костяной меч' },
+    { file: '/assets/sword/celestial.png', name: 'Небесный меч' },
+    { file: '/assets/sword/laser.png', name: 'Лазерный меч' },
+    { file: '/assets/sword/serrated.png', name: 'Зазубренный меч' },
+    { file: '/assets/sword/obsidian.png', name: 'Обсидиановый меч' },
+    { file: '/assets/sword/amethyst.png', name: 'Аметистовый меч' },
+    { file: '/assets/sword/neon.png', name: 'Неоновый меч' },
+    { file: '/assets/sword/greatsword.png', name: 'Двуручник' },
+    { file: '/assets/sword/starry.png', name: 'Звёздный меч' },
+    { file: '/assets/sword/runic.png', name: 'Рунический меч' }
+  ];
+
+  const macesData = [
+    { file: '/assets/mace/spiked.png', name: 'Шипастый шар' },
+    { file: '/assets/mace/warhammer.png', name: 'Боевой молот' },
+    { file: '/assets/mace/flanged.png', name: 'Шестопёр' },
+    { file: '/assets/mace/morningstar.png', name: 'Утренняя звезда' },
+    { file: '/assets/mace/crystal.png', name: 'Хрустальная булава' },
+    { file: '/assets/mace/lavahammer.png', name: 'Огненный молот' },
+    { file: '/assets/mace/ice.png', name: 'Ледяная булава' },
+    { file: '/assets/mace/skull.png', name: 'Черепная булава' },
+    { file: '/assets/mace/scepter.png', name: 'Золотой скипетр' },
+    { file: '/assets/mace/pumpkin.png', name: 'Тыквенная булава' },
+    { file: '/assets/mace/thunder.png', name: 'Громовая булава' },
+    { file: '/assets/mace/amethyst.png', name: 'Аметистовая булава' },
+    { file: '/assets/mace/breeze.png', name: 'Ветряная булава' },
+    { file: '/assets/mace/sledge.png', name: 'Кувалда' }
+  ];
+
+  // Alternating mix (exactly 14 items: 7 swords & 7 maces matching the screenshot layout)
+  const defaultMix = [
+    swordsData[0],  // Катана
+    macesData[0],   // Шипастый шар
+    swordsData[1],  // Рубиновый клинок
+    macesData[4],   // Хрустальная булава
+    swordsData[5],  // Изумрудный меч
+    macesData[5],   // Огненный молот
+    swordsData[11], // Небесный меч
+    macesData[6],   // Ледяная булава
+    swordsData[2],  // Ледяной меч
+    macesData[7],   // Черепная булава
+    swordsData[3],  // Пламенный меч
+    macesData[3],   // Утренняя звезда
+    swordsData[4],  // Теневой клинок
+    macesData[10]   // Громовая булава
+  ];
+
+  function renderPixelItemsGrid(filter = 'all') {
+    let items = defaultMix;
+    if (filter === 'swords') items = swordsData;
+    else if (filter === 'maces') items = macesData;
 
     return items.map(item => `
-      <div class="pixel-item-box" title="${item.name}">
-        <svg class="pixel-svg-icon" viewBox="0 0 16 16" fill="none">
-          ${item.shape === 'sword' ? `
-            <path d="M12 2L14 4L7 11L5 9L12 2Z" fill="${item.color}" />
-            <path d="M13 3L11 5L10 4L12 2Z" fill="#ffffff" opacity="0.6"/>
-            <path d="M4 10L6 12L5 13L3 11L4 10Z" fill="#d97706"/>
-            <path d="M2 14L4 12L3 11L1 13L2 14Z" fill="#78350f"/>
-          ` : `
-            <rect x="5" y="3" width="6" height="5" rx="1" fill="${item.color}" />
-            <rect x="6" y="5" width="1" height="1" fill="#ffffff"/>
-            <rect x="9" y="5" width="1" height="1" fill="#ffffff"/>
-            <rect x="4" y="8" width="8" height="6" rx="1" fill="${item.color}" opacity="0.85"/>
-            <circle cx="8" cy="11" r="1.5" fill="#fef08a"/>
-          `}
-        </svg>
+      <div class="pixel-item-box" data-name="${item.name}" title="${item.name}">
+        <img src="${item.file}" alt="${item.name}" class="pixel-item-img" loading="lazy" />
       </div>
     `).join('');
   }
@@ -1248,6 +1286,23 @@
       ctaDownloadBtn.onclick = () => {
         window.location.href = '/downloads/kodexlauncher.exe';
       };
+    }
+
+    const filterBtns = document.querySelectorAll('.swords-filter-btn');
+    const itemsGrid = document.getElementById('swordsItemsGrid');
+    if (filterBtns.length && itemsGrid) {
+      filterBtns.forEach(btn => {
+        btn.onclick = () => {
+          filterBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          const filter = btn.getAttribute('data-filter') || 'all';
+          itemsGrid.style.opacity = '0';
+          setTimeout(() => {
+            itemsGrid.innerHTML = renderPixelItemsGrid(filter);
+            itemsGrid.style.opacity = '1';
+          }, 150);
+        };
+      });
     }
   }
 

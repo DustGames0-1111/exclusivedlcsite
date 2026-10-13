@@ -2333,6 +2333,7 @@ body.scrolled .login-nav-btn {
   color: #0c0c0e;
   font-weight: 700;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
 .admin-subnav-btn.active svg,
 .admin-subnav-btn.active svg * {
   stroke: #0c0c0e !important;

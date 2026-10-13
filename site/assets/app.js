@@ -1317,7 +1317,7 @@
             <!-- Active Keys -->
             <div class="admin-subcard">
               <div class="admin-output-head">
-                <h4 class="admin-subcard-title" style="margin:0;">Активные ключи (${state.adminData.keys.length})</h4>
+                <h4 class="admin-subcard-title" id="adminActiveKeysTitle" style="margin:0;">Активные ключи (${state.adminData.keys.length})</h4>
                 <button class="btn-cabinet-pill" id="adminRefreshKeysBtn" style="padding:4px 10px; font-size:11px;">Обновить</button>
               </div>
               <div class="admin-keys-scroll-list" id="adminKeysListBody">
@@ -1356,7 +1356,7 @@
 
             <div class="admin-subcard">
               <div class="admin-output-head">
-                <h4 class="admin-subcard-title" style="margin:0;">Активные промокоды</h4>
+                <h4 class="admin-subcard-title" id="adminActivePromosTitle" style="margin:0;">Активные промокоды (${Object.keys(state.adminData.promocodes).length})</h4>
                 <button class="btn-cabinet-pill" id="adminRefreshPromosBtn" style="padding:4px 10px; font-size:11px;">Обновить</button>
               </div>
               <div class="admin-promos-scroll-list" id="adminPromosListBody">
@@ -2168,6 +2168,10 @@
         };
       });
     }
+    const titleEl = document.getElementById('adminActiveKeysTitle');
+    if (titleEl) {
+      titleEl.innerText = `Активные ключи (${state.adminData.keys.length})`;
+    }
   }
 
   function renderAdminPromosList() {
@@ -2189,6 +2193,10 @@
           }
         };
       });
+    }
+    const promoTitleEl = document.getElementById('adminActivePromosTitle');
+    if (promoTitleEl) {
+      promoTitleEl.innerText = `Активные промокоды (${Object.keys(state.adminData.promocodes).length})`;
     }
   }
 

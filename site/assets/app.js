@@ -471,7 +471,7 @@
               </li>
             </ul>
 
-            <a href="https://t.me/blydota4ka" target="_blank" class="btn-card-secondary">Купить</a>
+            <a href="https://t.me/swagTRAXA" target="_blank" class="btn-card-secondary">Купить</a>
           </div>
 
           <!-- 90 Days Card (399 RUB) -->
@@ -513,7 +513,7 @@
               </li>
             </ul>
 
-            <a href="https://t.me/blydota4ka" target="_blank" class="btn-card-primary">Купить</a>
+            <a href="https://t.me/swagTRAXA" target="_blank" class="btn-card-primary">Купить</a>
           </div>
 
           <!-- Lifetime Card (499 RUB) -->
@@ -555,12 +555,12 @@
               </li>
             </ul>
 
-            <a href="https://t.me/blydota4ka" target="_blank" class="btn-card-secondary">Купить</a>
+            <a href="https://t.me/swagTRAXA" target="_blank" class="btn-card-secondary">Купить</a>
           </div>
         </div>
 
         <p class="pricing-footnote reveal">
-          Один платёж за выбранный период — без автопродления и повторных списаний без твоего действия. Цены указаны в рублях (₽), итоговая сумма видна до подтверждения. Подробности — у <a href="https://t.me/blydota4ka" target="_blank">поддержки</a>.
+          Один платёж за выбранный период — без автопродления и повторных списаний без твоего действия. Цены указаны в рублях (₽), итоговая сумма видна до подтверждения. Подробности — у <a href="https://t.me/swagTRAXA" target="_blank">поддержки</a>.
         </p>
       </section>
 
@@ -778,7 +778,7 @@
             <div>
               <h5 class="footer-col-title">ПОДДЕРЖКА</h5>
               <ul class="footer-links-list">
-                <li><a href="https://t.me/blydota4ka" target="_blank" class="footer-link">Написать в поддержку</a></li>
+                <li><a href="https://t.me/swagTRAXA" target="_blank" class="footer-link">Написать в поддержку</a></li>
                 <li><a href="/cabinet" class="footer-link" onclick="event.preventDefault(); window.navigate('cabinet');">Твой аккаунт</a></li>
                 <li><a href="#cloud" class="footer-link">Облачная синхронизация</a></li>
                 <li><a href="#pricing" class="footer-link">Что входит</a></li>
@@ -1094,7 +1094,7 @@
                     </span>
                     <div class="account-data-val">
                       <span>${planText}</span>
-                      <button class="btn-plan-upgrade" onclick="window.open('https://t.me/blydota4ka', '_blank')">Продлить</button>
+                      <button class="btn-plan-upgrade" onclick="window.open('https://t.me/swagTRAXA', '_blank')">Продлить</button>
                     </div>
                   </div>
                   <div class="account-data-row">

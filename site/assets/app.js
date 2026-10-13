@@ -1588,19 +1588,36 @@
           navItems.forEach(i => i.classList.remove('active'));
           item.classList.add('active');
 
-          const offsetTop = targetId === 'hero' ? 0 : el.offsetTop - 85;
+          const offsetTop = targetId === 'hero' ? 0 : Math.max(0, el.offsetTop - 85);
           window.scrollTo({
             top: offsetTop,
             behavior: 'smooth'
           });
 
-          // Keep lock active until smooth scroll completes (900ms)
+          // Keep lock active until smooth scroll completes
           manualScrollTimer = setTimeout(() => {
             manualScrollLock = false;
-          }, 900);
+          }, 1200);
         }
       });
     });
+
+    const headerLogoLink = document.querySelector('.header-logo-link');
+    if (headerLogoLink) {
+      headerLogoLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        manualScrollLock = true;
+        clearTimeout(manualScrollTimer);
+        navItems.forEach(i => {
+          if (i.getAttribute('data-target') === 'hero') i.classList.add('active');
+          else i.classList.remove('active');
+        });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        manualScrollTimer = setTimeout(() => {
+          manualScrollLock = false;
+        }, 1200);
+      });
+    }
 
     const generalAnchors = document.querySelectorAll('a[href^="#"]:not(.nav-item)');
     generalAnchors.forEach(anchor => {
@@ -1609,18 +1626,39 @@
         const el = document.getElementById(targetId);
         if (el) {
           e.preventDefault();
-          const offsetTop = targetId === 'hero' ? 0 : el.offsetTop - 85;
+          manualScrollLock = true;
+          clearTimeout(manualScrollTimer);
+
+          navItems.forEach(i => {
+            if (i.getAttribute('data-target') === targetId) {
+              i.classList.add('active');
+            } else {
+              i.classList.remove('active');
+            }
+          });
+
+          const offsetTop = targetId === 'hero' ? 0 : Math.max(0, el.offsetTop - 85);
           window.scrollTo({
             top: offsetTop,
             behavior: 'smooth'
           });
+
+          manualScrollTimer = setTimeout(() => {
+            manualScrollLock = false;
+          }, 1200);
         }
       });
     });
+
+    // Native scrollend event support to unlock immediately when scroll finishes
+    window.addEventListener('scrollend', () => {
+      manualScrollLock = false;
+      clearTimeout(manualScrollTimer);
+    }, { passive: true });
   }
 
   function initScrollSpy() {
-    const sections = document.querySelectorAll('section[id]');
+    const sections = Array.from(document.querySelectorAll('section[id]'));
     const navItems = document.querySelectorAll('.header-nav-pill .nav-item[data-target]');
 
     let ticking = false;
@@ -1634,13 +1672,11 @@
             return;
           }
 
-          let current = 'hero';
-          const scrollPosition = window.scrollY + 120;
+          let current = sections[0]?.getAttribute('id') || 'hero';
+          const scrollPosition = window.scrollY + 140;
 
           sections.forEach(section => {
-            const top = section.offsetTop;
-            const height = section.offsetHeight;
-            if (scrollPosition >= top && scrollPosition < top + height) {
+            if (scrollPosition >= section.offsetTop) {
               current = section.getAttribute('id');
             }
           });

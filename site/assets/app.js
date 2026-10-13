@@ -183,7 +183,6 @@
             <a href="#showcase" class="nav-item" data-target="showcase">Косметика</a>
             <a href="#cloud" class="nav-item" data-target="cloud">Облако</a>
             <a href="#pricing" class="nav-item" data-target="pricing">Цены</a>
-            <a href="http://kodexclient.fun/pricing" class="nav-item">Магазин</a>
           </nav>
 
           <div class="header-right">
@@ -436,7 +435,7 @@
               </li>
             </ul>
 
-            <a href="http://kodexclient.fun/pricing" class="btn-card-secondary">Купить</a>
+            <a href="https://t.me/blydota4ka" target="_blank" class="btn-card-secondary">Купить</a>
           </div>
 
           <!-- 90 Days Card (399 RUB) -->
@@ -478,7 +477,7 @@
               </li>
             </ul>
 
-            <a href="http://kodexclient.fun/pricing" class="btn-card-primary">Купить</a>
+            <a href="https://t.me/blydota4ka" target="_blank" class="btn-card-primary">Купить</a>
           </div>
 
           <!-- Lifetime Card (499 RUB) -->
@@ -520,12 +519,12 @@
               </li>
             </ul>
 
-            <a href="http://kodexclient.fun/pricing" class="btn-card-secondary">Купить</a>
+            <a href="https://t.me/blydota4ka" target="_blank" class="btn-card-secondary">Купить</a>
           </div>
         </div>
 
         <p class="pricing-footnote reveal">
-          Один платёж за выбранный период — без автопродления и повторных списаний без твоего действия. Цены указаны в рублях (₽), итоговая сумма видна до подтверждения. Подробности — в <a href="http://kodexclient.fun/pricing">магазине</a> или у <a href="https://t.me/blydota4ka" target="_blank">поддержки</a>.
+          Один платёж за выбранный период — без автопродления и повторных списаний без твоего действия. Цены указаны в рублях (₽), итоговая сумма видна до подтверждения. Подробности — у <a href="https://t.me/blydota4ka" target="_blank">поддержки</a>.
         </p>
       </section>
 
@@ -715,7 +714,7 @@
           <p class="cta-banner-subtitle">
             Выбери подходящий тариф от 199 ₽ — моментальная активация, доступ ко всей библиотеке косметики и без лишней возни.
           </p>
-          <a href="http://kodexclient.fun/pricing" class="btn-black-pill" id="ctaPricingBtn">
+          <a href="#pricing" class="btn-black-pill" id="ctaPricingBtn">
             <span>Купить Kodex</span>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
           </a>
@@ -737,7 +736,6 @@
                 <li><a href="#pricing" class="footer-link">Цены</a></li>
                 <li><a href="/downloads/kodexlauncher.exe" class="footer-link">Скачать</a></li>
                 <li><a href="#showcase" class="footer-link">Косметика</a></li>
-                <li><a href="http://kodexclient.fun/pricing" class="footer-link">Магазин</a></li>
               </ul>
             </div>
 
@@ -756,7 +754,7 @@
               <ul class="footer-links-list">
                 <li><a href="/termsofservice" class="footer-link">Условия использования</a></li>
                 <li><a href="/privacypolicy" class="footer-link">Конфиденциальность</a></li>
-                <li><a href="http://kodexclient.fun/pricing" class="footer-link">Оплата и возвраты</a></li>
+                <li><a href="#pricing" class="footer-link">Оплата и тарифы</a></li>
               </ul>
             </div>
           </div>
@@ -1180,10 +1178,31 @@
       };
     }
 
-    const ctaDownloadBtn = document.getElementById('ctaDownloadBtn');
-    if (ctaDownloadBtn) {
-      ctaDownloadBtn.onclick = () => {
-        window.location.href = '/downloads/kodexlauncher.exe';
+    const ctaPricingBtn = document.getElementById('ctaPricingBtn');
+    if (ctaPricingBtn) {
+      ctaPricingBtn.onclick = (e) => {
+        e.preventDefault();
+        const pricingEl = document.getElementById('pricing');
+        if (pricingEl) {
+          manualScrollLock = true;
+          clearTimeout(manualScrollTimer);
+
+          const navItems = document.querySelectorAll('.header-nav-pill .nav-item[data-target]');
+          navItems.forEach(i => {
+            if (i.getAttribute('data-target') === 'pricing') i.classList.add('active');
+            else i.classList.remove('active');
+          });
+
+          const offsetTop = Math.max(0, pricingEl.offsetTop - 85);
+          window.scrollTo({
+            top: offsetTop,
+            behavior: 'smooth'
+          });
+
+          manualScrollTimer = setTimeout(() => {
+            manualScrollLock = false;
+          }, 1200);
+        }
       };
     }
 

@@ -889,22 +889,22 @@
 
         <button class="auth-back-btn" id="authBackBtn">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-          <span>Back to site</span>
+          <span>Назад на сайт</span>
         </button>
 
         <div class="auth-card">
           <img src="/assets/logo.png" alt="Kodex" class="auth-card-logo" />
-          <span class="auth-card-tag">ACCOUNT</span>
-          <h2 class="auth-card-title">${isSignup ? 'Create your account' : 'Welcome back'}</h2>
+          <span class="auth-card-tag">АККАУНТ</span>
+          <h2 class="auth-card-title">${isSignup ? 'Создать аккаунт' : 'С возвращением'}</h2>
           <p class="auth-card-desc">
             ${isSignup 
-              ? 'One account for your cosmetics, configs and friends — on every device.' 
-              : 'Sign in to sync your cosmetics, configs and friends across every device.'}
+              ? 'Единый аккаунт для конфигураций, настроек и привязки вашего клиента.' 
+              : 'Войдите в аккаунт для доступа к клиенту, настройкам и подписке.'}
           </p>
 
           <div class="auth-toggle-pill">
-            <button class="auth-toggle-btn ${!isSignup ? 'active' : ''}" id="toggleSignIn">Sign in</button>
-            <button class="auth-toggle-btn ${isSignup ? 'active' : ''}" id="toggleSignUp">Sign up</button>
+            <button class="auth-toggle-btn ${!isSignup ? 'active' : ''}" id="toggleSignIn">Вход</button>
+            <button class="auth-toggle-btn ${isSignup ? 'active' : ''}" id="toggleSignUp">Регистрация</button>
           </div>
 
           <div class="auth-error-msg" id="authErrorMsg"></div>
@@ -912,33 +912,33 @@
           <form class="auth-form" id="authForm">
             ${isSignup ? `
               <div class="auth-field-group">
-                <label class="auth-field-label">Login</label>
-                <input type="text" name="username" class="auth-input" placeholder="username (3-20 characters)" required autocomplete="username" />
+                <label class="auth-field-label">Логин</label>
+                <input type="text" name="username" class="auth-input" placeholder="логин (3-20 символов)" required autocomplete="username" />
               </div>
               <div class="auth-field-group">
-                <label class="auth-field-label">Email (optional)</label>
+                <label class="auth-field-label">Email (необязательно)</label>
                 <input type="email" name="email" class="auth-input" placeholder="you@example.com" autocomplete="email" />
               </div>
               <div class="auth-field-group">
-                <label class="auth-field-label">Password</label>
-                <input type="password" name="password" class="auth-input" placeholder="at least 6 characters" required autocomplete="new-password" />
+                <label class="auth-field-label">Пароль</label>
+                <input type="password" name="password" class="auth-input" placeholder="не менее 6 символов" required autocomplete="new-password" />
               </div>
-              <button type="submit" class="auth-submit-btn" id="authSubmitBtn">Create account</button>
+              <button type="submit" class="auth-submit-btn" id="authSubmitBtn">Создать аккаунт</button>
             ` : `
               <div class="auth-field-group">
-                <label class="auth-field-label">Login or Email</label>
-                <input type="text" name="username" class="auth-input" placeholder="username or you@example.com" required autocomplete="username" />
+                <label class="auth-field-label">Логин или Email</label>
+                <input type="text" name="username" class="auth-input" placeholder="логин или email" required autocomplete="username" />
               </div>
               <div class="auth-field-group">
-                <label class="auth-field-label">Password</label>
-                <input type="password" name="password" class="auth-input" placeholder="at least 6 characters" required autocomplete="current-password" />
+                <label class="auth-field-label">Пароль</label>
+                <input type="password" name="password" class="auth-input" placeholder="не менее 6 символов" required autocomplete="current-password" />
               </div>
-              <button type="submit" class="auth-submit-btn" id="authSubmitBtn">Sign in</button>
+              <button type="submit" class="auth-submit-btn" id="authSubmitBtn">Войти</button>
             `}
           </form>
 
           <p class="auth-card-footer-note">
-            Your account carries your cosmetics, module configs and friends list. It is bound to your device on first sign-in.
+            Ваш аккаунт привязывается к оборудованию при первом запуске клиента.
           </p>
         </div>
       </div>
@@ -960,7 +960,8 @@
     };
 
     const initial = (user.username || 'U')[0].toUpperCase();
-    const planText = user.role === 'ADMIN' ? 'Admin (Lifetime)' : (user.subtill && user.subtill !== 'None' ? `Pro (${user.subtill})` : 'Free');
+    const planText = user.role === 'ADMIN' ? 'Админ (Навсегда)' : (user.subtill && user.subtill !== 'None' ? (user.subtill === '31.12.2099' ? 'Навсегда' : `Подписка (${user.subtill})`) : 'Без подписки');
+    const roleText = user.role === 'ADMIN' ? 'Администратор' : (user.role === 'BETA' ? 'Beta-тестер' : 'Пользователь');
 
     return `
       <div class="cabinet-page-view">
@@ -974,14 +975,14 @@
           <ul class="cabinet-menu-list">
             <li class="cabinet-menu-item ${state.cabinetTab === 'account' ? 'active' : ''}" id="tabBtnAccount">
               <div class="cabinet-menu-item-left">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                <span>Account</span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                <span>Аккаунт</span>
               </div>
             </li>
             <li class="cabinet-menu-item ${state.cabinetTab === 'admin' ? 'active' : ''}" id="tabBtnAdmin">
               <div class="cabinet-menu-item-left">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-                <span>Admin Panel</span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                <span>Админ-панель</span>
               </div>
             </li>
           </ul>
@@ -993,7 +994,7 @@
             </div>
             <button class="cabinet-logout-btn" id="cabinetLogoutBtn">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-              <span>Log out</span>
+              <span>Выйти</span>
             </button>
           </div>
         </aside>
@@ -1003,15 +1004,15 @@
           ${state.cabinetTab === 'admin' ? renderAdminPanel(user) : `
             <div class="cabinet-content-col">
               <div>
-                <h1 class="cabinet-header-title">Account</h1>
-                <p class="cabinet-header-subtitle">Manage your account settings</p>
+                <h1 class="cabinet-header-title">Личный кабинет</h1>
+                <p class="cabinet-header-subtitle">Управление настройками аккаунта</p>
               </div>
 
               <div class="cabinet-user-header">
                 <div class="cabinet-big-avatar">${initial}</div>
                 <div class="cabinet-user-details">
                   <h3>${user.username}</h3>
-                  <p>${user.email || 'No email attached'}</p>
+                  <p>${user.email || 'Email не привязан'}</p>
                 </div>
               </div>
 
@@ -1019,7 +1020,7 @@
               <div>
                 <div class="cabinet-section-label">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
-                  <span>LAUNCHER</span>
+                  <span>ЛАУНЧЕР</span>
                 </div>
                 <div class="launcher-card">
                   <div class="launcher-card-left">
@@ -1031,21 +1032,24 @@
                       <p class="launcher-info-sub">Windows 10 / 11 · 64-bit</p>
                       <div class="launcher-badges-row">
                         <span class="launcher-badge">v1.1.41.0</span>
-                        <span class="launcher-badge">74.5 MB</span>
-                        <span class="launcher-badge">built 12.10.2026</span>
+                        <span class="launcher-badge">74.5 МБ</span>
+                        <span class="launcher-badge">сборка 12.10.2026</span>
                       </div>
                     </div>
                   </div>
-                  <button class="btn-launcher-download" id="downloadLauncherBtn">Download</button>
+                  <button class="btn-launcher-download" id="downloadLauncherBtn" style="display:inline-flex; align-items:center; gap:8px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0c0c0e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    <span>Скачать</span>
+                  </button>
                 </div>
-                <p class="launcher-subtext">Sign in inside the launcher with this account.</p>
+                <p class="launcher-subtext">Войдите в лаунчер, используя логин и пароль от этого аккаунта.</p>
               </div>
 
               <!-- Account Data Table (Screenshot 13 & 14) -->
               <div>
                 <div class="cabinet-section-label">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
-                  <span>ACCOUNT DATA</span>
+                  <span>ДАННЫЕ АККАУНТА</span>
                 </div>
                 <div class="account-data-list">
                   <div class="account-data-row">
@@ -1058,14 +1062,14 @@
                   <div class="account-data-row">
                     <span class="account-data-label">
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="2 4 5 20 19 20 22 4 16 10 12 4 8 10 2 4"></polygon></svg>
-                      <span>Role</span>
+                      <span>Роль</span>
                     </span>
-                    <span class="account-data-val">${user.role || 'User'}</span>
+                    <span class="account-data-val">${roleText}</span>
                   </div>
                   <div class="account-data-row">
                     <span class="account-data-label">
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><circle cx="12" cy="12" r="4"></circle><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94"></path></svg>
-                      <span>Login</span>
+                      <span>Логин</span>
                     </span>
                     <span class="account-data-val">${user.username}</span>
                   </div>
@@ -1079,18 +1083,18 @@
                   <div class="account-data-row">
                     <span class="account-data-label">
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                      <span>Registered</span>
+                      <span>Регистрация</span>
                     </span>
                     <span class="account-data-val">${user.regdate || '13.10.2026, 00:28'}</span>
                   </div>
                   <div class="account-data-row">
                     <span class="account-data-label">
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-                      <span>Plan</span>
+                      <span>Тариф</span>
                     </span>
                     <div class="account-data-val">
                       <span>${planText}</span>
-                      <button class="btn-plan-upgrade" onclick="window.open('https://t.me/blydota4ka', '_blank')">Upgrade</button>
+                      <button class="btn-plan-upgrade" onclick="window.open('https://t.me/blydota4ka', '_blank')">Продлить</button>
                     </div>
                   </div>
                   <div class="account-data-row">
@@ -1107,19 +1111,19 @@
               <div class="cabinet-actions-row">
                 <button class="btn-cabinet-pill" id="btnChangeAvatar">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
-                  <span>Change avatar</span>
+                  <span>Сменить аватар</span>
                 </button>
                 <button class="btn-cabinet-pill" id="btnEditEmail">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-                  <span>Edit email</span>
+                  <span>Изменить email</span>
                 </button>
                 <button class="btn-cabinet-pill" id="btnChangePass">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                  <span>Change password</span>
+                  <span>Сменить пароль</span>
                 </button>
                 <button class="btn-cabinet-pill" id="btnCopyHwid">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                  <span>Copy HWID</span>
+                  <span>Скопировать HWID</span>
                 </button>
               </div>
             </div>
@@ -1128,15 +1132,15 @@
             <div class="character-viewport-card">
               <div class="character-card-label">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                <span>CHARACTER</span>
+                <span>ПЕРСОНАЖ</span>
               </div>
               <div class="character-3d-stage" id="characterStage">
                 <canvas id="steveCanvas" width="280" height="360"></canvas>
               </div>
               <div class="character-card-foot">
-                <h4>Launch the game to link your character</h4>
-                <p>Drag to rotate — spins automatically</p>
-                <p style="margin-top:8px; color:#52525b">Steve 3D Model</p>
+                <h4>Запустите игру, чтобы привязать персонажа</h4>
+                <p>Вращайте мышью — крутится автоматически</p>
+                <p style="margin-top:8px; color:#52525b">3D-модель Стива</p>
               </div>
             </div>
           `}
@@ -1154,29 +1158,29 @@
         <!-- Admin Header -->
         <div class="admin-header-row">
           <div>
-            <h1 class="cabinet-header-title">Admin Panel</h1>
-            <p class="cabinet-header-subtitle">Server management, users, activation keys & promocodes</p>
+            <h1 class="cabinet-header-title">Админ-панель</h1>
+            <p class="cabinet-header-subtitle">Управление сервером, пользователями, ключами активации и промокодами</p>
           </div>
           <div class="admin-subnav-pills">
             <button class="admin-subnav-btn ${state.adminSubTab === 'overview' ? 'active' : ''}" data-subtab="overview">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-              <span>Overview</span>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+              <span>Обзор</span>
             </button>
             <button class="admin-subnav-btn ${state.adminSubTab === 'users' ? 'active' : ''}" data-subtab="users">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-              <span>Users</span>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+              <span>Пользователи</span>
             </button>
             <button class="admin-subnav-btn ${state.adminSubTab === 'keys' ? 'active' : ''}" data-subtab="keys">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><path d="M21 2l-2 2m-2-2l2 2m0 0l-7 7m0 0l-3-3-4 4 3 3-2 2-2-2-2 2 4 4 7-7"></path></svg>
-              <span>Keys</span>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-2-2l2 2m0 0l-7 7m0 0l-3-3-4 4 3 3-2 2-2-2-2 2 4 4 7-7"></path></svg>
+              <span>Ключи</span>
             </button>
             <button class="admin-subnav-btn ${state.adminSubTab === 'promocodes' ? 'active' : ''}" data-subtab="promocodes">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path></svg>
-              <span>Promocodes</span>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path></svg>
+              <span>Промокоды</span>
             </button>
             <button class="admin-subnav-btn ${state.adminSubTab === 'settings' ? 'active' : ''}" data-subtab="settings">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-              <span>Settings</span>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+              <span>Настройки</span>
             </button>
           </div>
         </div>
@@ -1185,48 +1189,48 @@
         <div class="admin-stats-grid">
           <div class="admin-stat-card">
             <div class="admin-stat-header">
-              <span class="admin-stat-title">REGISTERED USERS</span>
+              <span class="admin-stat-title">ПОЛЬЗОВАТЕЛИ</span>
               <div class="admin-stat-icon">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
               </div>
             </div>
             <div class="admin-stat-val" id="statUsersCount">${state.adminData.stats.totalUsers || state.adminData.users.length || '—'}</div>
-            <div class="admin-stat-sub">Accounts in database</div>
+            <div class="admin-stat-sub">Аккаунтов в базе данных</div>
           </div>
 
           <div class="admin-stat-card">
             <div class="admin-stat-header">
-              <span class="admin-stat-title">ACTIVE KEYS</span>
+              <span class="admin-stat-title">АКТИВНЫЕ КЛЮЧИ</span>
               <div class="admin-stat-icon">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><path d="M21 2l-2 2m-2-2l2 2m0 0l-7 7m0 0l-3-3-4 4 3 3-2 2-2-2-2 2 4 4 7-7"></path></svg>
               </div>
             </div>
             <div class="admin-stat-val" id="statKeysCount">${state.adminData.keys.length || '0'}</div>
-            <div class="admin-stat-sub">Ready for activation</div>
+            <div class="admin-stat-sub">Готовы к активации</div>
           </div>
 
           <div class="admin-stat-card">
             <div class="admin-stat-header">
-              <span class="admin-stat-title">PROMOCODES</span>
+              <span class="admin-stat-title">ПРОМОКОДЫ</span>
               <div class="admin-stat-icon">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path></svg>
               </div>
             </div>
             <div class="admin-stat-val" id="statPromosCount">${Object.keys(state.adminData.promocodes).length || '0'}</div>
-            <div class="admin-stat-sub">Configured discounts</div>
+            <div class="admin-stat-sub">Созданные промокоды</div>
           </div>
 
           <div class="admin-stat-card">
             <div class="admin-stat-header">
-              <span class="admin-stat-title">LOADER DOWNLOAD</span>
+              <span class="admin-stat-title">ЗАГРУЗКА ЛАУНЧЕРА</span>
               <div class="admin-stat-icon">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
               </div>
             </div>
             <div class="admin-stat-val" id="statDownloadState" style="color: ${state.adminData.settings.loader_download_enabled ? '#4ade80' : '#f87171'}">
-              ${state.adminData.settings.loader_download_enabled ? 'ONLINE' : 'PAUSED'}
+              ${state.adminData.settings.loader_download_enabled ? 'ДОСТУПНА' : 'ОТКЛЮЧЕНА'}
             </div>
-            <div class="admin-stat-sub">${state.adminData.settings.loader_download_enabled ? 'Public downloads active' : 'Downloads disabled'}</div>
+            <div class="admin-stat-sub">${state.adminData.settings.loader_download_enabled ? 'Скачивание открыто' : 'Скачивание отключено'}</div>
           </div>
         </div>
 
@@ -1235,28 +1239,28 @@
           <div class="admin-card-head">
             <div class="cabinet-section-label">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
-              <span>USERS MANAGEMENT</span>
+              <span>УПРАВЛЕНИЕ ПОЛЬЗОВАТЕЛЯМИ</span>
             </div>
             <div class="admin-head-tools">
               <div class="admin-search-wrapper">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#71717a" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                <input type="text" id="adminUserSearchInput" class="admin-search-input" placeholder="Search user by name or email..." value="${state.adminData.usersSearch}" />
+                <input type="text" id="adminUserSearchInput" class="admin-search-input" placeholder="Поиск по логину, email или UID..." value="${state.adminData.usersSearch}" />
               </div>
               <button class="btn-cabinet-pill" id="adminRefreshUsersBtn">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
-                <span>Refresh</span>
+                <span>Обновить</span>
               </button>
             </div>
           </div>
 
           <div class="admin-users-table">
             <div class="admin-table-head-row">
-              <span>USER</span>
+              <span>ПОЛЬЗОВАТЕЛЬ</span>
               <span>UID</span>
-              <span>ROLE</span>
-              <span>SUBSCRIPTION</span>
+              <span>РОЛЬ</span>
+              <span>ПОДПИСКА</span>
               <span>HWID</span>
-              <span style="text-align:right;">ACTIONS</span>
+              <span style="text-align:right;">ДЕЙСТВИЯ</span>
             </div>
             <div id="adminUsersTableBody">
               ${renderAdminUsersRowsHTML()}
@@ -1264,10 +1268,10 @@
           </div>
 
           <div class="admin-pagination-row">
-            <span class="admin-page-info" id="adminPageInfo">Page ${state.adminData.usersPage + 1} of ${state.adminData.usersTotalPages}</span>
+            <span class="admin-page-info" id="adminPageInfo">Страница ${state.adminData.usersPage + 1} из ${state.adminData.usersTotalPages}</span>
             <div class="admin-page-btns">
-              <button class="admin-page-btn" id="adminPrevPageBtn" ${state.adminData.usersPage <= 0 ? 'disabled' : ''}>← Previous</button>
-              <button class="admin-page-btn" id="adminNextPageBtn" ${state.adminData.usersPage >= state.adminData.usersTotalPages - 1 ? 'disabled' : ''}>Next →</button>
+              <button class="admin-page-btn" id="adminPrevPageBtn" ${state.adminData.usersPage <= 0 ? 'disabled' : ''}>← Назад</button>
+              <button class="admin-page-btn" id="adminNextPageBtn" ${state.adminData.usersPage >= state.adminData.usersTotalPages - 1 ? 'disabled' : ''}>Вперед →</button>
             </div>
           </div>
         </div>
@@ -1276,32 +1280,35 @@
         <div class="admin-section-card" id="adminKeysSection" style="${state.adminSubTab !== 'overview' && state.adminSubTab !== 'keys' ? 'display:none;' : ''}">
           <div class="cabinet-section-label">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><path d="M21 2l-2 2m-2-2l2 2m0 0l-7 7m0 0l-3-3-4 4 3 3-2 2-2-2-2 2 4 4 7-7"></path></svg>
-            <span>ACTIVATION KEYS GENERATOR & LIST</span>
+            <span>ГЕНЕРАТОР И СПИСОК КЛЮЧЕЙ</span>
           </div>
           <div class="admin-two-cols">
             <!-- Key Generator -->
             <div class="admin-subcard">
-              <h4 class="admin-subcard-title">Generate New Keys</h4>
+              <h4 class="admin-subcard-title">Генерация новых ключей</h4>
               <div class="admin-form-group">
-                <label class="admin-field-label">Key Type</label>
+                <label class="admin-field-label">Тип ключа</label>
                 <select id="adminKeyTypeSelect" class="admin-select">
-                  <option value="sub-30">Subscription (30 Days - 199 ₽)</option>
-                  <option value="sub-90">Subscription (90 Days - 399 ₽)</option>
-                  <option value="sub-lifetime">Lifetime (Forever - 499 ₽)</option>
-                  <option value="hwid">Hardware Reset Key</option>
-                  <option value="beta">BETA Access Key</option>
+                  <option value="sub-30">Подписка (30 дней — 199 ₽)</option>
+                  <option value="sub-90">Подписка (90 дней — 399 ₽)</option>
+                  <option value="sub-lifetime">Навсегда (Lifetime — 499 ₽)</option>
+                  <option value="hwid">Ключ сброса HWID</option>
+                  <option value="beta">Ключ Beta-доступа</option>
                 </select>
               </div>
               <div class="admin-form-group">
-                <label class="admin-field-label">Count (1 - 50)</label>
+                <label class="admin-field-label">Количество (1 - 50)</label>
                 <input type="number" id="adminKeyCountInput" class="admin-input" min="1" max="50" value="1" />
               </div>
-              <button class="btn-launcher-download" id="adminGenerateKeysBtn" style="width:100%; justify-content:center;">⚡ Generate Keys</button>
+              <button class="btn-launcher-download" id="adminGenerateKeysBtn" style="width:100%; justify-content:center; display:inline-flex; align-items:center; gap:8px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0c0c0e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                <span>Сгенерировать ключи</span>
+              </button>
 
               <div id="adminGeneratedKeysBox" class="admin-output-box" style="display:none;">
                 <div class="admin-output-head">
-                  <span>Generated Keys:</span>
-                  <button class="admin-copy-sm-btn" id="adminCopyGeneratedKeys">Copy all</button>
+                  <span>Сгенерированные ключи:</span>
+                  <button class="admin-copy-sm-btn" id="adminCopyGeneratedKeys">Копировать все</button>
                 </div>
                 <textarea id="adminGeneratedKeysText" class="admin-keys-textarea" readonly rows="4"></textarea>
               </div>
@@ -1310,8 +1317,8 @@
             <!-- Active Keys -->
             <div class="admin-subcard">
               <div class="admin-output-head">
-                <h4 class="admin-subcard-title" style="margin:0;">Active Keys (${state.adminData.keys.length})</h4>
-                <button class="btn-cabinet-pill" id="adminRefreshKeysBtn" style="padding:4px 10px; font-size:11px;">Refresh</button>
+                <h4 class="admin-subcard-title" style="margin:0;">Активные ключи (${state.adminData.keys.length})</h4>
+                <button class="btn-cabinet-pill" id="adminRefreshKeysBtn" style="padding:4px 10px; font-size:11px;">Обновить</button>
               </div>
               <div class="admin-keys-scroll-list" id="adminKeysListBody">
                 ${renderAdminKeysListHTML()}
@@ -1324,30 +1331,33 @@
         <div class="admin-section-card" id="adminPromosSection" style="${state.adminSubTab !== 'overview' && state.adminSubTab !== 'promocodes' ? 'display:none;' : ''}">
           <div class="cabinet-section-label">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path></svg>
-            <span>PROMOCODES MANAGEMENT</span>
+            <span>УПРАВЛЕНИЕ ПРОМОКОДАМИ</span>
           </div>
           <div class="admin-two-cols">
             <div class="admin-subcard">
-              <h4 class="admin-subcard-title">Create Promocode</h4>
+              <h4 class="admin-subcard-title">Создать промокод</h4>
               <div class="admin-form-group">
-                <label class="admin-field-label">Promocode Name</label>
-                <input type="text" id="adminPromoNameInput" class="admin-input" placeholder="e.g. KODEX2026" />
+                <label class="admin-field-label">Название промокода</label>
+                <input type="text" id="adminPromoNameInput" class="admin-input" placeholder="Например: KODEX2026" />
               </div>
               <div class="admin-form-group">
-                <label class="admin-field-label">Discount %</label>
+                <label class="admin-field-label">Скидка %</label>
                 <input type="number" id="adminPromoBetInput" class="admin-input" min="1" max="100" value="20" />
               </div>
               <div class="admin-form-group">
-                <label class="admin-field-label">Max Usages</label>
+                <label class="admin-field-label">Лимит активаций</label>
                 <input type="number" id="adminPromoMaxInput" class="admin-input" min="1" value="50" />
               </div>
-              <button class="btn-launcher-download" id="adminCreatePromoBtn" style="width:100%; justify-content:center;">+ Create Promocode</button>
+              <button class="btn-launcher-download" id="adminCreatePromoBtn" style="width:100%; justify-content:center; display:inline-flex; align-items:center; gap:8px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0c0c0e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                <span>Создать промокод</span>
+              </button>
             </div>
 
             <div class="admin-subcard">
               <div class="admin-output-head">
-                <h4 class="admin-subcard-title" style="margin:0;">Active Promocodes</h4>
-                <button class="btn-cabinet-pill" id="adminRefreshPromosBtn" style="padding:4px 10px; font-size:11px;">Refresh</button>
+                <h4 class="admin-subcard-title" style="margin:0;">Активные промокоды</h4>
+                <button class="btn-cabinet-pill" id="adminRefreshPromosBtn" style="padding:4px 10px; font-size:11px;">Обновить</button>
               </div>
               <div class="admin-promos-scroll-list" id="adminPromosListBody">
                 ${renderAdminPromosListHTML()}
@@ -1360,13 +1370,13 @@
         <div class="admin-section-card" id="adminSettingsSection" style="${state.adminSubTab !== 'overview' && state.adminSubTab !== 'settings' ? 'display:none;' : ''}">
           <div class="cabinet-section-label">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-            <span>SYSTEM & LOADER DOWNLOAD SETTINGS</span>
+            <span>НАСТРОЙКИ СИСТЕМЫ И ЗАГРУЗКИ</span>
           </div>
           <div class="admin-subcard" style="max-width: 600px;">
             <div class="admin-setting-row">
               <div>
-                <div class="admin-setting-title">Launcher Downloads</div>
-                <div class="admin-setting-desc">Enable or pause public launcher downloading on the website</div>
+                <div class="admin-setting-title">Скачивание лаунчера</div>
+                <div class="admin-setting-desc">Разрешить или приостановить загрузку лаунчера посетителями сайта</div>
               </div>
               <label class="admin-toggle-switch">
                 <input type="checkbox" id="adminDownloadEnabledToggle" ${state.adminData.settings.loader_download_enabled ? 'checked' : ''} />
@@ -1375,11 +1385,14 @@
             </div>
 
             <div class="admin-form-group" style="margin-top:16px;">
-              <label class="admin-field-label">Loader File Download Path / URL</label>
+              <label class="admin-field-label">Путь или URL-ссылка на файл лаунчера</label>
               <input type="text" id="adminDownloadUrlInput" class="admin-input" value="${state.adminData.settings.loader_download_url || '/downloads/kodexlauncher.exe'}" />
             </div>
 
-            <button class="btn-launcher-download" id="adminSaveSettingsBtn" style="margin-top:14px; width:fit-content;">Save System Settings</button>
+            <button class="btn-launcher-download" id="adminSaveSettingsBtn" style="margin-top:14px; width:fit-content; display:inline-flex; align-items:center; gap:8px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0c0c0e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+              <span>Сохранить настройки</span>
+            </button>
             <div id="adminSettingsStatus" class="admin-status-msg" style="display:none;"></div>
           </div>
         </div>
@@ -1388,29 +1401,29 @@
         <div class="admin-modal-overlay" id="adminEditUserModal" style="display:none;">
           <div class="admin-modal-card">
             <div class="admin-modal-head">
-              <h3 class="admin-modal-title">Edit User: <span id="modalTargetUser">User</span></h3>
+              <h3 class="admin-modal-title">Редактирование: <span id="modalTargetUser">User</span></h3>
               <button class="admin-modal-close" id="modalCloseBtn">✕</button>
             </div>
             <div class="admin-modal-body">
               <div class="admin-form-group">
-                <label class="admin-field-label">UID (Unique ID)</label>
+                <label class="admin-field-label">UID (Уникальный номер)</label>
                 <input type="number" id="modalUserUid" class="admin-input" min="0" />
               </div>
               <div class="admin-form-group">
-                <label class="admin-field-label">Role</label>
+                <label class="admin-field-label">Роль</label>
                 <select id="modalUserRole" class="admin-select">
-                  <option value="USER">USER</option>
-                  <option value="ADMIN">ADMIN</option>
-                  <option value="BETA">BETA</option>
+                  <option value="USER">USER (Пользователь)</option>
+                  <option value="ADMIN">ADMIN (Администратор)</option>
+                  <option value="BETA">BETA (Тестер)</option>
                 </select>
               </div>
               <div class="admin-form-group">
-                <label class="admin-field-label">Subscription Until</label>
-                <input type="text" id="modalUserSub" class="admin-input" placeholder="31.12.2099 or None or DD.MM.YYYY" />
+                <label class="admin-field-label">Подписка действует до</label>
+                <input type="text" id="modalUserSub" class="admin-input" placeholder="31.12.2099, None или ДД.ММ.ГГГГ" />
                 <div class="admin-modal-presets">
-                  <button type="button" class="admin-preset-btn" id="modalPresetLifetime">Lifetime</button>
-                  <button type="button" class="admin-preset-btn" id="modalPreset30d">+30 Days</button>
-                  <button type="button" class="admin-preset-btn" id="modalPresetNone">Free (None)</button>
+                  <button type="button" class="admin-preset-btn" id="modalPresetLifetime">Навсегда</button>
+                  <button type="button" class="admin-preset-btn" id="modalPreset30d">+30 дней</button>
+                  <button type="button" class="admin-preset-btn" id="modalPresetNone">Без подписки</button>
                 </div>
               </div>
               <div class="admin-form-group">
@@ -1419,8 +1432,8 @@
               </div>
               <div class="admin-setting-row" style="margin-top:8px;">
                 <div>
-                  <div class="admin-setting-title">Account Banned</div>
-                  <div class="admin-setting-desc">Prevent user from accessing client and panel</div>
+                  <div class="admin-setting-title">Блокировка аккаунта</div>
+                  <div class="admin-setting-desc">Заблокировать доступ пользователя к клиенту и сайту</div>
                 </div>
                 <label class="admin-toggle-switch">
                   <input type="checkbox" id="modalUserBanned" />
@@ -1429,8 +1442,8 @@
               </div>
             </div>
             <div class="admin-modal-foot">
-              <button class="btn-cabinet-pill" id="modalCancelBtn">Cancel</button>
-              <button class="btn-launcher-download" id="modalSaveUserBtn">Save Changes</button>
+              <button class="btn-cabinet-pill" id="modalCancelBtn">Отмена</button>
+              <button class="btn-launcher-download" id="modalSaveUserBtn">Сохранить изменения</button>
             </div>
           </div>
         </div>
@@ -1441,7 +1454,7 @@
   function renderAdminUsersRowsHTML() {
     const list = state.adminData.users;
     if (!list || list.length === 0) {
-      return `<div style="padding:24px; text-align:center; color:#71717a;">No users found. Click Refresh or clear search filter.</div>`;
+      return `<div style="padding:24px; text-align:center; color:#71717a;">Пользователи не найдены. Нажмите «Обновить» или сбросьте фильтр поиска.</div>`;
     }
     return list.map(u => {
       const initial = (u.user || 'U')[0].toUpperCase();
@@ -1449,8 +1462,8 @@
       const isDust = (u.user || '').toLowerCase() === 'dustgames';
       const role = u.group || 'USER';
       const roleClass = role === 'ADMIN' ? 'admin' : (role === 'BETA' ? 'beta' : 'user');
-      const sub = u.subtill === '31.12.2099' ? 'Lifetime (Forever)' : (u.subtill && u.subtill !== 'None' ? u.subtill : 'Free');
-      const hwidShort = u.hwid ? (u.hwid.length > 12 ? u.hwid.slice(0, 10) + '...' : u.hwid) : 'None';
+      const sub = u.subtill === '31.12.2099' ? 'Навсегда' : (u.subtill && u.subtill !== 'None' ? u.subtill : 'Без подписки');
+      const hwidShort = u.hwid ? (u.hwid.length > 12 ? u.hwid.slice(0, 10) + '...' : u.hwid) : 'Нет';
 
       return `
         <div class="admin-user-row" data-username="${u.user}">
@@ -1458,7 +1471,7 @@
             <div class="admin-user-avatar-sm">${initial}</div>
             <div class="admin-user-info-text">
               <span class="admin-user-name">${u.user}</span>
-              <span class="admin-user-email">${u.email || 'No email'}</span>
+              <span class="admin-user-email">${u.email || 'Email отсутствует'}</span>
             </div>
           </div>
           <div>
@@ -1466,24 +1479,24 @@
           </div>
           <div>
             <span class="admin-chip-role ${roleClass}">${role}</span>
-            ${isBanned ? '<span class="admin-chip-banned" style="margin-left:4px;">BANNED</span>' : ''}
+            ${isBanned ? '<span class="admin-chip-banned" style="margin-left:4px;">ЗАБАНЕН</span>' : ''}
           </div>
           <div>
             <span class="admin-cell-sub">${sub}</span>
           </div>
           <div class="admin-cell-hwid">
             <span style="font-family:monospace; font-size:11px; color:#a1a1aa;" title="${u.hwid || ''}">${hwidShort}</span>
-            <button class="admin-sm-btn primary admin-btn-reset-hwid" data-user="${u.user}" title="Reset HWID">
+            <button class="admin-sm-btn primary admin-btn-reset-hwid" data-user="${u.user}" title="Сбросить HWID">
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
             </button>
           </div>
           <div class="admin-cell-actions" style="justify-content:flex-end;">
             <button class="admin-sm-btn primary admin-btn-edit-user" data-user="${u.user}" data-uid="${u.uid}" data-role="${role}" data-sub="${u.subtill || ''}" data-email="${u.email || ''}" data-banned="${isBanned}">
-              Edit
+              Изменить
             </button>
             ${!isDust ? `
               <button class="admin-sm-btn ${isBanned ? 'success' : 'danger'} admin-btn-ban-user" data-user="${u.user}" data-banned="${isBanned}">
-                ${isBanned ? 'Unban' : 'Ban'}
+                ${isBanned ? 'Разбанить' : 'Забанить'}
               </button>
             ` : ''}
           </div>
@@ -1495,35 +1508,44 @@
   function renderAdminKeysListHTML() {
     const list = state.adminData.keys;
     if (!list || list.length === 0) {
-      return `<div style="padding:16px; text-align:center; color:#71717a; font-size:12px;">No keys available. Generate some above.</div>`;
+      return `<div style="padding:16px; text-align:center; color:#71717a; font-size:12px;">Нет активных ключей. Сгенерируйте их выше.</div>`;
     }
-    return list.map(k => `
-      <div class="admin-key-item">
-        <div>
-          <div class="admin-key-code">${k.key}</div>
-          <div class="admin-key-meta">${k.display || 'Subscription'} · By ${k.generatedBy || 'Admin'}</div>
+    return list.map(k => {
+      let displayRu = k.display || 'Подписка';
+      if (k.type === 'sub-30' || displayRu.includes('30')) displayRu = 'Подписка (30 дней)';
+      else if (k.type === 'sub-90' || displayRu.includes('90')) displayRu = 'Подписка (90 дней)';
+      else if (k.type === 'sub-lifetime' || displayRu.toLowerCase().includes('lifetime')) displayRu = 'Навсегда (Lifetime)';
+      else if (k.type === 'hwid' || displayRu.toLowerCase().includes('hwid')) displayRu = 'Сброс HWID';
+      else if (k.type === 'beta' || displayRu.toLowerCase().includes('beta')) displayRu = 'Beta-доступ';
+
+      return `
+        <div class="admin-key-item">
+          <div>
+            <div class="admin-key-code">${k.key}</div>
+            <div class="admin-key-meta">${displayRu} · Создал: ${k.generatedBy || 'Админ'}</div>
+          </div>
+          <div style="display:flex; gap:6px;">
+            <button class="admin-copy-sm-btn admin-btn-copy-key" data-key="${k.key}">Копия</button>
+            <button class="admin-sm-btn danger admin-btn-del-key" data-key="${k.key}" title="Удалить ключ">✕</button>
+          </div>
         </div>
-        <div style="display:flex; gap:6px;">
-          <button class="admin-copy-sm-btn admin-btn-copy-key" data-key="${k.key}">Copy</button>
-          <button class="admin-sm-btn danger admin-btn-del-key" data-key="${k.key}">✕</button>
-        </div>
-      </div>
-    `).join('');
+      `;
+    }).join('');
   }
 
   function renderAdminPromosListHTML() {
     const promos = state.adminData.promocodes;
     const entries = Object.entries(promos);
     if (!entries || entries.length === 0) {
-      return `<div style="padding:16px; text-align:center; color:#71717a; font-size:12px;">No promocodes created yet.</div>`;
+      return `<div style="padding:16px; text-align:center; color:#71717a; font-size:12px;">Промокоды еще не созданы.</div>`;
     }
     return entries.map(([name, p]) => `
       <div class="admin-promo-item">
         <div>
           <div class="admin-key-code">${name}</div>
-          <div class="admin-key-meta">${p.bet || p.discount || 0}% OFF · Usages: ${p.activations || 0} / ${p.maxUsages || p.maxActivations || '∞'}</div>
+          <div class="admin-key-meta">Скидка ${p.bet || p.discount || 0}% · Использований: ${p.activations || 0} / ${p.maxUsages || p.maxActivations || '∞'}</div>
         </div>
-        <button class="admin-sm-btn danger admin-btn-del-promo" data-promo="${name}">✕</button>
+        <button class="admin-sm-btn danger admin-btn-del-promo" data-promo="${name}" title="Удалить промокод">✕</button>
       </div>
     `).join('');
   }
@@ -1755,9 +1777,9 @@
       btnCopyHwid.onclick = () => {
         const hwid = (state.user && state.user.hwid) ? state.user.hwid : 'NONE';
         navigator.clipboard.writeText(hwid);
-        btnCopyHwid.innerText = 'Copied!';
+        btnCopyHwid.innerText = 'Скопировано!';
         setTimeout(() => {
-          btnCopyHwid.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> <span>Copy HWID</span>';
+          btnCopyHwid.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> <span>Скопировать HWID</span>';
         }, 2000);
       };
     }
@@ -1765,13 +1787,13 @@
     const btnChangePass = document.getElementById('btnChangePass');
     if (btnChangePass) {
       btnChangePass.onclick = () => {
-        const newPass = prompt('Enter new password:');
+        const newPass = prompt('Введите новый пароль (не менее 6 символов):');
         if (newPass && newPass.length >= 6) {
           fetch('/ajax/users/settings/password', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ token: state.token, password: newPass }),
-          }).then(() => alert('Password updated successfully!'));
+          }).then(() => alert('Пароль успешно обновлен!'));
         }
       };
     }
@@ -1779,14 +1801,14 @@
     const btnEditEmail = document.getElementById('btnEditEmail');
     if (btnEditEmail) {
       btnEditEmail.onclick = () => {
-        const newEmail = prompt('Enter new email:');
+        const newEmail = prompt('Введите новый адрес email:');
         if (newEmail && newEmail.includes('@')) {
           fetch('/ajax/users/settings/email', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ token: state.token, email: newEmail }),
           }).then(() => {
-            alert('Email updated!');
+            alert('Email успешно обновлен!');
             checkSession().then(renderApp);
           });
         }
@@ -1856,10 +1878,10 @@
         const type = document.getElementById('adminKeyTypeSelect')?.value || 'sub-30';
         const count = parseInt(document.getElementById('adminKeyCountInput')?.value || '1', 10);
         genBtn.disabled = true;
-        genBtn.innerText = 'Generating...';
+        genBtn.innerHTML = '<span>Генерация...</span>';
         await generateAdminKeys(type, count);
         genBtn.disabled = false;
-        genBtn.innerText = '⚡ Generate Keys';
+        genBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0c0c0e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg><span>Сгенерировать ключи</span>';
       };
     }
 
@@ -1869,8 +1891,8 @@
       copyGenBtn.onclick = () => {
         const txt = document.getElementById('adminGeneratedKeysText')?.value || '';
         navigator.clipboard.writeText(txt);
-        copyGenBtn.innerText = 'Copied!';
-        setTimeout(() => { copyGenBtn.innerText = 'Copy all'; }, 2000);
+        copyGenBtn.innerText = 'Скопировано!';
+        setTimeout(() => { copyGenBtn.innerText = 'Копировать все'; }, 2000);
       };
     }
 
@@ -1892,7 +1914,7 @@
         const maxUsages = parseInt(maxInput?.value || '50', 10);
 
         if (!promoName) {
-          alert('Enter promocode name');
+          alert('Введите название промокода');
           return;
         }
 
@@ -1908,7 +1930,7 @@
           renderAdminPromosList();
           updateAdminStatsUI();
         } catch (e) {
-          alert('Failed to create promocode');
+          alert('Ошибка при создании промокода');
         } finally {
           createPromoBtn.disabled = false;
         }
@@ -1946,7 +1968,7 @@
           state.adminData.settings.loader_download_url = url;
           if (statusBox) {
             statusBox.className = 'admin-status-msg success';
-            statusBox.innerText = 'Settings saved successfully!';
+            statusBox.innerText = 'Настройки успешно сохранены!';
             statusBox.style.display = 'block';
             setTimeout(() => { statusBox.style.display = 'none'; }, 3000);
           }
@@ -1954,7 +1976,7 @@
         } catch (e) {
           if (statusBox) {
             statusBox.className = 'admin-status-msg error';
-            statusBox.innerText = 'Failed to save settings.';
+            statusBox.innerText = 'Ошибка при сохранении настроек.';
             statusBox.style.display = 'block';
           }
         } finally {
@@ -2109,7 +2131,7 @@
     }
     const pageInfo = document.getElementById('adminPageInfo');
     if (pageInfo) {
-      pageInfo.innerText = `Page ${state.adminData.usersPage + 1} of ${state.adminData.usersTotalPages}`;
+      pageInfo.innerText = `Страница ${state.adminData.usersPage + 1} из ${state.adminData.usersTotalPages}`;
     }
     const prevBtn = document.getElementById('adminPrevPageBtn');
     const nextBtn = document.getElementById('adminNextPageBtn');
@@ -2125,7 +2147,7 @@
       container.querySelectorAll('.admin-btn-del-key').forEach(btn => {
         btn.onclick = async () => {
           const key = btn.getAttribute('data-key');
-          if (confirm(`Remove key ${key}?`)) {
+          if (confirm(`Удалить ключ ${key}?`)) {
             await fetch('/ajax/admin/keys/action/remove', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -2141,8 +2163,8 @@
         btn.onclick = () => {
           const key = btn.getAttribute('data-key');
           navigator.clipboard.writeText(key);
-          btn.innerText = 'Copied!';
-          setTimeout(() => { btn.innerText = 'Copy'; }, 2000);
+          btn.innerText = 'Скопировано!';
+          setTimeout(() => { btn.innerText = 'Копия'; }, 2000);
         };
       });
     }
@@ -2155,7 +2177,7 @@
       container.querySelectorAll('.admin-btn-del-promo').forEach(btn => {
         btn.onclick = async () => {
           const promo = btn.getAttribute('data-promo');
-          if (confirm(`Delete promocode ${promo}?`)) {
+          if (confirm(`Удалить промокод ${promo}?`)) {
             await fetch('/ajax/admin/promocodes/remove', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -2180,7 +2202,7 @@
     const dState = document.getElementById('statDownloadState');
     if (dState) {
       const en = state.adminData.settings.loader_download_enabled;
-      dState.innerText = en ? 'ONLINE' : 'PAUSED';
+      dState.innerText = en ? 'ДОСТУПНА' : 'ОТКЛЮЧЕНА';
       dState.style.color = en ? '#4ade80' : '#f87171';
     }
   }
@@ -2189,13 +2211,13 @@
     document.querySelectorAll('.admin-btn-reset-hwid').forEach(btn => {
       btn.onclick = async () => {
         const username = btn.getAttribute('data-user');
-        if (confirm(`Reset HWID for user ${username}?`)) {
+        if (confirm(`Сбросить HWID для пользователя ${username}?`)) {
           await fetch('/ajax/admin/resetHardwareId', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ token: state.token, username })
           });
-          alert(`HWID for ${username} reset successfully!`);
+          alert(`HWID для пользователя ${username} успешно сброшен!`);
           fetchAdminUsers(state.adminData.usersPage, state.adminData.usersSearch).then(renderAdminUsersRows);
         }
       };
@@ -2205,8 +2227,8 @@
       btn.onclick = async () => {
         const username = btn.getAttribute('data-user');
         const currentlyBanned = btn.getAttribute('data-banned') === 'true';
-        const action = currentlyBanned ? 'unban' : 'ban';
-        if (confirm(`Are you sure you want to ${action} user ${username}?`)) {
+        const action = currentlyBanned ? 'разбанить' : 'забанить';
+        if (confirm(`Вы уверены, что хотите ${action} пользователя ${username}?`)) {
           await fetch('/ajax/admin/users/patch', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -2285,7 +2307,7 @@
       closeEditUserModal();
       fetchAdminUsers(state.adminData.usersPage, state.adminData.usersSearch).then(renderAdminUsersRows);
     } catch (e) {
-      alert('Failed to save user changes');
+      alert('Ошибка при сохранении изменений пользователя');
     } finally {
       if (saveBtn) saveBtn.disabled = false;
     }
@@ -2327,7 +2349,7 @@
       renderAdminKeysList();
       updateAdminStatsUI();
     } catch (e) {
-      alert('Failed to generate keys');
+      alert('Ошибка при генерации ключей');
     }
   }
 

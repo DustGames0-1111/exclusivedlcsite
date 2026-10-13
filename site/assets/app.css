@@ -1802,11 +1802,15 @@ body.scrolled .login-nav-btn {
   font-weight: 700;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
 }
-.cabinet-menu-item.active svg {
+.cabinet-menu-item.active svg,
+.cabinet-menu-item.active svg * {
   stroke: #0c0c0e !important;
+  color: #0c0c0e !important;
 }
-.cabinet-menu-item:not(.active) svg {
+.cabinet-menu-item:not(.active) svg,
+.cabinet-menu-item:not(.active) svg * {
   stroke: #ffffff !important;
+  color: #ffffff !important;
 }
 
 .cabinet-menu-item-left {
@@ -2031,6 +2035,10 @@ body.scrolled .login-nav-btn {
 }
 
 .btn-launcher-download {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   padding: 11px 24px;
   border-radius: var(--radius-pill);
   background: #ffffff;
@@ -2043,6 +2051,11 @@ body.scrolled .login-nav-btn {
 .btn-launcher-download:hover {
   background: #e4e4e7;
   transform: translateY(-2px);
+}
+.btn-launcher-download svg,
+.btn-launcher-download svg * {
+  stroke: #0c0c0e !important;
+  color: #0c0c0e !important;
 }
 
 .launcher-subtext {
@@ -2078,11 +2091,25 @@ body.scrolled .login-nav-btn {
 }
 
 .account-data-label svg,
+.account-data-label svg *,
 .cabinet-section-label svg,
+.cabinet-section-label svg *,
 .character-card-label svg,
-.btn-cabinet-pill svg {
-  color: #ffffff;
-  stroke: #ffffff;
+.character-card-label svg *,
+.btn-cabinet-pill svg,
+.btn-cabinet-pill svg *,
+.cabinet-logout-btn svg,
+.cabinet-logout-btn svg *,
+.admin-stat-icon svg,
+.admin-stat-icon svg *,
+.admin-sm-btn svg,
+.admin-sm-btn svg *,
+.launcher-icon-box svg,
+.launcher-icon-box svg *,
+.admin-copy-sm-btn svg,
+.admin-copy-sm-btn svg * {
+  color: #ffffff !important;
+  stroke: #ffffff !important;
   flex-shrink: 0;
 }
 
@@ -2306,9 +2333,15 @@ body.scrolled .login-nav-btn {
   color: #0c0c0e;
   font-weight: 700;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-}
-.admin-subnav-btn.active svg {
+.admin-subnav-btn.active svg,
+.admin-subnav-btn.active svg * {
   stroke: #0c0c0e !important;
+  color: #0c0c0e !important;
+}
+.admin-subnav-btn:not(.active) svg,
+.admin-subnav-btn:not(.active) svg * {
+  stroke: #ffffff !important;
+  color: #ffffff !important;
 }
 
 .admin-stats-grid {

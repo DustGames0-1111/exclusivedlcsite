@@ -938,52 +938,8 @@
           <ul class="cabinet-menu-list">
             <li class="cabinet-menu-item active">
               <div class="cabinet-menu-item-left">
-                <span>👤</span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                 <span>Account</span>
-              </div>
-            </li>
-            <li class="cabinet-menu-item" onclick="window.location.href='http://kodexclient.fun/pricing'">
-              <div class="cabinet-menu-item-left">
-                <span>✨</span>
-                <span>Pro</span>
-              </div>
-              <span class="cabinet-badge-pro">GET</span>
-            </li>
-            <li class="cabinet-menu-item">
-              <div class="cabinet-menu-item-left">
-                <span>🎯</span>
-                <span>FunTime</span>
-              </div>
-              <span class="cabinet-badge-live">LIVE</span>
-            </li>
-            <li class="cabinet-menu-item">
-              <div class="cabinet-menu-item-left">
-                <span>👕</span>
-                <span>Cosmetics</span>
-              </div>
-            </li>
-            <li class="cabinet-menu-item">
-              <div class="cabinet-menu-item-left">
-                <span>👥</span>
-                <span>Friends</span>
-              </div>
-            </li>
-            <li class="cabinet-menu-item">
-              <div class="cabinet-menu-item-left">
-                <span>⚙</span>
-                <span>Configs</span>
-              </div>
-            </li>
-            <li class="cabinet-menu-item" onclick="window.location.href='http://kodexclient.fun/pricing'">
-              <div class="cabinet-menu-item-left">
-                <span>🛍</span>
-                <span>Store</span>
-              </div>
-            </li>
-            <li class="cabinet-menu-item">
-              <div class="cabinet-menu-item-left">
-                <span>📥</span>
-                <span>My purchases</span>
               </div>
             </li>
           </ul>
@@ -994,7 +950,7 @@
               <span class="cabinet-user-name">${user.username}</span>
             </div>
             <button class="cabinet-logout-btn" id="cabinetLogoutBtn">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
               <span>Log out</span>
             </button>
           </div>
@@ -1019,12 +975,13 @@
             <!-- Launcher Card (Screenshot 13 & 14) -->
             <div>
               <div class="cabinet-section-label">
-                <span>↓</span> <span>LAUNCHER</span>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
+                <span>LAUNCHER</span>
               </div>
               <div class="launcher-card">
                 <div class="launcher-card-left">
                   <div class="launcher-icon-box">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                   </div>
                   <div class="launcher-info">
                     <h4 class="launcher-info-title">Kodex Launcher</h4>
@@ -1044,38 +1001,60 @@
             <!-- Account Data Table (Screenshot 13 & 14) -->
             <div>
               <div class="cabinet-section-label">
-                <span>🪪</span> <span>ACCOUNT DATA</span>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                <span>ACCOUNT DATA</span>
               </div>
               <div class="account-data-list">
                 <div class="account-data-row">
-                  <span class="account-data-label">🏷 UID</span>
+                  <span class="account-data-label">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+                    <span>UID</span>
+                  </span>
                   <span class="account-data-val">${user.uid || user.id || '20018'}</span>
                 </div>
                 <div class="account-data-row">
-                  <span class="account-data-label">👑 Role</span>
+                  <span class="account-data-label">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="2 4 5 20 19 20 22 4 16 10 12 4 8 10 2 4"></polygon></svg>
+                    <span>Role</span>
+                  </span>
                   <span class="account-data-val">${user.role || 'User'}</span>
                 </div>
                 <div class="account-data-row">
-                  <span class="account-data-label">@ Login</span>
+                  <span class="account-data-label">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><circle cx="12" cy="12" r="4"></circle><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94"></path></svg>
+                    <span>Login</span>
+                  </span>
                   <span class="account-data-val">${user.username}</span>
                 </div>
                 <div class="account-data-row">
-                  <span class="account-data-label">✉ Email</span>
+                  <span class="account-data-label">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                    <span>Email</span>
+                  </span>
                   <span class="account-data-val">${user.email || '—'}</span>
                 </div>
                 <div class="account-data-row">
-                  <span class="account-data-label">🕒 Registered</span>
+                  <span class="account-data-label">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    <span>Registered</span>
+                  </span>
                   <span class="account-data-val">${user.regdate || '13.10.2026, 00:28'}</span>
                 </div>
                 <div class="account-data-row">
-                  <span class="account-data-label">⚡ Plan</span>
+                  <span class="account-data-label">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                    <span>Plan</span>
+                  </span>
                   <div class="account-data-val">
                     <span>${planText}</span>
-                    <button class="btn-plan-upgrade" onclick="window.location.href='http://kodexclient.fun/pricing'">Upgrade</button>
+                    <button class="btn-plan-upgrade" onclick="window.open('https://t.me/blydota4ka', '_blank')">Upgrade</button>
                   </div>
                 </div>
                 <div class="account-data-row">
-                  <span class="account-data-label">⌗ HWID</span>
+                  <span class="account-data-label">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="15" x2="23" y2="15"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="15" x2="4" y2="15"></line></svg>
+                    <span>HWID</span>
+                  </span>
                   <span class="account-data-val">${user.hwid || '—'}</span>
                 </div>
               </div>
@@ -1084,16 +1063,20 @@
             <!-- Action Pills Row -->
             <div class="cabinet-actions-row">
               <button class="btn-cabinet-pill" id="btnChangeAvatar">
-                <span>🖼</span> <span>Change avatar</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                <span>Change avatar</span>
               </button>
               <button class="btn-cabinet-pill" id="btnEditEmail">
-                <span>✉</span> <span>Edit email</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                <span>Edit email</span>
               </button>
               <button class="btn-cabinet-pill" id="btnChangePass">
-                <span>🔑</span> <span>Change password</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                <span>Change password</span>
               </button>
               <button class="btn-cabinet-pill" id="btnCopyHwid">
-                <span>📋</span> <span>Copy HWID</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                <span>Copy HWID</span>
               </button>
             </div>
           </div>
@@ -1101,7 +1084,8 @@
           <!-- Character Viewport Card (Screenshot 13 & 14) -->
           <div class="character-viewport-card">
             <div class="character-card-label">
-              <span>👤</span> <span>CHARACTER</span>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+              <span>CHARACTER</span>
             </div>
             <div class="character-3d-stage" id="characterStage">
               <canvas id="steveCanvas" width="280" height="360"></canvas>
@@ -1330,7 +1314,7 @@
         navigator.clipboard.writeText(hwid);
         btnCopyHwid.innerText = 'Copied!';
         setTimeout(() => {
-          btnCopyHwid.innerHTML = '<span>📋</span> <span>Copy HWID</span>';
+          btnCopyHwid.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> <span>Copy HWID</span>';
         }, 2000);
       };
     }

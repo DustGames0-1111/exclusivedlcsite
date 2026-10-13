@@ -1802,6 +1802,12 @@ body.scrolled .login-nav-btn {
   font-weight: 700;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
 }
+.cabinet-menu-item.active svg {
+  stroke: #0c0c0e !important;
+}
+.cabinet-menu-item:not(.active) svg {
+  stroke: #ffffff !important;
+}
 
 .cabinet-menu-item-left {
   display: flex;
@@ -2069,6 +2075,15 @@ body.scrolled .login-nav-btn {
   gap: 10px;
   color: #71717a;
   font-weight: 500;
+}
+
+.account-data-label svg,
+.cabinet-section-label svg,
+.character-card-label svg,
+.btn-cabinet-pill svg {
+  color: #ffffff;
+  stroke: #ffffff;
+  flex-shrink: 0;
 }
 
 .account-data-val {

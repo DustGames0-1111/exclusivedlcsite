@@ -26,7 +26,7 @@
       navStore: 'Магазин',
       navLogin: 'Войти',
       navCabinet: 'Кабинет',
-      tryFree: 'Попробовать бесплатно ↗',
+      tryFree: 'Купить подписку ↗',
       seeInAction: 'Посмотреть в деле',
       createAccount: 'Создать аккаунт ↗',
       downloadKodex: 'Скачать Kodex ↗',
@@ -219,10 +219,10 @@
             Плащи, крылья, шляпы и 3D-скины. HUD, который можно собрать заново. Шейдеры на руке, блоках и нике. Один клиент, одно меню — и ничего лишнего.
           </p>
           <div class="hero-actions">
-            <button class="btn-black-pill" id="heroCtaRegister">
-              <span>Попробовать бесплатно</span>
+            <a href="#pricing" class="btn-black-pill" id="heroCtaPricing">
+              <span>Купить подписку</span>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
-            </button>
+            </a>
             <a href="#showcase" class="btn-glass-pill">
               <span>Посмотреть в деле</span>
             </a>
@@ -670,7 +670,7 @@
           <div class="basic-pills-wrap">
             <span class="basic-pill">Вход с привязкой к устройству</span>
             <span class="basic-pill">Мгновенная активация</span>
-            <span class="basic-pill">Бесплатный перенос между устройствами</span>
+            <span class="basic-pill">Синхронизация между устройствами</span>
             <span class="basic-pill">Автообновления</span>
             <span class="basic-pill">Баг-репорты из клиента</span>
           </div>
@@ -814,12 +814,12 @@
         <div class="cta-banner-card reveal">
           <h2 class="cta-banner-title">Готов выглядеть лучше?</h2>
           <p class="cta-banner-subtitle">
-            Начни с бесплатного тарифа — без карты, без листа ожидания и без борьбы с лаунчером.
+            Выбери подходящий тариф от 199 ₽ — моментальная активация, доступ ко всей библиотеке косметики и без лишней возни.
           </p>
-          <button class="btn-black-pill" id="ctaDownloadBtn">
-            <span>Скачать Kodex</span>
+          <a href="http://kodexclient.fun/pricing" class="btn-black-pill" id="ctaPricingBtn">
+            <span>Купить Kodex</span>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
-          </button>
+          </a>
         </div>
       </section>
 

@@ -38,6 +38,9 @@ KEYS: list[dict] = []
 PROMOCODES: dict[str, dict] = {}
 LOGS: dict[str, dict] = {}
 WITHDRAWS: list[dict] = []
+COSMETIC_SESSIONS: dict[str, dict] = {}
+PARTY_ROOMS: dict[str, dict] = {}
+IRC_MESSAGES: list[dict] = []
 VERSIONS: dict[str, dict] = {
     "1.21.11": {"display": "1.21.11 BETA", "identify": "1.21.11"},
 }
@@ -1084,20 +1087,318 @@ class Handler(SimpleHTTPRequestHandler):
 
             return self._json(200, {"ok": True, "message": "Local mock OK"})
 
+        # Cosmetics manifest
+        if path in ("/cosmetics/manifest.php", "/cosmetics/manifest", "/ajax/cosmetics/manifest"):
+            return self._json(200, {"ok": True, "files": {}})
+
+        # Cosmetics sync (UID and site registration check)
+        if path in ("/cosmetics/sync.php", "/cosmetics/sync", "/ajax/cosmetics/sync"):
+            action = params.get("action") or "beat"
+            nick = (params.get("nick") or "").strip()
+            nick_lower = nick.lower()
+            now_ms = int(time.time() * 1000)
+
+            if not nick:
+                return self._json(200, {"ok": False, "error": "nick_required", "players": {}})
+
+            token = params.get("token") or ""
+            raw_uid = params.get("uid")
+            site_user = (params.get("username") or params.get("siteUser") or "").strip()
+
+            verified_user = None
+            if token and token in TOKENS:
+                uname = TOKENS[token]
+                verified_user = USERS.get(uname)
+            if not verified_user and raw_uid is not None and str(raw_uid).strip() not in ("", "-1"):
+                try:
+                    p_uid = int(raw_uid)
+                    verified_user = next((u for u in USERS.values() if u.get("id") == p_uid or u.get("uid") == p_uid), None)
+                except ValueError:
+                    pass
+            if not verified_user and site_user:
+                verified_user = next((u for k, u in USERS.items() if k.lower() == site_user.lower()), None)
+            if not verified_user and nick:
+                verified_user = next((u for k, u in USERS.items() if k.lower() == nick_lower), None)
+
+            if not verified_user:
+                return self._json(200, {
+                    "ok": False,
+                    "error": "not_registered",
+                    "message": "Косметика и питомцы доступны только зарегистрированным пользователям сайта с UID.",
+                    "players": {}
+                })
+
+            if verified_user.get("banned"):
+                return self._json(200, {
+                    "ok": False,
+                    "error": "banned",
+                    "message": "Аккаунт заблокирован",
+                    "players": {}
+                })
+
+            final_uid = 0 if (verified_user.get("username") or "").lower() == "dustgames" else verified_user.get("id", 1)
+
+            if action == "leave":
+                COSMETIC_SESSIONS.pop(nick_lower, None)
+                return self._json(200, {"ok": True, "players": {}})
+
+            host = (params.get("host") or "").strip()
+            selections = params.get("selections") or {}
+            if isinstance(selections, str):
+                try: selections = json.loads(selections)
+                except: selections = {}
+            friends = params.get("friends") or []
+            if isinstance(friends, str):
+                try: friends = json.loads(friends)
+                except: friends = []
+            friends = [str(f).lower() for f in friends]
+            nearby = params.get("nearby") or []
+            if isinstance(nearby, str):
+                try: nearby = json.loads(nearby)
+                except: nearby = []
+            nearby = [str(n).lower() for n in nearby]
+            audience = params.get("audience") or "all"
+
+            COSMETIC_SESSIONS[nick_lower] = {
+                "nick": nick,
+                "uid": final_uid,
+                "username": verified_user.get("username", nick),
+                "host": host,
+                "selections": selections,
+                "friends": set(friends),
+                "audience": audience,
+                "last_seen": now_ms,
+            }
+
+            stale = [k for k, v in COSMETIC_SESSIONS.items() if now_ms - v["last_seen"] > 25000]
+            for k in stale:
+                COSMETIC_SESSIONS.pop(k, None)
+
+            players = {}
+            nearby_set = set(nearby)
+            friends_set = set(friends)
+
+            for other_nick, other in COSMETIC_SESSIONS.items():
+                if other_nick == nick_lower:
+                    continue
+                if other.get("uid") is None:
+                    continue
+
+                visible = False
+                if other["audience"] == "all":
+                    if not host or not other["host"] or other["host"] == host or other_nick in nearby_set or other_nick in friends_set:
+                        visible = True
+                elif other["audience"] == "friends":
+                    if nick_lower in other["friends"] or other_nick in friends_set:
+                        visible = True
+
+                if visible:
+                    players[other_nick] = other["selections"]
+
+            return self._json(200, {
+                "ok": True,
+                "uid": final_uid,
+                "username": verified_user.get("username"),
+                "role": verified_user.get("role", "USER"),
+                "players": players
+            })
+
+        # Party system
+        if path in ("/party/party.php", "/party/party", "/ajax/party/party"):
+            action = params.get("action") or ""
+            nick = (params.get("nick") or "").strip()
+            nick_lower = nick.lower()
+            now_ms = int(time.time() * 1000)
+
+            if not nick:
+                return self._json(200, {"ok": False, "error": "nick_required"})
+
+            if action == "create":
+                chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
+                code = "".join(secrets.choice(chars) for _ in range(4))
+                members = [{
+                    "nick": nick,
+                    "host": params.get("host") or "",
+                    "dim": params.get("dim") or "",
+                    "x": float(params.get("x") or 0.0),
+                    "y": float(params.get("y") or 0.0),
+                    "z": float(params.get("z") or 0.0),
+                    "hp": float(params.get("hp") or 20.0),
+                    "lastSeen": now_ms,
+                }]
+                PARTY_ROOMS[code] = {
+                    "code": code,
+                    "owner": nick,
+                    "locked": False,
+                    "members": members,
+                    "marks": [],
+                    "last_activity": now_ms,
+                }
+                return self._json(200, {
+                    "ok": True,
+                    "code": code,
+                    "owner": nick,
+                    "locked": False,
+                    "members": [{"nick": m["nick"], "host": m["host"], "dim": m["dim"], "x": m["x"], "y": m["y"], "z": m["z"], "hp": m["hp"]} for m in members],
+                    "marks": []
+                })
+
+            code = (params.get("code") or "").strip().upper()
+            room = PARTY_ROOMS.get(code)
+            if not room:
+                return self._json(200, {"ok": False, "error": "not_found"})
+
+            room["members"] = [m for m in room["members"] if now_ms - m.get("lastSeen", 0) <= 15000]
+            room["marks"] = [mk for mk in room["marks"] if now_ms - mk.get("createdAt", 0) <= 60000]
+
+            if action == "join":
+                if room["locked"]: return self._json(200, {"ok": False, "error": "locked"})
+                if len(room["members"]) >= 32: return self._json(200, {"ok": False, "error": "full"})
+                existing = next((m for m in room["members"] if m["nick"].lower() == nick_lower), None)
+                m_obj = {
+                    "nick": nick,
+                    "host": params.get("host") or "",
+                    "dim": params.get("dim") or "",
+                    "x": float(params.get("x") or 0.0),
+                    "y": float(params.get("y") or 0.0),
+                    "z": float(params.get("z") or 0.0),
+                    "hp": float(params.get("hp") or 20.0),
+                    "lastSeen": now_ms,
+                }
+                if existing:
+                    existing.update(m_obj)
+                else:
+                    room["members"].append(m_obj)
+                return self._json(200, {
+                    "ok": True,
+                    "code": code,
+                    "owner": room["owner"],
+                    "locked": room["locked"],
+                    "members": [{"nick": m["nick"], "host": m["host"], "dim": m["dim"], "x": m["x"], "y": m["y"], "z": m["z"], "hp": m["hp"]} for m in room["members"]],
+                    "marks": room["marks"]
+                })
+
+            if action == "leave":
+                room["members"] = [m for m in room["members"] if m["nick"].lower() != nick_lower]
+                if not room["members"]:
+                    PARTY_ROOMS.pop(code, None)
+                elif room["owner"].lower() == nick_lower:
+                    room["owner"] = room["members"][0]["nick"]
+                return self._json(200, {"ok": True})
+
+            if action == "kick":
+                if room["owner"].lower() != nick_lower: return self._json(200, {"ok": False, "error": "not_owner"})
+                target = (params.get("target") or "").strip().lower()
+                room["members"] = [m for m in room["members"] if m["nick"].lower() != target]
+                return self._json(200, {
+                    "ok": True,
+                    "code": code,
+                    "owner": room["owner"],
+                    "locked": room["locked"],
+                    "members": [{"nick": m["nick"], "host": m["host"], "dim": m["dim"], "x": m["x"], "y": m["y"], "z": m["z"], "hp": m["hp"]} for m in room["members"]],
+                    "marks": room["marks"]
+                })
+
+            if action == "lock":
+                if room["owner"].lower() != nick_lower: return self._json(200, {"ok": False, "error": "not_owner"})
+                room["locked"] = bool(params.get("locked"))
+                return self._json(200, {
+                    "ok": True,
+                    "code": code,
+                    "owner": room["owner"],
+                    "locked": room["locked"],
+                    "members": [{"nick": m["nick"], "host": m["host"], "dim": m["dim"], "x": m["x"], "y": m["y"], "z": m["z"], "hp": m["hp"]} for m in room["members"]],
+                    "marks": room["marks"]
+                })
+
+            if action == "mark":
+                is_mem = any(m["nick"].lower() == nick_lower for m in room["members"])
+                if not is_mem: return self._json(200, {"ok": False, "error": "not_member"})
+                m_type = params.get("type") or "point"
+                m_target = (params.get("target") or "").strip()
+                if m_type == "player" and m_target:
+                    room["marks"] = [mk for mk in room["marks"] if not (mk["type"] == "player" and mk.get("target", "").lower() == m_target.lower())]
+                room["marks"].append({
+                    "id": f"mk_{now_ms}_{secrets.token_hex(2)}",
+                    "by": nick,
+                    "type": m_type,
+                    "target": m_target,
+                    "host": params.get("host") or "",
+                    "dim": params.get("dim") or "",
+                    "x": float(params.get("x") or 0.0),
+                    "y": float(params.get("y") or 0.0),
+                    "z": float(params.get("z") or 0.0),
+                    "createdAt": now_ms,
+                })
+                if len(room["marks"]) > 20: room["marks"] = room["marks"][-20:]
+                return self._json(200, {
+                    "ok": True,
+                    "code": code,
+                    "owner": room["owner"],
+                    "locked": room["locked"],
+                    "members": [{"nick": m["nick"], "host": m["host"], "dim": m["dim"], "x": m["x"], "y": m["y"], "z": m["z"], "hp": m["hp"]} for m in room["members"]],
+                    "marks": room["marks"]
+                })
+
+            if action == "beat":
+                m_idx = next((i for i, m in enumerate(room["members"]) if m["nick"].lower() == nick_lower), -1)
+                if m_idx < 0: return self._json(200, {"ok": False, "error": "not_member"})
+                room["members"][m_idx]["x"] = float(params.get("x") or room["members"][m_idx]["x"])
+                room["members"][m_idx]["y"] = float(params.get("y") or room["members"][m_idx]["y"])
+                room["members"][m_idx]["z"] = float(params.get("z") or room["members"][m_idx]["z"])
+                room["members"][m_idx]["hp"] = float(params.get("hp") or room["members"][m_idx]["hp"])
+                room["members"][m_idx]["host"] = params.get("host") or room["members"][m_idx]["host"]
+                room["members"][m_idx]["dim"] = params.get("dim") or room["members"][m_idx]["dim"]
+                room["members"][m_idx]["lastSeen"] = now_ms
+                return self._json(200, {
+                    "ok": True,
+                    "code": code,
+                    "owner": room["owner"],
+                    "locked": room["locked"],
+                    "members": [{"nick": m["nick"], "host": m["host"], "dim": m["dim"], "x": m["x"], "y": m["y"], "z": m["z"], "hp": m["hp"]} for m in room["members"]],
+                    "marks": room["marks"]
+                })
+
+        # IRC system
+        if path in ("/irc/irc.php", "/irc/irc", "/ajax/irc/irc"):
+            action = params.get("action") or ""
+            now_ms = int(time.time() * 1000)
+            if action == "poll":
+                recent = [m for m in IRC_MESSAGES if now_ms - m.get("created_at", 0) < 180000]
+                return self._json(200, {"ok": True, "messages": recent})
+            if action == "send":
+                text = (params.get("text") or "").strip()
+                if not text: return self._json(200, {"ok": False, "message": "Пустое сообщение"})
+                IRC_MESSAGES.append({
+                    "name": params.get("name") or "User",
+                    "role": params.get("role") or "DEFAULT",
+                    "nick": params.get("nick") or "",
+                    "text": text[:256],
+                    "replyTo": params.get("replyTo") or "",
+                    "replyToNick": params.get("replyToNick") or "",
+                    "time": int(now_ms / 1000),
+                    "emoji": secrets.randbelow(20),
+                    "created_at": now_ms,
+                })
+                if len(IRC_MESSAGES) > 100: IRC_MESSAGES.pop(0)
+                return self._json(200, {"ok": True})
+            if action == "online":
+                return self._json(200, {"ok": True, "online": [{"name": u["username"], "role": u.get("role", "USER"), "nick": u["username"]} for u in USERS.values() if not u.get("banned")]})
+            return self._json(200, {"ok": True})
+
         # user cabinet extras / generic
-        if path.startswith("/ajax/"):
-            # Never return a bare `message` field — many pages treat it as failure
+        if path.startswith("/ajax/") or path.startswith("/cosmetics/") or path.startswith("/party/") or path.startswith("/irc/"):
             return self._json(200, {"ok": True, "authStatus": True})
 
         return False
 
     def do_POST(self):
-        if self.path.startswith("/ajax/"):
+        if self.path.startswith("/ajax/") or self.path.startswith("/cosmetics/") or self.path.startswith("/party/") or self.path.startswith("/irc/"):
             return self._handle_ajax("POST")
         self.send_error(404)
 
     def do_PATCH(self):
-        if self.path.startswith("/ajax/"):
+        if self.path.startswith("/ajax/") or self.path.startswith("/cosmetics/") or self.path.startswith("/party/") or self.path.startswith("/irc/"):
             return self._handle_ajax("PATCH")
         self.send_error(404)
 
@@ -1109,7 +1410,7 @@ class Handler(SimpleHTTPRequestHandler):
             self.send_header("Location", "/downloads/exclusivelauncher.exe")
             self.end_headers()
             return
-        if self.path.startswith("/ajax/"):
+        if self.path.startswith("/ajax/") or self.path.startswith("/cosmetics/") or self.path.startswith("/party/") or self.path.startswith("/irc/"):
             return self._handle_ajax("GET")
         rel = parsed.path.lstrip("/")
         if rel and not (ROOT / rel).exists() and not Path(rel).suffix:

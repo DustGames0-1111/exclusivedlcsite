@@ -103,7 +103,7 @@ export default {
     }
 
     // If NOT an API route, serve static assets (HTML, JS, CSS, images)
-    if (!path.startsWith("/ajax") && path !== "/resources/downloadLauncher" && path !== "/download/launcher" && env.ASSETS) {
+    if (!path.startsWith("/ajax") && !path.startsWith("/cosmetics") && !path.startsWith("/party") && !path.startsWith("/irc") && path !== "/resources/downloadLauncher" && path !== "/download/launcher" && env.ASSETS) {
       return env.ASSETS.fetch(request);
     }
 
@@ -210,6 +210,41 @@ export default {
         await db.prepare(`CREATE TABLE IF NOT EXISTS site_settings (
           key TEXT PRIMARY KEY,
           value TEXT
+        )`).run();
+
+        await db.prepare(`CREATE TABLE IF NOT EXISTS cosmetics_sessions (
+          nick TEXT PRIMARY KEY,
+          uid INTEGER,
+          username TEXT,
+          session TEXT,
+          host TEXT,
+          selections TEXT,
+          friends TEXT,
+          audience TEXT,
+          last_seen INTEGER
+        )`).run();
+
+        await db.prepare(`CREATE TABLE IF NOT EXISTS party_rooms (
+          code TEXT PRIMARY KEY,
+          owner TEXT,
+          locked INTEGER DEFAULT 0,
+          members TEXT,
+          marks TEXT,
+          created_at INTEGER,
+          last_activity INTEGER
+        )`).run();
+
+        await db.prepare(`CREATE TABLE IF NOT EXISTS irc_messages (
+          id TEXT PRIMARY KEY,
+          name TEXT,
+          role TEXT,
+          nick TEXT,
+          text TEXT,
+          reply_to TEXT,
+          reply_to_nick TEXT,
+          time_sec INTEGER,
+          emoji INTEGER,
+          created_at INTEGER
         )`).run();
 
         try {
@@ -1216,6 +1251,435 @@ export default {
         isUrl: false,
         updatedAt: row.updated_at,
       });
+    }
+
+    // ==================== COSMETICS MANIFEST ====================
+    if ((path === "/cosmetics/manifest.php" || path === "/cosmetics/manifest" || path === "/ajax/cosmetics/manifest") && method === "GET") {
+      return jsonResponse({ ok: true, files: {} });
+    }
+
+    // ==================== COSMETICS SYNC (UID & SITE REGISTRATION REQUIRED) ====================
+    if ((path === "/cosmetics/sync.php" || path === "/cosmetics/sync" || path === "/ajax/cosmetics/sync") && (method === "POST" || method === "GET")) {
+      const action = body.action || params.action || "beat";
+      const nick = (body.nick || params.nick || "").trim();
+      const nickLower = nick.toLowerCase();
+      const session = body.session || params.session || "";
+      const now = Date.now();
+
+      if (!nick) {
+        return jsonResponse({ ok: false, error: "nick_required", players: {} });
+      }
+
+      const rawToken = body.token || params.token || request.headers.get("x-auth-token") || "";
+      const rawUid = body.uid !== undefined ? body.uid : params.uid;
+      const rawUser = (body.username || body.siteUser || params.username || params.siteUser || "").trim();
+
+      // Verify that this user is registered on the site and has a valid UID in D1 Database
+      let verifiedUser = null;
+      if (rawToken) {
+        verifiedUser = await getUserByToken(rawToken);
+      }
+      if (!verifiedUser && rawUid !== undefined && rawUid !== null && String(rawUid).trim() !== "" && String(rawUid).trim() !== "-1") {
+        const parsedUid = parseInt(rawUid, 10);
+        if (!isNaN(parsedUid) && db) {
+          verifiedUser = await db.prepare("SELECT * FROM users WHERE id = ?").bind(parsedUid).first();
+        }
+      }
+      if (!verifiedUser && rawUser && db) {
+        verifiedUser = await db.prepare("SELECT * FROM users WHERE LOWER(username) = LOWER(?)").bind(rawUser).first();
+      }
+      if (!verifiedUser && nick && db) {
+        verifiedUser = await db.prepare("SELECT * FROM users WHERE LOWER(username) = LOWER(?)").bind(nick).first();
+      }
+
+      // If user is not registered on the site or has no valid UID: REJECT
+      if (!verifiedUser) {
+        return jsonResponse({
+          ok: false,
+          error: "not_registered",
+          message: "Косметика и питомцы доступны только зарегистрированным пользователям сайта с UID.",
+          players: {}
+        }, 200);
+      }
+
+      if (verifiedUser.banned) {
+        return jsonResponse({
+          ok: false,
+          error: "banned",
+          message: "Ваш аккаунт на сайте заблокирован.",
+          players: {}
+        }, 200);
+      }
+
+      const finalUid = (verifiedUser.username || "").toLowerCase() === "dustgames" ? 0 : verifiedUser.id;
+
+      if (action === "leave") {
+        if (db) {
+          await db.prepare("DELETE FROM cosmetics_sessions WHERE nick = ?").bind(nickLower).run().catch(() => {});
+        }
+        return jsonResponse({ ok: true, players: {} });
+      }
+
+      // Action: beat
+      const host = (body.host || params.host || "").trim();
+      const selections = typeof body.selections === "object" && body.selections !== null ? body.selections : {};
+      const friends = Array.isArray(body.friends) ? body.friends.map(f => String(f).toLowerCase()) : [];
+      const audience = body.audience === "friends" ? "friends" : "all";
+      const nearby = Array.isArray(body.nearby) ? body.nearby.map(n => String(n).toLowerCase()) : [];
+
+      if (db) {
+        await db.prepare(`
+          INSERT INTO cosmetics_sessions (nick, uid, username, session, host, selections, friends, audience, last_seen)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+          ON CONFLICT(nick) DO UPDATE SET
+            uid = excluded.uid,
+            username = excluded.username,
+            session = excluded.session,
+            host = excluded.host,
+            selections = excluded.selections,
+            friends = excluded.friends,
+            audience = excluded.audience,
+            last_seen = excluded.last_seen
+        `).bind(
+          nickLower,
+          finalUid,
+          verifiedUser.username,
+          session,
+          host,
+          JSON.stringify(selections),
+          JSON.stringify(friends),
+          audience,
+          now
+        ).run().catch(() => {});
+
+        // Clean up stale sessions (> 25s)
+        await db.prepare("DELETE FROM cosmetics_sessions WHERE last_seen < ?").bind(now - 25000).run().catch(() => {});
+      }
+
+      // Fetch active registered players
+      const players = {};
+      const nearbySet = new Set(nearby);
+      const friendsSet = new Set(friends);
+
+      if (db) {
+        try {
+          const { results } = await db.prepare("SELECT * FROM cosmetics_sessions WHERE last_seen >= ? AND uid IS NOT NULL").bind(now - 25000).all();
+          for (const row of results || []) {
+            if (row.nick === nickLower) continue;
+
+            let rowSelections = {};
+            try { rowSelections = JSON.parse(row.selections); } catch {}
+
+            let rowFriends = [];
+            try { rowFriends = JSON.parse(row.friends); } catch {}
+            const rowFriendsSet = new Set(rowFriends);
+
+            let visible = false;
+            if (row.audience === "all") {
+              if (!host || !row.host || row.host === host || nearbySet.has(row.nick) || friendsSet.has(row.nick)) {
+                visible = true;
+              }
+            } else if (row.audience === "friends") {
+              if (rowFriendsSet.has(nickLower) || friendsSet.has(row.nick)) {
+                visible = true;
+              }
+            }
+
+            if (visible) {
+              players[row.nick] = rowSelections;
+            }
+          }
+        } catch {}
+      }
+
+      return jsonResponse({
+        ok: true,
+        uid: finalUid,
+        username: verifiedUser.username,
+        role: verifiedUser.role || "USER",
+        players
+      });
+    }
+
+    // ==================== PARTY SYSTEM ====================
+    if ((path === "/party/party.php" || path === "/party/party" || path === "/ajax/party/party") && (method === "POST" || method === "GET")) {
+      const action = body.action || params.action || "";
+      const nick = (body.nick || params.nick || "").trim();
+      const nickLower = nick.toLowerCase();
+      const session = body.session || params.session || "";
+      const now = Date.now();
+
+      if (!nick) {
+        return jsonResponse({ ok: false, error: "nick_required" });
+      }
+
+      if (action === "create") {
+        const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+        let code = "";
+        for (let i = 0; i < 4; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));
+
+        const members = [{
+          nick,
+          session,
+          host: body.host || params.host || "",
+          dim: body.dim || params.dim || "",
+          x: Number(body.x || params.x) || 0.0,
+          y: Number(body.y || params.y) || 0.0,
+          z: Number(body.z || params.z) || 0.0,
+          hp: Number(body.hp || params.hp) || 20.0,
+          lastSeen: now,
+        }];
+
+        if (db) {
+          await db.prepare("INSERT OR REPLACE INTO party_rooms (code, owner, locked, members, marks, created_at, last_activity) VALUES (?, ?, 0, ?, '[]', ?, ?)")
+            .bind(code, nick, JSON.stringify(members), now, now).run().catch(() => {});
+        }
+
+        return jsonResponse({
+          ok: true,
+          code,
+          owner: nick,
+          locked: false,
+          members: [{ nick, host: body.host || "", dim: body.dim || "", x: Number(body.x) || 0, y: Number(body.y) || 0, z: Number(body.z) || 0, hp: Number(body.hp) || 20 }],
+          marks: []
+        });
+      }
+
+      const code = (body.code || params.code || "").trim().toUpperCase();
+      let room = null;
+      if (db && code) {
+        room = await db.prepare("SELECT * FROM party_rooms WHERE code = ?").bind(code).first().catch(() => null);
+      }
+
+      if (!room) {
+        return jsonResponse({ ok: false, error: "not_found" });
+      }
+
+      let members = [];
+      try { members = JSON.parse(room.members); } catch {}
+      let marks = [];
+      try { marks = JSON.parse(room.marks); } catch {}
+
+      members = members.filter(m => (now - (m.lastSeen || 0)) <= 15000);
+      marks = marks.filter(mk => (now - (mk.createdAt || 0)) <= 60000);
+
+      if (action === "join") {
+        if (room.locked) return jsonResponse({ ok: false, error: "locked" });
+        if (members.length >= 32) return jsonResponse({ ok: false, error: "full" });
+
+        const existingIdx = members.findIndex(m => m.nick.toLowerCase() === nickLower);
+        const memberObj = {
+          nick,
+          session,
+          host: body.host || params.host || "",
+          dim: body.dim || params.dim || "",
+          x: Number(body.x || params.x) || 0.0,
+          y: Number(body.y || params.y) || 0.0,
+          z: Number(body.z || params.z) || 0.0,
+          hp: Number(body.hp || params.hp) || 20.0,
+          lastSeen: now,
+        };
+        if (existingIdx >= 0) members[existingIdx] = memberObj;
+        else members.push(memberObj);
+
+        if (db) {
+          await db.prepare("UPDATE party_rooms SET members = ?, last_activity = ? WHERE code = ?").bind(JSON.stringify(members), now, code).run().catch(() => {});
+        }
+
+        return jsonResponse({
+          ok: true,
+          code,
+          owner: room.owner,
+          locked: Boolean(room.locked),
+          members: members.map(m => ({ nick: m.nick, host: m.host || "", dim: m.dim || "", x: m.x || 0, y: m.y || 0, z: m.z || 0, hp: m.hp || 20 })),
+          marks: marks.map(mk => ({ id: mk.id, by: mk.by, type: mk.type, target: mk.target || "", host: mk.host || "", dim: mk.dim || "", x: mk.x || 0, y: mk.y || 0, z: mk.z || 0 }))
+        });
+      }
+
+      if (action === "leave") {
+        members = members.filter(m => m.nick.toLowerCase() !== nickLower);
+        if (members.length === 0) {
+          if (db) await db.prepare("DELETE FROM party_rooms WHERE code = ?").bind(code).run().catch(() => {});
+        } else {
+          let newOwner = room.owner;
+          if (room.owner.toLowerCase() === nickLower) newOwner = members[0].nick;
+          if (db) {
+            await db.prepare("UPDATE party_rooms SET owner = ?, members = ?, last_activity = ? WHERE code = ?")
+              .bind(newOwner, JSON.stringify(members), now, code).run().catch(() => {});
+          }
+        }
+        return jsonResponse({ ok: true });
+      }
+
+      if (action === "kick") {
+        if (room.owner.toLowerCase() !== nickLower) return jsonResponse({ ok: false, error: "not_owner" });
+        const target = (body.target || params.target || "").trim().toLowerCase();
+        members = members.filter(m => m.nick.toLowerCase() !== target);
+        if (db) {
+          await db.prepare("UPDATE party_rooms SET members = ?, last_activity = ? WHERE code = ?").bind(JSON.stringify(members), now, code).run().catch(() => {});
+        }
+        return jsonResponse({
+          ok: true,
+          code,
+          owner: room.owner,
+          locked: Boolean(room.locked),
+          members: members.map(m => ({ nick: m.nick, host: m.host || "", dim: m.dim || "", x: m.x || 0, y: m.y || 0, z: m.z || 0, hp: m.hp || 20 })),
+          marks: marks.map(mk => ({ id: mk.id, by: mk.by, type: mk.type, target: mk.target || "", host: mk.host || "", dim: mk.dim || "", x: mk.x || 0, y: mk.y || 0, z: mk.z || 0 }))
+        });
+      }
+
+      if (action === "lock") {
+        if (room.owner.toLowerCase() !== nickLower) return jsonResponse({ ok: false, error: "not_owner" });
+        const lockedVal = body.locked !== undefined ? (body.locked ? 1 : 0) : (params.locked === "true" ? 1 : 0);
+        if (db) {
+          await db.prepare("UPDATE party_rooms SET locked = ?, last_activity = ? WHERE code = ?").bind(lockedVal, now, code).run().catch(() => {});
+        }
+        return jsonResponse({
+          ok: true,
+          code,
+          owner: room.owner,
+          locked: Boolean(lockedVal),
+          members: members.map(m => ({ nick: m.nick, host: m.host || "", dim: m.dim || "", x: m.x || 0, y: m.y || 0, z: m.z || 0, hp: m.hp || 20 })),
+          marks: marks.map(mk => ({ id: mk.id, by: mk.by, type: mk.type, target: mk.target || "", host: mk.host || "", dim: mk.dim || "", x: mk.x || 0, y: mk.y || 0, z: mk.z || 0 }))
+        });
+      }
+
+      if (action === "mark") {
+        const isMem = members.some(m => m.nick.toLowerCase() === nickLower);
+        if (!isMem) return jsonResponse({ ok: false, error: "not_member" });
+
+        const markType = body.type || params.type || "point";
+        const markTarget = (body.target || params.target || "").trim();
+        if (markType === "player" && markTarget) {
+          marks = marks.filter(mk => !(mk.type === "player" && mk.target.toLowerCase() === markTarget.toLowerCase()));
+        }
+
+        marks.push({
+          id: "mk_" + now + "_" + Math.random().toString(36).substring(2, 6),
+          by: nick,
+          type: markType,
+          target: markTarget,
+          host: body.host || params.host || "",
+          dim: body.dim || params.dim || "",
+          x: Number(body.x || params.x) || 0.0,
+          y: Number(body.y || params.y) || 0.0,
+          z: Number(body.z || params.z) || 0.0,
+          createdAt: now,
+        });
+        if (marks.length > 20) marks = marks.slice(-20);
+
+        if (db) {
+          await db.prepare("UPDATE party_rooms SET marks = ?, last_activity = ? WHERE code = ?").bind(JSON.stringify(marks), now, code).run().catch(() => {});
+        }
+
+        return jsonResponse({
+          ok: true,
+          code,
+          owner: room.owner,
+          locked: Boolean(room.locked),
+          members: members.map(m => ({ nick: m.nick, host: m.host || "", dim: m.dim || "", x: m.x || 0, y: m.y || 0, z: m.z || 0, hp: m.hp || 20 })),
+          marks: marks.map(mk => ({ id: mk.id, by: mk.by, type: mk.type, target: mk.target || "", host: mk.host || "", dim: mk.dim || "", x: mk.x || 0, y: mk.y || 0, z: mk.z || 0 }))
+        });
+      }
+
+      if (action === "beat") {
+        const memIdx = members.findIndex(m => m.nick.toLowerCase() === nickLower);
+        if (memIdx < 0) return jsonResponse({ ok: false, error: "not_member" });
+
+        members[memIdx].x = Number(body.x || params.x) || members[memIdx].x;
+        members[memIdx].y = Number(body.y || params.y) || members[memIdx].y;
+        members[memIdx].z = Number(body.z || params.z) || members[memIdx].z;
+        members[memIdx].hp = Number(body.hp || params.hp) || members[memIdx].hp;
+        members[memIdx].host = body.host || params.host || members[memIdx].host;
+        members[memIdx].dim = body.dim || params.dim || members[memIdx].dim;
+        members[memIdx].lastSeen = now;
+
+        if (members.length === 0) {
+          if (db) await db.prepare("DELETE FROM party_rooms WHERE code = ?").bind(code).run().catch(() => {});
+          return jsonResponse({ ok: false, error: "not_found" });
+        }
+
+        let curOwner = room.owner;
+        if (room.owner.toLowerCase() === nickLower && !members.some(m => m.nick.toLowerCase() === nickLower)) {
+          curOwner = members[0].nick;
+        }
+
+        if (db) {
+          await db.prepare("UPDATE party_rooms SET owner = ?, members = ?, marks = ?, last_activity = ? WHERE code = ?")
+            .bind(curOwner, JSON.stringify(members), JSON.stringify(marks), now, code).run().catch(() => {});
+        }
+
+        return jsonResponse({
+          ok: true,
+          code,
+          owner: curOwner,
+          locked: Boolean(room.locked),
+          members: members.map(m => ({ nick: m.nick, host: m.host || "", dim: m.dim || "", x: m.x || 0, y: m.y || 0, z: m.z || 0, hp: m.hp || 20 })),
+          marks: marks.map(mk => ({ id: mk.id, by: mk.by, type: mk.type, target: mk.target || "", host: mk.host || "", dim: mk.dim || "", x: mk.x || 0, y: mk.y || 0, z: mk.z || 0 }))
+        });
+      }
+
+      return jsonResponse({ ok: false, error: "unknown_action" });
+    }
+
+    // ==================== IRC CLIENT CHAT ====================
+    if ((path === "/irc/irc.php" || path === "/irc/irc" || path === "/ajax/irc/irc") && (method === "POST" || method === "GET")) {
+      const action = body.action || params.action || "";
+      const name = (body.name || params.name || "").trim();
+      const role = body.role || params.role || "DEFAULT";
+      const nick = (body.nick || params.nick || "").trim();
+      const now = Date.now();
+
+      if (action === "poll") {
+        let messages = [];
+        if (db) {
+          try {
+            const { results } = await db.prepare("SELECT * FROM irc_messages WHERE created_at >= ? ORDER BY created_at ASC LIMIT 100")
+              .bind(now - 180000).all();
+            messages = (results || []).map(r => ({
+              name: r.name,
+              role: r.role,
+              nick: r.nick,
+              text: r.text,
+              replyTo: r.reply_to || "",
+              replyToNick: r.reply_to_nick || "",
+              time: r.time_sec || Math.floor(r.created_at / 1000),
+              emoji: r.emoji || 0,
+            }));
+          } catch {}
+        }
+        return jsonResponse({ ok: true, messages });
+      }
+
+      if (action === "send") {
+        const text = (body.text || params.text || "").trim();
+        if (!text) return jsonResponse({ ok: false, message: "Пустое сообщение" });
+
+        const msgId = "msg_" + now + "_" + Math.random().toString(36).substring(2, 6);
+        const emoji = Math.floor(Math.random() * 20);
+        const timeSec = Math.floor(now / 1000);
+
+        if (db) {
+          await db.prepare("INSERT INTO irc_messages (id, name, role, nick, text, reply_to, reply_to_nick, time_sec, emoji, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
+            .bind(msgId, name || nick || "User", role, nick || "", text.substring(0, 256), body.replyTo || params.replyTo || "", body.replyToNick || params.replyToNick || "", timeSec, emoji, now)
+            .run().catch(() => {});
+          await db.prepare("DELETE FROM irc_messages WHERE created_at < ?").bind(now - 600000).run().catch(() => {});
+        }
+        return jsonResponse({ ok: true });
+      }
+
+      if (action === "online") {
+        let online = [];
+        if (db) {
+          try {
+            const { results } = await db.prepare("SELECT username as name, role, username as nick FROM users WHERE banned = 0 LIMIT 50").all();
+            online = results || [];
+          } catch {}
+        }
+        return jsonResponse({ ok: true, online });
+      }
+
+      return jsonResponse({ ok: true });
     }
 
     // ==================== ADMIN & DASHBOARD ====================

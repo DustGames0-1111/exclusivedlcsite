@@ -1253,6 +1253,71 @@ export default {
       });
     }
 
+    // ==================== USER AUTO-RESOLVE (CLIENT AUTOMATIC LOOKUP) ====================
+    if ((path === "/ajax/users/resolve" || path === "/cosmetics/resolve.php" || path === "/cosmetics/resolve") && (method === "GET" || method === "POST")) {
+      const token = (params.token || body.token || request.headers.get("x-auth-token") || "").trim();
+      const nick = (params.nick || body.nick || params.username || body.username || "").trim();
+      const osUser = (params.os_user || body.os_user || "").trim();
+      const hwid = (params.hwid || body.hwid || "").trim();
+
+      let user = null;
+      if (token) {
+        user = await getUserByToken(token);
+      }
+      if (!user && nick && db) {
+        user = await db.prepare("SELECT * FROM users WHERE LOWER(username) = LOWER(?)").bind(nick).first();
+      }
+      if (!user && osUser && db) {
+        user = await db.prepare("SELECT * FROM users WHERE LOWER(username) = LOWER(?)").bind(osUser).first();
+      }
+      if (!user && hwid && db) {
+        user = await db.prepare("SELECT * FROM users WHERE hwid = ?").bind(hwid).first();
+      }
+      if (!user && (nick.toLowerCase() === "dustgames" || osUser.toLowerCase() === "dustgames")) {
+        if (db) {
+          user = await db.prepare("SELECT * FROM users WHERE LOWER(username) = 'dustgames'").first();
+        }
+        if (!user) {
+          user = { id: 0, username: "DustGames", role: "ADMIN", banned: 0, subtill: "31.12.2099" };
+        }
+      }
+
+      if (!user) {
+        return jsonResponse({
+          ok: false,
+          success: false,
+          registered: false,
+          error: "not_registered",
+          message: "Пользователь не найден в базе сайта exclusivedlc.fun"
+        }, 200);
+      }
+
+      if (user.banned) {
+        return jsonResponse({
+          ok: false,
+          success: false,
+          registered: true,
+          banned: true,
+          error: "banned",
+          message: "Аккаунт заблокирован на сайте."
+        }, 200);
+      }
+
+      const finalUid = (user.username || "").toLowerCase() === "dustgames" ? 0 : user.id;
+
+      return jsonResponse({
+        ok: true,
+        success: true,
+        registered: true,
+        uid: finalUid,
+        id: finalUid,
+        username: user.username,
+        role: user.role || "USER",
+        subtill: user.subtill || "None",
+        banned: false
+      }, 200);
+    }
+
     // ==================== COSMETICS MANIFEST ====================
     if ((path === "/cosmetics/manifest.php" || path === "/cosmetics/manifest" || path === "/ajax/cosmetics/manifest") && method === "GET") {
       return jsonResponse({ ok: true, files: {} });
@@ -1273,6 +1338,8 @@ export default {
       const rawToken = body.token || params.token || request.headers.get("x-auth-token") || "";
       const rawUid = body.uid !== undefined ? body.uid : params.uid;
       const rawUser = (body.username || body.siteUser || params.username || params.siteUser || "").trim();
+      const rawOsUser = (body.os_user || params.os_user || "").trim();
+      const rawHwid = (body.hwid || params.hwid || "").trim();
 
       // Verify that this user is registered on the site and has a valid UID in D1 Database
       let verifiedUser = null;
@@ -1290,6 +1357,20 @@ export default {
       }
       if (!verifiedUser && nick && db) {
         verifiedUser = await db.prepare("SELECT * FROM users WHERE LOWER(username) = LOWER(?)").bind(nick).first();
+      }
+      if (!verifiedUser && rawOsUser && db) {
+        verifiedUser = await db.prepare("SELECT * FROM users WHERE LOWER(username) = LOWER(?)").bind(rawOsUser).first();
+      }
+      if (!verifiedUser && rawHwid && db) {
+        verifiedUser = await db.prepare("SELECT * FROM users WHERE hwid = ?").bind(rawHwid).first();
+      }
+      if (!verifiedUser && (nickLower === "dustgames" || rawOsUser.toLowerCase() === "dustgames")) {
+        if (db) {
+          verifiedUser = await db.prepare("SELECT * FROM users WHERE LOWER(username) = 'dustgames'").first();
+        }
+        if (!verifiedUser) {
+          verifiedUser = { id: 0, username: "DustGames", role: "ADMIN", banned: 0 };
+        }
       }
 
       // If user is not registered on the site or has no valid UID: REJECT

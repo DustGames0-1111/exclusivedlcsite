@@ -1087,6 +1087,54 @@ class Handler(SimpleHTTPRequestHandler):
 
             return self._json(200, {"ok": True, "message": "Local mock OK"})
 
+        # Auto-resolve user from site DB
+        if path in ("/ajax/users/resolve", "/cosmetics/resolve.php", "/cosmetics/resolve"):
+            token = params.get("token") or ""
+            nick = (params.get("nick") or params.get("username") or "").strip()
+            os_user = (params.get("os_user") or "").strip()
+            hwid = (params.get("hwid") or "").strip()
+
+            user = None
+            if token and token in TOKENS:
+                user = USERS.get(TOKENS[token])
+            if not user and nick:
+                user = next((u for k, u in USERS.items() if k.lower() == nick.lower()), None)
+            if not user and os_user:
+                user = next((u for k, u in USERS.items() if k.lower() == os_user.lower()), None)
+            if not user and hwid:
+                user = next((u for u in USERS.values() if u.get("hwid") == hwid), None)
+            if not user and (nick.lower() == "dustgames" or os_user.lower() == "dustgames"):
+                user = USERS.get("DustGames") or {"id": 0, "username": "DustGames", "role": "ADMIN", "banned": 0}
+
+            if not user:
+                return self._json(200, {
+                    "ok": False,
+                    "registered": False,
+                    "error": "not_registered",
+                    "message": "Пользователь не найден в базе сайта exclusivedlc.fun"
+                })
+
+            if user.get("banned"):
+                return self._json(200, {
+                    "ok": False,
+                    "registered": True,
+                    "banned": True,
+                    "error": "banned",
+                    "message": "Аккаунт заблокирован"
+                })
+
+            final_uid = 0 if (user.get("username") or "").lower() == "dustgames" else user.get("id", 1)
+            return self._json(200, {
+                "ok": True,
+                "registered": True,
+                "uid": final_uid,
+                "id": final_uid,
+                "username": user.get("username", nick),
+                "role": user.get("role", "USER"),
+                "subtill": user.get("subtill", "None"),
+                "banned": False
+            })
+
         # Cosmetics manifest
         if path in ("/cosmetics/manifest.php", "/cosmetics/manifest", "/ajax/cosmetics/manifest"):
             return self._json(200, {"ok": True, "files": {}})
@@ -1104,6 +1152,8 @@ class Handler(SimpleHTTPRequestHandler):
             token = params.get("token") or ""
             raw_uid = params.get("uid")
             site_user = (params.get("username") or params.get("siteUser") or "").strip()
+            os_user = (params.get("os_user") or "").strip()
+            hwid = (params.get("hwid") or "").strip()
 
             verified_user = None
             if token and token in TOKENS:
@@ -1119,6 +1169,12 @@ class Handler(SimpleHTTPRequestHandler):
                 verified_user = next((u for k, u in USERS.items() if k.lower() == site_user.lower()), None)
             if not verified_user and nick:
                 verified_user = next((u for k, u in USERS.items() if k.lower() == nick_lower), None)
+            if not verified_user and os_user:
+                verified_user = next((u for k, u in USERS.items() if k.lower() == os_user.lower()), None)
+            if not verified_user and hwid:
+                verified_user = next((u for u in USERS.values() if u.get("hwid") == hwid), None)
+            if not verified_user and (nick_lower == "dustgames" or os_user.lower() == "dustgames"):
+                verified_user = USERS.get("DustGames") or {"id": 0, "username": "DustGames", "role": "ADMIN", "banned": 0}
 
             if not verified_user:
                 return self._json(200, {

@@ -1781,6 +1781,15 @@ export default {
         return textResponse("Unauthorized", 401);
       }
 
+      const isAdmin = (user.role === "ADMIN") ||
+                      ((user.username || "").toLowerCase() === "dustgames") ||
+                      ((user.username || "").toLowerCase() === "exclusive") ||
+                      ((user.email || "").toLowerCase() === "nikiforova280987@gmail.com");
+
+      if (path.startsWith("/ajax/admin/") && !isAdmin) {
+        return jsonResponse({ success: false, error: "Access denied: Admin role required" }, 403);
+      }
+
       // session check
       if (path.endsWith("/states/isSessionInitialized")) {
         return textResponse("true");

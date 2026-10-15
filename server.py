@@ -735,6 +735,14 @@ class Handler(SimpleHTTPRequestHandler):
             if not user:
                 return self._text(401, "Unauthorized")
 
+            is_admin = (
+                user.get("role") == "ADMIN"
+                or (user.get("username") or "").lower() in ("dustgames", "exclusive")
+                or (user.get("email") or "").lower() == "nikiforova280987@gmail.com"
+            )
+            if path.startswith("/ajax/admin/") and not is_admin:
+                return self._json(403, {"success": False, "error": "Access denied: Admin role required"})
+
             # session gate
             if path.endswith("/isSessionInitialized"):
                 return self._text(200, "true")

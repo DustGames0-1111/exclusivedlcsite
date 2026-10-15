@@ -127,9 +127,22 @@
         state.cabinetTab = 'account';
         state.authMode = 'signin';
       } else if (path === '/admin' || path === '/dashboard' || hash === '#admin') {
-        state.currentRoute = state.user ? 'cabinet' : 'auth';
-        state.cabinetTab = 'admin';
-        state.authMode = 'signin';
+        if (!state.user) {
+          state.currentRoute = 'auth';
+          state.authMode = 'signin';
+        } else {
+          const isAdmin = (state.user.role === 'ADMIN') ||
+                          ((state.user.username || '').toLowerCase() === 'dustgames') ||
+                          ((state.user.username || '').toLowerCase() === 'exclusive');
+          if (isAdmin) {
+            state.currentRoute = 'cabinet';
+            state.cabinetTab = 'admin';
+          } else {
+            state.currentRoute = 'cabinet';
+            state.cabinetTab = 'account';
+            window.history.replaceState({}, '', '/cabinet');
+          }
+        }
       } else if (path === '/sign-in' || path === '/signin' || hash === '#signin') {
         state.currentRoute = 'auth';
         state.authMode = 'signin';
@@ -147,14 +160,26 @@
   }
 
   function navigate(route, pushState = true) {
+    const isAdmin = state.user && (
+      state.user.role === 'ADMIN' ||
+      (state.user.username || '').toLowerCase() === 'dustgames' ||
+      (state.user.username || '').toLowerCase() === 'exclusive'
+    );
+
     state.currentRoute = route;
     let url = '/';
     if (route === 'cabinet') {
-      url = state.cabinetTab === 'admin' ? '/admin' : '/cabinet';
+      url = (state.cabinetTab === 'admin' && isAdmin) ? '/admin' : '/cabinet';
     } else if (route === 'admin') {
-      state.currentRoute = 'cabinet';
-      state.cabinetTab = 'admin';
-      url = '/admin';
+      if (!isAdmin) {
+        state.currentRoute = 'cabinet';
+        state.cabinetTab = 'account';
+        url = '/cabinet';
+      } else {
+        state.currentRoute = 'cabinet';
+        state.cabinetTab = 'admin';
+        url = '/admin';
+      }
     } else if (route === 'auth') {
       url = state.authMode === 'signup' ? '/sign-up' : '/sign-in';
     }
@@ -178,11 +203,17 @@
         navigate('auth');
         return;
       }
+      const isAdmin = (state.user.role === 'ADMIN') ||
+                      ((state.user.username || '').toLowerCase() === 'dustgames') ||
+                      ((state.user.username || '').toLowerCase() === 'exclusive');
+      if (state.cabinetTab === 'admin' && !isAdmin) {
+        state.cabinetTab = 'account';
+      }
       mainContainer.innerHTML = renderCabinetScreen();
       attachCabinetEvents();
       if (state.cabinetTab === 'account') {
         init3DCharacter();
-      } else {
+      } else if (isAdmin) {
         attachAdminEvents();
         loadAdminData();
       }
@@ -960,6 +991,9 @@
     };
 
     const initial = (user.username || 'U')[0].toUpperCase();
+    const isAdmin = (user.role === 'ADMIN') ||
+                    ((user.username || '').toLowerCase() === 'dustgames') ||
+                    ((user.username || '').toLowerCase() === 'exclusive');
     const planText = user.role === 'ADMIN' ? 'Админ (Навсегда)' : (user.subtill && user.subtill !== 'None' ? (user.subtill === '31.12.2099' ? 'Навсегда' : `Подписка (${user.subtill})`) : 'Без подписки');
     const roleText = user.role === 'ADMIN' ? 'Администратор' : (user.role === 'BETA' ? 'Beta-тестер' : 'Пользователь');
 
@@ -979,12 +1013,14 @@
                 <span>Аккаунт</span>
               </div>
             </li>
+            ${isAdmin ? `
             <li class="cabinet-menu-item ${state.cabinetTab === 'admin' ? 'active' : ''}" id="tabBtnAdmin">
               <div class="cabinet-menu-item-left">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
                 <span>Админ-панель</span>
               </div>
             </li>
+            ` : ''}
           </ul>
 
           <div class="cabinet-sidebar-bottom">
@@ -1000,8 +1036,8 @@
         </aside>
 
         <!-- Main Body -->
-        <main class="cabinet-main-body ${state.cabinetTab === 'admin' ? 'cabinet-admin-view' : ''}">
-          ${state.cabinetTab === 'admin' ? renderAdminPanel(user) : `
+        <main class="cabinet-main-body ${state.cabinetTab === 'admin' && isAdmin ? 'cabinet-admin-view' : ''}">
+          ${state.cabinetTab === 'admin' && isAdmin ? renderAdminPanel(user) : `
             <div class="cabinet-content-col">
               <div>
                 <h1 class="cabinet-header-title">Личный кабинет</h1>
@@ -1743,8 +1779,18 @@
     const tabBtnAdmin = document.getElementById('tabBtnAdmin');
     if (tabBtnAdmin) {
       tabBtnAdmin.onclick = () => {
-        state.cabinetTab = 'admin';
-        navigate('admin');
+        const isAdmin = state.user && (
+          state.user.role === 'ADMIN' ||
+          (state.user.username || '').toLowerCase() === 'dustgames' ||
+          (state.user.username || '').toLowerCase() === 'exclusive'
+        );
+        if (isAdmin) {
+          state.cabinetTab = 'admin';
+          navigate('admin');
+        } else {
+          state.cabinetTab = 'account';
+          navigate('cabinet');
+        }
       };
     }
 
@@ -2021,6 +2067,13 @@
   }
 
   async function loadAdminData() {
+    const isAdmin = state.user && (
+      state.user.role === 'ADMIN' ||
+      (state.user.username || '').toLowerCase() === 'dustgames' ||
+      (state.user.username || '').toLowerCase() === 'exclusive'
+    );
+    if (!isAdmin) return;
+
     await Promise.allSettled([
       fetchAdminUsers(state.adminData.usersPage, state.adminData.usersSearch),
       fetchAdminKeys(),
@@ -2055,12 +2108,17 @@
       console.warn('Failed to load users from API:', e);
     }
 
-    if (state.adminData.users.length === 0 && state.user) {
+    const isAdmin = state.user && (
+      state.user.role === 'ADMIN' ||
+      (state.user.username || '').toLowerCase() === 'dustgames' ||
+      (state.user.username || '').toLowerCase() === 'exclusive'
+    );
+    if (state.adminData.users.length === 0 && isAdmin) {
       state.adminData.users = [{
         uid: state.user.uid || 0,
         user: state.user.username || 'DustGames',
         email: state.user.email || 'nikiforova280987@gmail.com',
-        group: state.user.role || 'ADMIN',
+        group: 'ADMIN',
         banned: false,
         hwid: state.user.hwid || 'LOCAL-FULL-ACCESS',
         subtill: '31.12.2099'
